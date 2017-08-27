@@ -1,0 +1,40 @@
+html, body {
+	height: 100%;
+}
+
+.left {
+	width: 25%;
+	float: left;
+	padding: 15px;
+}
+
+.vertical {
+	position: absolute;
+	left: 25%;
+	height: 100%;
+	border: 1px solid black;
+}
+
+.right {
+	width: 75%;
+	float: right;
+	padding: 15px;
+/*	height: 100%;
+	max-height: 100%;*/
+	height: 100%;
+
+	overflow-y: auto;
+}
+
+.custom-button {
+	padding: 0px;
+	margin: 5px;
+}
+
+span.glyphicon {
+	margin: 5px;
+}
+
+/*span.glyphicon-pencil {
+	cursor: pointer;
+}*/
