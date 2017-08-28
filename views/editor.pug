@@ -1,0 +1,165 @@
+html(lang='en')
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    title editor
+    script(src='https://d3js.org/d3.v4.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/ajv/5.0.0/ajv.min.js')
+    script(src='/scripts/svgeditor.js')
+    script(src='/scripts/svgeditor_optionspanel.js')
+    script(src='/scripts/topologySchema.js')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/style/svgeditor.css')
+
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+
+  body(onload='SVGGRAPH=SVGGRAPH();'+((data)?'loadfile()':''))
+    .left
+      button#help.btn.btn-info(type='button' data-toggle='modal' data-target='#helpModal') help
+      a(href='/u/dashboard') Dashboard
+      br
+      if fileName
+        h4#fileName= fileName
+      else
+        br
+      //- button(type='button' onclick='randomgraph()') big
+      // I really don't know how to label these
+      // also these bootstrap buttons look kinda out of place
+      .btn-group.btn-group-xs#withDropdown
+        button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load
+        button.btn.btn-default(type='button' onclick='saveAsFile()') save
+        ul.dropdown-menu(role='menu')
+        span#flashmessage(style='display: none;') don't panic
+      input(type='file')
+      .btn-group.btn-group-sm
+        button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_import();') import
+        button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_clear()') clear
+        button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_export();') export
+      textarea#jsontextarea(name='jsontextarea')
+    .right
+      #svgfocus(tabindex='0' style='display:inline-block')
+        svg#editor(width='100%' height='100%' style='border: 1px solid black;')
+
+    // MODAL
+    #helpModal.modal.fade(role='dialog')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button' data-dismiss='modal') &times;
+            h3.modal-title Help
+          .modal-body
+            h4 <strong>sidebar</strong>
+            ul
+              li <strong>load:</strong> loads a file from the list of your attachments
+              li <strong>save:</strong> saves the JSON in the textarea as an attachment
+              li <strong>choose file:</strong> directly upload a file to the textarea
+              li <strong>import:</strong> imports the JSON in the textarea to the graph
+              li <strong>clear:</strong> puts the JSON of an empty graph into the textarea
+              li <strong>export:</strong> outputs the JSON of the graph into the textarea
+              li <strong>textarea:</strong> the middleman
+            h3 <strong>SVG graph</strong>
+            p hover over icons to show a tooltip
+            h4 <strong>toolbar</strong>
+            ul
+              li <strong>play/pause:</strong> plays or pauses the <em>force</em> simulation
+                ul
+                  li forces are: link, manybodies, center
+                  li in pause mode nodes will not be moved around by the forces
+              li <strong>select/edit:</strong> toggles between edit modes
+                ul
+                  li must be in edit mode in order to delete
+                  li <strong>shapes:</strong> determines what shape will be used to create the next node
+            h4 <strong>usage</strong>
+            ul
+              li <strong>in general</strong>
+                ul
+                  li <u>click and drag a node</u> to move it around
+                  li <u>double click a node</u> to open an options panel to edit its properties
+                  li <u>click a node</u> to select it
+                  li <u>click a link</u> to select it
+                  li <u>press escape</u> to deselect everything
+                  li <u>drag the background</u> to pan
+                  li <u>scroll the mousewheel</u> to zoom
+              li <strong>in edit mode</strong>
+                ul
+                  li <u>double click the background</u> to create a new node
+                  li <u>shift-click a node</u> to begin creating a link
+                  li <u>shift-click another node</u> to finish creating the link
+                  li <u>press delete</u> to delete all selected nodes/links
+              li <strong>in non-edit mode</strong>
+            h4 <strong>highlights/borders</strong>
+            ul
+              li <strong>orange:</strong> selected
+              li <strong>dashed orange:</strong> selected to create link
+              li <strong>light sky blue:</strong> has options panel open (is not selected)
+            h4 <strong>properties</strong>
+            ul
+              li names must be <em>unique</em>
+            h4 <strong>browser compatability</strong>
+            ul
+              li <strong>chrome v59.0.3071:</strong> developed using chrome
+              li <strong>firefox v54.0:</strong> ok
+              li <strong>edge v40.15063.0.0:</strong> problems with form rendering when zooming
+
+          .modal-footer
+            button.btn.btn-default(type='button' data-dismiss='modal') Close
+
+//- script.
+  function randomgraph() {
+    var n = 1000,
+      rnodes = d3.range(n).map(function (d) {
+        return { name: d.toString(), shape: "circle", color: "black"};
+      }),
+      rlinks = d3.range(n).map(function (d) {
+        return { source: d.toString(), target: ((d + 8) % n).toString() };
+        //return { source: d.toString(), target: (Math.floor((Math.random() * n))).toString() };
+        //return { source: d.toString(), target: "1" };
+      }),
+      obj = JSON.stringify({ nodes: rnodes, links: rlinks });
+    d3.select("textarea").property("value", obj);
+  }
+
+script.
+  function listAttachments() {
+    var drop = d3.select("#withDropdown");
+    // if it is already open, then destroy the dropdown list
+    if (drop.classed("open")) { 
+      drop.select(".dropdown-menu").html(null);
+    } else { // if dropdown is not open, then get the list of attachments and show it
+      $('#flashmessage').text("loading...").show(0);
+      $.get("/u/api/listattachments", function(result) {
+        drop.select(".dropdown-menu").selectAll("li").data(Object.keys(result))
+          .enter().append("li").append("a")
+            .attr("href", function(d) { return "/u/editor/" + d; })
+            .attr("tabindex", "-1")
+            .text(function(d) { return d; });
+        $('#flashmessage').text("loaded").hide(0);
+      });
+    }
+  }
+  function saveAsFile() {
+    event.preventDefault();
+    $('#flashmessage').text("saving...").show(0);
+    $.ajax({
+      type: 'POST',
+      url: '/u/api/upload/' + $('#fileName').text(),
+      data: { jsonfile: $('#jsontextarea').val() },
+      success: function() { 
+        $('#flashmessage').text("success").show(0).delay(3500).hide(0);
+      },
+      error: function() {
+        $('#flashmessage').text("not JSON format").show(0).delay(3500).hide(0);
+      }
+    });
+  }
+
+
+if data
+  script.
+    function loadfile() {
+      var data = !{JSON.stringify(data).replace(/<\//g, "<\\/")};
+      d3.select("textarea").property("value", data);
+      SVGGRAPH.svg_import();
+    }
+
+

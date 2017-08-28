@@ -1,0 +1,41 @@
+html(lang='en')
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title register
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/style/main.css')
+    script(src='https://code.jquery.com/jquery-3.2.1.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js')
+  body.centerpls
+    .login-container
+      form(method='post', data-toggle='validator')
+        h2 Register a new user!
+        h3 some company name
+        .form-group
+          label.sr-only(for='usr') Username
+          input#usr.form-control(type='text', name='username', placeholder='Username', data-taken=taken, required, value=username)
+          if taken
+            .help-block= taken + " already exists"
+        .form-group
+          label.sr-only(for='eml') Email
+          input#eml.form-control(type='email', name='email', placeholder='Email', required, value=email)
+        .form-group
+          label.sr-only(for='pwd') Password
+          input#pwd.form-control(type='password', name='password', placeholder='Password', data-minlength='5', required)
+          .help-block Minimum 5 characters
+        .form-group
+          label.sr-only(for='conf') Confirm password
+          input#conf.form-control(type='password', name='confirm', placeholder='Confirm password', data-match='#pwd', data-match-error="Password doesn't match", required)
+          .help-block.with-errors
+        .form-group
+          label.sr-only(for='rol') Role
+          select#rol.form-control(type='text', name='role', required)
+            option(value='user', selected) user
+            option(value='admin') admin
+          .help-block Choose role
+        |  
+        button.btn.btn-primary(type='submit') Create new account
+script.
+  if ("#{role}") {
+    document.getElementById("rol").value = "#{role}";
+  }

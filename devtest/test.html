@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>custom-sort</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel="stylesheet" href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css'>
+<!--     <link rel="stylesheet" href="../assets/examples.css">
+ -->    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js'></script>
+<!--     <script src="../ga.js"></script>
+ --></head>
+<body>
+    <div class="container">
+        <h1>Custom Sort</h1>
+        <p>Use <code>sorter</code> column option to define the custom sort of bootstrap table.</p>
+        <table id="table"
+               data-toggle="table"
+               data-height="460"
+               data-url="../json/data1.json"
+               data-sort-name="price"
+               data-sort-order="desc">
+            <thead>
+            <tr>
+                <th data-field="id" data-sortable="true">Item ID</th>
+                <th data-field="name" data-sortable="true">Item Name</th>
+                <th data-field="price" data-sortable="true" data-sorter="priceSorter">Item Price</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+<script>
+    function priceSorter(a, b) {
+        a = +a.substring(1); // remove $
+        b = +b.substring(1);
+        if (a > b) return 1;
+        if (a < b) return -1;
+        return 0;
+    }
+</script>
+</body>
+</html>
