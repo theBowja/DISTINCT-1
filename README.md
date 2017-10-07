@@ -1,37 +1,57 @@
 # DISTINCT
 
+'about' goes here
 https://docs.google.com/presentation/d/1yXcqzQ_bF7ZG4YzCxm1gXvq6DyfmKGHy297GhTXRL20/edit?usp=sharing
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+### Setup
+Step by step instructions for creating/setting up your app on the Bluemix cloud platform (10/5/2017):
 
-Node.js and [Bluemix CLI](https://clis.ng.bluemix.net/ui/home.html) for Deployment
+1. [Create/Login](https://idaas.iam.ibm.com/idaas/mtfim/sps/authsvc?PolicyId=urn:ibm:security:authentication:asf:basicldapuser) your Bluemix account
+2. Go to Catalog
+3. Search "node.js"
+4. Click on the "Node.js Cloudant DB Web Starter" boilerplate
+5. Enter an app name and host name and click create
+6. Follow the "Getting started" in order to familiarize yourself on how to use Bluemix CLI (how to login and how to push)
 
-### Installing
-A step by step series of examples that tell you have to get a development env running. (disclaimer: may or may not work)
+### Accessing Cloudant Credentials
+Your Cloudant account should have been generated when you previously created your app. They can be found in your app's environmental variables. Step by step instructions for setting up your **vcap-local.json** that should go into your config folder (**_important_** for starting the app locally) (10/5/2017):
 
+1. Somehow navigate to your app on Bluemix
 
-1. Install Node.js from [here](https://nodejs.org/en/download
+2. Click on "Runtime" in the side menu
+3. Click on the "Environment variables" tab
+alternatively:
+2. Click on "Connections" in the side menu
+3. In the container that is subtitled "Cloudant NoSQL DB Lite", click on the button "View credentials"
 
-2. Verify your Node.js installation using ```node --version```.
+4. Copy the JSON that pops up and paste into your **vcap-local.json** file
 
-3. Fork this repository.
-
-4. Go to the forked repository in command line and type ```npm install``` to automatically install the required packages.
-
-5. In order to start the server, type: ```node app.js```
-
-## Running
-
-Running application locally:
+### Running
 Server is hosted on port 3000. It can be changed in the **config/config.js** file.
 
-## Deployment
+**Locally:**
+Prerequisites:
+1. This repository forked
+2. [Node.js](https://nodejs.org/en/download) installed (verify using ```node --version```)
+3. Dependency packages installed ( ```npm install```)
+3. **config/vcap-local.json** file created (refer to [Accessing Cloudant Credentials](#accessing-cloudant-credentials))
 
-Follow this guide for Bluemix [here](https://console.bluemix.net/docs/starters/upload_app.html)
+In command line in your downloaded repository's directory, type ```node app.js```.
+
+**Bluemix:**
+Prerequisites:
+1. This repository forked
+2. [Bluemix CLI](https://clis.ng.bluemix.net/ui/home.html) installed
+3. Bluemix "Node.js Cloudant DB Web Starter" boilerplate app created (refer to [Setup](#setup))
+
+In command line in your downloaded repository's directory, type ```cf push```.
+For more detailed instructions follow [this guide](https://console.bluemix.net/docs/starters/install_cli.html).
+
+xx Follow this guide for Bluemix [here](https://console.bluemix.net/docs/starters/upload_app.html)
 
 ## Development
 
