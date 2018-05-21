@@ -21,6 +21,8 @@ $RECYCLE.BIN/
 # https://docs.npmjs.com/cli/shrinkwrap#caveats
 node_modules
 
+config/private.js
+.jshintrc
 
 # Debug log from npm
 npm-debug.log
@@ -79,8 +81,13 @@ build/Release
 Network Trash Folder
 Temporary Items
 .apdisk
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+
+
+# Elastic Beanstalk Files
+
+.elasticbeanstalk/*
+
+!.elasticbeanstalk/*.cfg.yml
+
+!.elasticbeanstalk/*.global.yml
+
