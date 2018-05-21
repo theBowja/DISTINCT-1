@@ -1,8 +1,9 @@
 branch-defaults:
   dev:
-    environment: Teset-env
+    environment: teset-dev
+    group_suffix: null
 environment-defaults:
-  Default-Environment:
+  Teset-env:
     branch: null
     repository: null
 global:
@@ -10,7 +11,7 @@ global:
   branch: null
   default_ec2_keyname: null
   default_platform: arn:aws:elasticbeanstalk:us-east-1::platform/Node.js running on
-    64bit Amazon Linux/4.4.5
+    64bit Amazon Linux/4.5.0
   default_region: us-east-1
   include_git_submodules: true
   instance_profile: null
