@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var config = require('../config/config.js');
 var schema = require('./schema.js');
 
+
 var conn = mysql.createConnection({
 	host 		: config.db.hostname,
 	user		: config.db.username,//config.db.username,
@@ -9,6 +10,11 @@ var conn = mysql.createConnection({
 	port        : config.db.port,
 	// database    : config.db.database
 });
+
+console.log(config.db.hostname);
+console.log(config.db.username);
+console.log(config.db.password);
+console.log(config.db.port);
 
 conn.query('CREATE DATABASE IF NOT EXISTS ' + config.db.dbname, function(err) {
 	if (err) throw err;
