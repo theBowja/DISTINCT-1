@@ -10,13 +10,16 @@ router.get('/', function(req, res) {
 
 router.get('/login', function(req, res) {
 	if (req.session.user) // probably already logged in
-		res.redirect('dashboard');
-	res.render('login');
+		return res.redirect('dashboard');
+	return res.render('login');
 });
 
 router.post('/login', function(req, res) {
 	dbfuncs.login(req.body.username, req.body.password, function(err, data) {
-		if (err) return console.log(err);
+		if (err) {
+			console.log(err);
+			return res.send(err);
+		}
 		req.session.user = data; // assigns everything from data to the session.user
 		return res.redirect('dashboard');
 	});
@@ -24,7 +27,7 @@ router.post('/login', function(req, res) {
 });
 
 router.get('/register', function(req, res) {
-	res.render('register');
+	return res.render('register');
 });
 
 router.post('/register', function(req, res) {
@@ -47,7 +50,7 @@ router.post('/register', function(req, res) {
 router.get('/logout', function(req, res) {
 	req.session.destroy( function(err) {
 		if(err) console.log('there was an error destroying the session');
-		res.redirect('/login');
+		return res.redirect('/login');
 	});
 });
 

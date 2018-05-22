@@ -7,11 +7,11 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res) {
-	res.send('respond with a resource');
+	return res.send('respond with a resource');
 });
 
 router.get('/dashboard', function(req, res) {
-	res.render('dashboard');
+	return res.render('dashboard');
 });
 
 router.get('/profile', function(req, res) {
@@ -19,7 +19,7 @@ router.get('/profile', function(req, res) {
 });
 
 router.get('/scheduler', function(req, res) {
-	res.render('scheduler', { group: req.user._id} );
+	return res.render('scheduler', { group: req.user._id} );
 });
 
 router.get('/organizer', function(req, res) {
@@ -27,7 +27,7 @@ router.get('/organizer', function(req, res) {
 });
 
 router.get('/editor', function(req, res) {
-	res.render('editor');
+	return res.render('editor');
 });
 
 router.get('/editor/:fileName', function(req, res) {
