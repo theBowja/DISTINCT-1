@@ -10,7 +10,7 @@ schema.defs.user =
 	password CHAR(60) BINARY NOT NULL,
 
 	UNIQUE (username),
-	PRIMARY KEY (id)
+	PRIMARY KEY (Id)
 )`;
 
 schema.defs.topology = 
@@ -19,7 +19,7 @@ schema.defs.topology =
 	name VARCHAR(255) NOT NULL,
 	location VARCHAR(63) NOT NULL,
 
-	PRIMARY KEY (id)
+	PRIMARY KEY (Id)
 )`;
 
 schema.defs.permission = 
@@ -30,9 +30,9 @@ schema.defs.permission =
 	role ENUM('owner', 'readonly', 'readwrite') NOT NULL DEFAULT 'readwrite',
 	topoid INT NOT NULL,
 
-	FOREIGN KEY (userid) REFERENCES user(id),
-	FOREIGN KEY (topoid) REFERENCES topology(id),
-	PRIMARY KEY (id)
+	FOREIGN KEY (userid) REFERENCES user(Id),
+	FOREIGN KEY (topoid) REFERENCES topology(Id),
+	PRIMARY KEY (Id)
 )`;
 
 module.exports = schema;

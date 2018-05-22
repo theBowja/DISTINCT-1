@@ -19,7 +19,7 @@ dbfuncs.login = function(username, password, callback) {
 			// else user login success
 			//   update lastlogin
 			var user = {
-				id : result[0].id,
+				id : result[0].Id,
 				username : result[0].username
 			};
 			return callback(null, user);
