@@ -10,16 +10,17 @@ router.get('/', function(req, res) {
 	return res.send('respond with a resource');
 });
 
+var config = require('../config/config.js');
 var fs = require('fs');
 router.get('/filewritetest', function(req, res) {
-	fs.writeFile('./public/uploads/helloworld.txt', 'Hello World! - ' + req.session.user.username, function(err) {
+	fs.writeFile(config.filedirectory+'/helloworld.txt', 'Hello World! - ' + req.session.user.username, function(err) {
     	if (err) return console.log(err);
     	console.log('Wrote Hello World in file helloworld.txt, just check it');
 	});
 });
 
 router.get('/filereadtest', function(req, res) {
-	fs.readFile('./public/uploads/helloworld.txt', function(err, data) {
+	fs.readFile(config.filedirectory+'/helloworld.txt', function(err, data) {
 		if(err) return res.send(err);
 		res.send(data);
 	});
