@@ -1,6 +1,6 @@
 branch-defaults:
   dev:
-    environment: teset-dev2
+    environment: teset-dev
 environment-defaults:
   teset-dev2:
     branch: null

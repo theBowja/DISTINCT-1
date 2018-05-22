@@ -11,11 +11,6 @@ var conn = mysql.createConnection({
 	// database    : config.db.database
 });
 
-console.log(config.db.hostname);
-console.log(config.db.username);
-console.log(config.db.password);
-console.log(config.db.port);
-
 conn.query('CREATE DATABASE IF NOT EXISTS ' + config.db.dbname, function(err) {
 	if (err) throw err;
 	conn.query('USE ' + config.db.dbname, function(err) {

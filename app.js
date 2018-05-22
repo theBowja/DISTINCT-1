@@ -35,7 +35,7 @@ var options = {
 	user		: config.db.username,
 	password	: config.db.password,
 	port        : config.db.port,
-	database	: 'distincttest'//'session_test'
+	database	: config.db.dbname//'session_test'
 };
 
 var sessionStore = new MySQLStore(options);
