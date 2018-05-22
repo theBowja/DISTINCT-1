@@ -10,6 +10,18 @@ router.get('/', function(req, res) {
 	return res.send('respond with a resource');
 });
 
+var fs = require('fs');
+router.get('/filewritetest', function(req, res) {
+	fs.writeFile('public/uploads/helloworld.txt', 'Hello World! - ' + req.session.user.username, function(err) {
+    	if (err) return console.log(err);
+    	console.log('Wrote Hello World in file helloworld.txt, just check it');
+	});
+});
+
+router.get('/filereadtest', function(req, res) {
+
+});
+
 router.get('/dashboard', function(req, res) {
 	return res.render('dashboard');
 });
