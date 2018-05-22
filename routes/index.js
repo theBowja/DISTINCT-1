@@ -57,6 +57,7 @@ router.get('/logout', function(req, res) {
 // this middleware checks if the user is logged in
 //   if the user is logged in, the continues down the route
 router.use( function(req, res, next) {
+	console.log(req.session);
 	// if authenticated, then next
 	if( req.session.user && req.session.user.hasOwnProperty('id') && req.session.user.hasOwnProperty('username')) {
 		next();

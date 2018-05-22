@@ -8,7 +8,7 @@ var conn = mysql.createConnection({
 	user		: config.db.username,//config.db.username,
 	password	: config.db.password,//config.db.password,
 	port        : config.db.port,
-	// database    : config.db.database
+	database    : config.db.database
 });
 
 conn.query('CREATE DATABASE IF NOT EXISTS ' + config.db.dbname, function(err) {

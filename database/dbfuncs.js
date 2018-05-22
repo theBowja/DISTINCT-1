@@ -11,11 +11,11 @@ var dbfuncs = {};
 dbfuncs.login = function(username, password, callback) {
 	conn.query('SELECT * FROM user WHERE username = ?;', username, function (err, result, fields) {
 		if (err) return callback(err);
-		if (result.length == 0) return callback("INVALID_LOGIN");
+		if (result.length == 0) return callback("USER_NOT_FOUND");
 
 		bcrypt.compare(password, result[0].password, function(err, res) {
 			if (err) return callback("BCRYPT_ERR");
-			if (!res) return callback("INVALID_LOGIN");
+			if (!res) return callback("INCORRECT_PWD");
 			// else user login success
 			//   update lastlogin
 			var user = {
