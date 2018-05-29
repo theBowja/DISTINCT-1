@@ -16,9 +16,22 @@ schema.defs.user =
 schema.defs.topology = 
 `topology (
 	Id INT NOT NULL AUTO_INCREMENT,
-	name VARCHAR(255) NOT NULL,
+	toponame VARCHAR(255) NOT NULL,
 	location VARCHAR(63) NOT NULL,
 
+	UNIQUE (location),
+	PRIMARY KEY (Id)
+)`;
+
+schema.defs.file = 
+`file (
+	Id INT NOT NULL AUTO_INCREMENT
+	location VARCHAR(63) NOT NULL,
+
+	topoid INT NOT NULL,
+
+	UNIQUE (location),
+	FOREIGN KEY (topoid) REFERENCES topology(Id),
 	PRIMARY KEY (Id)
 )`;
 

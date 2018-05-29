@@ -127,12 +127,12 @@ script.
       drop.select(".dropdown-menu").html(null);
     } else { // if dropdown is not open, then get the list of attachments and show it
       $('#flashmessage').text("loading...").show(0);
-      $.get("/u/api/listattachments", function(result) {
-        drop.select(".dropdown-menu").selectAll("li").data(Object.keys(result))
+      $.get("/api/listtopologies", function(result) {
+        drop.select(".dropdown-menu").selectAll("li").data(result)
           .enter().append("li").append("a")
-            .attr("href", function(d) { return "/u/editor/" + d; })
+            .attr("href", function(d) { return "/editor/" + d.location; })
             .attr("tabindex", "-1")
-            .text(function(d) { return d; });
+            .text(function(d) { return d.toponame; });
         $('#flashmessage').text("loaded").hide(0);
       });
     }
@@ -142,8 +142,8 @@ script.
     $('#flashmessage').text("saving...").show(0);
     $.ajax({
       type: 'POST',
-      url: '/u/api/upload/' + $('#fileName').text(),
-      data: { jsonfile: $('#jsontextarea').val() },
+      url: '/api/topo/' + $('#fileName').text(),
+      data: { jsontopo: $('#jsontextarea').val() },
       success: function() { 
         $('#flashmessage').text("success").show(0).delay(3500).hide(0);
       },

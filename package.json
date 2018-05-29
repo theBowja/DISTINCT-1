@@ -7,7 +7,6 @@
     "test": "mocha"
   },
   "dependencies": {
-    "aws-sdk": "^2.240.1",
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",

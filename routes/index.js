@@ -65,7 +65,7 @@ router.use( function(req, res, next) {
 	}
 });
 
-var users = require('./users');
-router.use('/', users);
+var user = require('./user.js');
+router.use('/', user);
 
 module.exports = router;
