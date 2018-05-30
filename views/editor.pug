@@ -18,10 +18,11 @@ html(lang='en')
       button#help.btn.btn-info(type='button' data-toggle='modal' data-target='#helpModal') help
       a(href='/dashboard') Dashboard
       br
-      if fileName
-        h4#fileName= fileName
-      else
-        br
+      br
+      div
+        textarea#fileName(contenteditable='true' placeholder='adfas')
+        button.btn.btn-default.btn-sm.custom-button(type='button' title='delete')
+          span.glyphicon.glyphicon-pencil
       //- button(type='button' onclick='randomgraph()') big
       // I really don't know how to label these
       // also these bootstrap buttons look kinda out of place
@@ -142,7 +143,7 @@ script.
     $('#flashmessage').text("saving...").show(0);
     $.ajax({
       type: 'POST',
-      url: '/api/topo/' + $('#fileName').text(),
+      url: '/api/topo/' + this.href.substr(this.href.lastIndexOf('/') + 1), // gets last segment of url
       data: { jsontopo: $('#jsontextarea').val() },
       success: function() { 
         $('#flashmessage').text("success").show(0).delay(3500).hide(0);

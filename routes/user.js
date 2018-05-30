@@ -41,7 +41,7 @@ router.get('/editor/:topoloc', function(req, res) {
 		if (err) { console.log(err); return res.redirect('editor'); }
 
 		fsfuncs.readfile(req.params.topoloc, function(err, body) {
-			return res.render('editor', { fileName: body.toponame, data: body.toString() });
+			return res.render('editor', { fileName: JSON.parse(body).toponame, data: body.toString() });
 		});
 	});
 });

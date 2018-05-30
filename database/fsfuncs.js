@@ -14,6 +14,10 @@ fsfuncs.writefile = function(fileloc, data, callback) {
 	fs.writeFile(path.join(config.filedirectory,fileloc), data, callback);
 };
 
+fsfuncs.deletefile = function(fileloc, callback) {
+	fs.unlink(path.join(config.filedirectory,fileloc), callback);
+};
+
 
 
 module.exports = fsfuncs;

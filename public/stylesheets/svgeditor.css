@@ -15,6 +15,19 @@
 	height: 100%;
 }
 
+#fileName {
+	font-size: 20px;
+}
+
+.custom-button {
+	padding: 0px;
+	margin: 5px;
+}
+
+span.glyphicon {
+	margin: 5px;
+}
+
 button#help {
 	position: relative;
 	float: right;

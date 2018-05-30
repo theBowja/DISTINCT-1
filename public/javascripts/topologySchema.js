@@ -1,6 +1,11 @@
 var topologySchema = {
 	"type": "object",
 	"properties": {
+		"toponame": {
+			"type": "string",
+			"minlength": 1,
+			"maxlength": 40
+		},
 		"nodes": {
 			"type": "array",
 			"items": {
@@ -31,7 +36,7 @@ var topologySchema = {
 			}
 		}
 	},
-	"required": ["nodes", "links"]
+	"required": ["toponame", "nodes", "links"]
 };
 
 // should show as an error in browser and hopefully not affect anything then
