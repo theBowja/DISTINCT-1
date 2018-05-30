@@ -16,7 +16,7 @@ html(lang='en')
   body(onload='SVGGRAPH=SVGGRAPH();'+((data)?'loadfile()':''))
     .left
       button#help.btn.btn-info(type='button' data-toggle='modal' data-target='#helpModal') help
-      a(href='/u/dashboard') Dashboard
+      a(href='/dashboard') Dashboard
       br
       if fileName
         h4#fileName= fileName
