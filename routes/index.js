@@ -58,7 +58,7 @@ router.get('/logout', function(req, res) {
 //   if the user is logged in, the continues down the route
 router.use( function(req, res, next) {
 	// if authenticated, then next
-	if( req.session.user && req.session.user.hasOwnProperty('id') && req.session.user.hasOwnProperty('username')) {
+	if( req.session.user && req.session.user.hasOwnProperty('Id') && req.session.user.hasOwnProperty('username')) {
 		next();
 	} else {
 		res.redirect('/login');

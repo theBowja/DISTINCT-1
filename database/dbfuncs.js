@@ -1,5 +1,6 @@
 var conn = require('./db.js');
 var bcrypt = require('bcrypt');
+var uuidv4 = require('uuid/v4');
 
 var dbfuncs = {};
 
@@ -47,22 +48,25 @@ dbfuncs.createuser = function(username, email, password, callback) {
 	});
 	
 };
+/* returns permission object
 
+*/
 dbfuncs.getPermission = function(userid, topoid, callback) {
 	var query = {
 		userid: userid,
 		topoid: topoid
 	};
-	conn.query('SELECT role FROM permission WHERE SET ?', query, function(err, results, fields) {
+	conn.query('SELECT * FROM permission WHERE SET ?', query, function(err, results, fields) {
 		if (err) return callback(err);
 		if (results.length == 0) return callback("PERMISSION_NOT_FOUND");
 
-		return callback(null, results[0].role);
+		return callback(null, results[0]);
 	});
 };
 
 /* Gets the permission associated with the user and file location
      callback: err may be FILE_NOT_FOUND or PERMISSION_NOT_FOUND
+     returns permission object
 */
 dbfuncs.getPermissionbyLocation = function(userid, location, callback) {
 	dbfuncs.getIdbyLocation(location, function(err, fileid) {
@@ -73,6 +77,16 @@ dbfuncs.getPermissionbyLocation = function(userid, location, callback) {
 
 			return callback(null, data);
 		});
+	});
+};
+
+/* updates the permission associated with 
+*/
+dbfuncs.updatePermission = function(role, callback) {
+	conn.query('UPDATE permission SET role = ? WHERE userid = ?', function(err, results, fields) {
+		if (err) return callback(err);
+
+		return call(null, data);
 	});
 };
 
@@ -107,16 +121,57 @@ dbfuncs.getTopologybyLocation = function(location, callback) {
 	 Returns an array of objects. The objects are of format: { toponame: toponame, location: locaiton }
 */
 dbfuncs.listTopologies = function(userid, callback) {
-	conn.query('SELECT topology.toponame, topology.location FROM permission, topology, WHERE permission.userid = ? AND permission.topoid = topology.Id;', userid, function (err, results, fields) {
+	conn.query('SELECT topology.toponame, topology.location FROM permission, topology WHERE permission.userid = ? AND permission.topoid = topology.Id;', userid, function (err, results, fields) {
 		if (err) return callback(err);
 
 		return callback(null, results);
 	});
 };
 
+/* creates a topology and its corresponding permission with userid and toponame
+     if something fails, then it undos any changes made.
+     returns the topology object (the object must have the 'location' key-value)
+*/
+dbfuncs.createTopology = function(userid, toponame, callback) {
+	var topology = {
+		toponame: toponame,
+		location: uuidv4()
+	};
 
+	conn.beginTransaction(function(err) {
+		if (err) return callback(err);
 
+		conn.query('INSERT INTO topology SET ?', topology, function(err, results, fields) {
+			if (err) conn.rollback(function() { return callback(err); });
 
+			var permission = {
+				userid: userid,
+				role: 'owner',
+				topoid: results.insertId
+			};
+
+			conn.query('INSERT INTO permission SET ?', permission, function(err, results, fields) {
+				if (err) conn.rollback(function() { return callback(err); });
+
+				conn.commit(function(err) {
+					if (err) conn.rollback(function() { return callback(err); });
+					return callback(null, topology);
+				});
+			});
+		});	
+	});
+};
+
+/* Updates the topology. May change the fields for: toponame
+	 returns the changed topology (the object must have the 'location' key-value)
+*/
+dbfuncs.updateTopology = function(topoid, toponame, callback) {
+	conn.query('UPDATE topology SET toponame = ? WHERE Id = ?', [toponame, topoid], function(err, results, fields) {
+		if (err) return callback(err);
+
+		return callback(null, results);
+	});
+};
 
 
 

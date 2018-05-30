@@ -17,6 +17,7 @@ api.get('/topo/:topoloc', function(req, res) {
 });
 
 api.post('/topo/:topoloc', function(req, res) {
+	console.log(req.body.jsontopo);
 	var data;
 	// test if it is a json file, otherwise don't accept
 	try {
@@ -25,35 +26,56 @@ api.post('/topo/:topoloc', function(req, res) {
 		return res.sendStatus(400); // not in json format
 	}
 
-	// validate the data according to a schema
-	var ajv = Ajv({ $data: true, allErrors: true});
-	// var ajv = Ajv({ $data: true, allErrors: true, removeAdditional: true});
-	ajv.addKeyword('containsNodeName', { $data:true, "validate": function (schema, data, parentSchema, currentDataPath, parentDataObject, parentProperty, rootData) {
-		for (let node of rootData.nodes) { // not supported in all browsers
-			if( node.name === data)
-				return true;
-		}
-		return false;
-	}, "errors": false });
-	var valid = ajv.validate(topologySchema, data);
-	if (!valid) return res.sendStatus(400); // does not pass validation format // console.log(ajv.errors)
+	// // validate the data according to a schema
+	// var ajv = Ajv({ $data: true, allErrors: true});
+	// // var ajv = Ajv({ $data: true, allErrors: true, removeAdditional: true});
+	// ajv.addKeyword('containsNodeName', { $data:true, "validate": function (schema, data, parentSchema, currentDataPath, parentDataObject, parentProperty, rootData) {
+	// 	for (let node of rootData.nodes) { // not supported in all browsers
+	// 		if( node.name === data)
+	// 			return true;
+	// 	}
+	// 	return false;
+	// }, "errors": false });
+	// var valid = ajv.validate(topologySchema, data);
+	// if (!valid) return res.sendStatus(400); // does not pass validation format // console.log(ajv.errors)
 
+	// check if user has the write permission
+	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
+		if (err && err === "PERMISSION_NOT_FOUND" || perm && perm.role === "readonly") return res.sendStatus(403); // FORBIDDEN
+		if (err && err !== "FILE_NOT_FOUND") { console.log(err); return res.sendStatus(500); }
 
-	console.log("DB WRITE - write file");
-	db.profiles.attachment.insert(req.user._id, req.params.fileName, req.body.jsonfile, "application/octet-stream", {rev: req.user._rev}, function(err, body) {
-		if (err) {
-			console.log("database attachment insert error");
-			return res.send("an error has occured");
+		// writing the file
+		if (err === "FILE_NOT_FOUND") {
+			// creates new file
+			dbfuncs.createTopology(req.session.user.Id, data.toponame, function(err, topo) {
+				if (err) { console.log(err); return res.sendStatus(500); }
+				console.log(topo);
+				fsfuncs.writefile(topo.location, function(err, data) {
+					if (err) { console.log(err); return res.sendStatus(500); }
+					return res.sendStatus(200);
+				});
+			});
+		} else { 
+			// updates file
+			dbfuncs.updateTopology(perm.topoid, data.toponame, function(err, topo) {
+				if (err) { console.log(err); return res.sendStatus(500); }
+				console.log(topo);
+				fsfuncs.writefile(topo.location, function(err, data) {
+					if (err) { console.log(err); return res.sendStatus(500); }
+
+					return res.sendStatus(200);
+				});
+			});
 		}
-		return res.sendStatus(200);
 	});
-
 });
 
 api.get('/listtopologies', function(req, res) {
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
-		if (err) { console.log('some error has occured in list'); return res.sendStatus(500); }
+		if (err) { console.log(err); return res.sendStatus(500); }
 
 		return res.send(data);
 	});
 });
+
+module.exports = api;

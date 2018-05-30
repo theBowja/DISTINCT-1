@@ -26,7 +26,9 @@ router.get('/scheduler', function(req, res) {
 });
 
 router.get('/organizer', function(req, res) {
-
+	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
+		return res.render('fileorganizer', { attachments: data });
+	});
 });
 
 // query parameters: topoid, toponame
@@ -45,7 +47,7 @@ router.get('/editor/:topoloc', function(req, res) {
 });
 
 var api = require('./api.js');
-user.use('/api', api);
+router.use('/api', api);
 
 
 module.exports = router;

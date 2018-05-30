@@ -13,7 +13,7 @@ fsfuncs.readfile = function(fileloc, callback) {
 	});
 };
 
-fsfuncs.writefile = function(fileLoc, callback) {
+fsfuncs.writefile = function(fileloc, callback) {
 	fs.writeFile(path.join(config.filedirectory,fileloc), function(err) {
 		if (err) return callback(err);
 		return callback(null, "SUCCESS");

@@ -25,13 +25,13 @@ html(lang='en')
     .vertical
     .right
       if (attachments)
-        each val, key in attachments
+        each val in attachments
           div
-            button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+key+'")')
+            button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+val.toponame+'")')
               span.glyphicon.glyphicon-trash
-            button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+key+'"')
+            button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
               span.glyphicon.glyphicon-chevron-right
-            a(href='api/file/'+key)= key
+            a(href='api/topo/'+val.location)= val.location
             //- span.glyphicon.glyphicon-pencil
               title rename
 

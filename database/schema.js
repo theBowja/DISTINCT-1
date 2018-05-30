@@ -11,7 +11,7 @@ schema.defs.user =
 
 	UNIQUE (username),
 	PRIMARY KEY (Id)
-)`;
+) ENGINE=InnoDB`;
 
 schema.defs.topology = 
 `topology (
@@ -21,11 +21,11 @@ schema.defs.topology =
 
 	UNIQUE (location),
 	PRIMARY KEY (Id)
-)`;
+) ENGINE=InnoDB`;
 
 schema.defs.file = 
 `file (
-	Id INT NOT NULL AUTO_INCREMENT
+	Id INT NOT NULL AUTO_INCREMENT,
 	location VARCHAR(63) NOT NULL,
 
 	topoid INT NOT NULL,
@@ -33,7 +33,7 @@ schema.defs.file =
 	UNIQUE (location),
 	FOREIGN KEY (topoid) REFERENCES topology(Id),
 	PRIMARY KEY (Id)
-)`;
+) ENGINE=InnoDB`;
 
 schema.defs.permission = 
 `permission (
@@ -46,6 +46,6 @@ schema.defs.permission =
 	FOREIGN KEY (userid) REFERENCES user(Id),
 	FOREIGN KEY (topoid) REFERENCES topology(Id),
 	PRIMARY KEY (Id)
-)`;
+) ENGINE=InnoDB`;
 
 module.exports = schema;
