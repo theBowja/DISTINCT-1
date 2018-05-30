@@ -7,17 +7,11 @@ var fsfuncs = {};
 
 
 fsfuncs.readfile = function(fileloc, callback) {
-	fs.readFile(path.join(config.filedirectory,fileloc), function(err, data) {
-		if (err) return callback(err);
-		return callback(null, data);
-	});
+	fs.readFile(path.join(config.filedirectory,fileloc), callback);
 };
 
-fsfuncs.writefile = function(fileloc, callback) {
-	fs.writeFile(path.join(config.filedirectory,fileloc), function(err) {
-		if (err) return callback(err);
-		return callback(null, "SUCCESS");
-	});
+fsfuncs.writefile = function(fileloc, data, callback) {
+	fs.writeFile(path.join(config.filedirectory,fileloc), data, callback);
 };
 
 

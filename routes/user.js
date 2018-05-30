@@ -40,7 +40,7 @@ router.get('/editor/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
 		if (err) { console.log(err); return res.redirect('editor'); }
 
-		fsfuncs.getfile(req.params.topoloc, function(err, body) {
+		fsfuncs.readfile(req.params.topoloc, function(err, body) {
 			return res.render('editor', { fileName: body.toponame, data: body.toString() });
 		});
 	});

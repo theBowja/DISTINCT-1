@@ -52,11 +52,7 @@ dbfuncs.createuser = function(username, email, password, callback) {
 
 */
 dbfuncs.getPermission = function(userid, topoid, callback) {
-	var query = {
-		userid: userid,
-		topoid: topoid
-	};
-	conn.query('SELECT * FROM permission WHERE SET ?', query, function(err, results, fields) {
+	conn.query('SELECT * FROM permission WHERE userid=? AND topoid=?', [userid, topoid], function(err, results, fields) {
 		if (err) return callback(err);
 		if (results.length == 0) return callback("PERMISSION_NOT_FOUND");
 
@@ -167,6 +163,14 @@ dbfuncs.createTopology = function(userid, toponame, callback) {
 */
 dbfuncs.updateTopology = function(topoid, toponame, callback) {
 	conn.query('UPDATE topology SET toponame = ? WHERE Id = ?', [toponame, topoid], function(err, results, fields) {
+		if (err) return callback(err);
+
+		return callback(null, results);
+	});
+};
+
+dbfuncs.deleteTopology = function(topoloc, callback) {
+	conn.query('DELETE topology, permission FROM topology INNER JOIN permission WHERE topology.location = ? AND topology.Id = permission.topoid', topoloc, function(err, results, fields) {
 		if (err) return callback(err);
 
 		return callback(null, results);

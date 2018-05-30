@@ -5,23 +5,26 @@ var fsfuncs = require('../database/fsfuncs.js');
 
 
 api.get('/topo/:topoloc', function(req, res) {
-	fsfuncs.readfile(req.params.topoloc, function(err, body) {
-		if (err) {
-			console.log("file probably not found");
-			return res.send("Error: file probably not found");
-		}
+	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
+		if (err) { console.log(err); return res.send("permission err"); }
 
-		return res.send(""+body);
-		//return res.render('viewfile', { contents: body} );
+		fsfuncs.readfile(req.params.topoloc, function(err, body) {
+			if (err) {
+				console.log("file probably not found");
+				return res.send("Error: file probably not found");
+			}
+			
+			return res.send(""+body);
+			//return res.render('viewfile', { contents: body} );
+		});
 	});
 });
 
 api.post('/topo/:topoloc', function(req, res) {
-	console.log(req.body.jsontopo);
-	var data;
+	var data = req.body.jsontopo;
 	// test if it is a json file, otherwise don't accept
 	try {
-		data = JSON.parse(req.body.jsontopo);
+		var toponame = JSON.parse(data).toponame;
 	} catch (e) {
 		return res.sendStatus(400); // not in json format
 	}
@@ -47,26 +50,33 @@ api.post('/topo/:topoloc', function(req, res) {
 		// writing the file
 		if (err === "FILE_NOT_FOUND") {
 			// creates new file
-			dbfuncs.createTopology(req.session.user.Id, data.toponame, function(err, topo) {
+			dbfuncs.createTopology(req.session.user.Id, toponame, function(err, topo) {
 				if (err) { console.log(err); return res.sendStatus(500); }
-				console.log(topo);
-				fsfuncs.writefile(topo.location, function(err, data) {
+				fsfuncs.writefile(topo.location, data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
 					return res.sendStatus(200);
 				});
 			});
 		} else { 
 			// updates file
-			dbfuncs.updateTopology(perm.topoid, data.toponame, function(err, topo) {
+			dbfuncs.updateTopology(perm.topoid, toponame, function(err, topo) {
 				if (err) { console.log(err); return res.sendStatus(500); }
-				console.log(topo);
-				fsfuncs.writefile(topo.location, function(err, data) {
+				fsfuncs.writefile(topo.location, data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
 
 					return res.sendStatus(200);
 				});
 			});
 		}
+	});
+});
+
+api.delete('/topo/:topoloc', function(req, res) {
+	dbfuncs.deleteTopology(req.params.topoloc, function(err, data) {
+		if (err) { console.log(err); return res.sendStatus(500); }
+
+		console.log(data);
+		return res.sendStatus(200);
 	});
 });
 

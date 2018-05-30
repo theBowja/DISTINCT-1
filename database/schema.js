@@ -31,7 +31,7 @@ schema.defs.file =
 	topoid INT NOT NULL,
 
 	UNIQUE (location),
-	FOREIGN KEY (topoid) REFERENCES topology(Id),
+	FOREIGN KEY (topoid) REFERENCES topology(Id) ON DELETE CASCADE,
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
@@ -43,8 +43,8 @@ schema.defs.permission =
 	role ENUM('owner', 'readonly', 'readwrite') NOT NULL DEFAULT 'readwrite',
 	topoid INT NOT NULL,
 
-	FOREIGN KEY (userid) REFERENCES user(Id),
-	FOREIGN KEY (topoid) REFERENCES topology(Id),
+	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+	FOREIGN KEY (topoid) REFERENCES topology(Id) ON DELETE CASCADE,
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
