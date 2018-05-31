@@ -356,7 +356,7 @@ var SVGGRAPH = function() {
 						.attr("d", d3.symbol()
 							.size(150)
 							.type(control.getShape(name)));
-					d3.select("#shapesBoundBox").attr("visibility", "collapse");
+					//d3.select("#shapesBoundBox").attr("visibility", "collapse");
 				};
 			}());
 			shapebutton.select("title")

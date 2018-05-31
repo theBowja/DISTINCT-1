@@ -32,18 +32,18 @@ api.post('/topo/:topoloc', function(req, res) {
 		return res.sendStatus(400); // not in json format
 	}
 
-	// // validate the data according to a schema
-	// var ajv = Ajv({ $data: true, allErrors: true});
-	// // var ajv = Ajv({ $data: true, allErrors: true, removeAdditional: true});
-	// ajv.addKeyword('containsNodeName', { $data:true, "validate": function (schema, data, parentSchema, currentDataPath, parentDataObject, parentProperty, rootData) {
-	// 	for (let node of rootData.nodes) { // not supported in all browsers
-	// 		if( node.name === data)
-	// 			return true;
-	// 	}
-	// 	return false;
-	// }, "errors": false });
-	// var valid = ajv.validate(topologySchema, data);
-	// if (!valid) return res.sendStatus(400); // does not pass validation format // console.log(ajv.errors)
+	// validate the data according to a schema
+	var ajv = Ajv({ $data: true, allErrors: true});
+	// var ajv = Ajv({ $data: true, allErrors: true, removeAdditional: true});
+	ajv.addKeyword('containsNodeName', { $data:true, "validate": function (schema, data, parentSchema, currentDataPath, parentDataObject, parentProperty, rootData) {
+		for (let node of rootData.nodes) { // not supported in all browsers
+			if( node.name === data)
+				return true;
+		}
+		return false;
+	}, "errors": false });
+	var valid = ajv.validate(topologySchema, JSON.parse(data));
+	if (!valid) { console.log(ajv.errors); return res.sendStatus(400); } // does not pass validation format
 
 	// check if user has the write permission
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
@@ -55,7 +55,6 @@ api.post('/topo/:topoloc', function(req, res) {
 			// creates new file
 			dbfuncs.createTopology(req.session.user.Id, toponame, function(err, topo) {
 				if (err) { console.log(err); return res.sendStatus(500); }
-				//console.log(topo)
 				fsfuncs.writefile(topo.location, data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
 					return res.sendStatus(200);
