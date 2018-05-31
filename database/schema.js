@@ -16,7 +16,7 @@ schema.defs.user =
 schema.defs.topology = 
 `topology (
 	Id INT NOT NULL AUTO_INCREMENT,
-	toponame VARCHAR(255) NOT NULL,
+	toponame VARCHAR(50) NOT NULL,
 	location VARCHAR(63) NOT NULL,
 
 	UNIQUE (location),

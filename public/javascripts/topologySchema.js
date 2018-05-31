@@ -4,7 +4,7 @@ var topologySchema = {
 		"toponame": {
 			"type": "string",
 			"minlength": 1,
-			"maxlength": 40
+			"maxlength": 50
 		},
 		"nodes": {
 			"type": "array",

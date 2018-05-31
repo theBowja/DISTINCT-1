@@ -97,6 +97,8 @@ dbfuncs.getIdbyLocation = function(location, callback) {
 	});
 };
 
+/* Gets the topology object based on topoid
+*/
 dbfuncs.getTopology = function(topoid, callback) {
 	conn.query('SELECT * FROM topology WHERE Id = ?', topoid, function(err, results, fields) {
 		if (err) return callback(err);
@@ -105,6 +107,8 @@ dbfuncs.getTopology = function(topoid, callback) {
 	});
 };
 
+/* Gets the topology object association with the location
+*/
 dbfuncs.getTopologybyLocation = function(location, callback) {
 	conn.query('SELECT * FROM topology WHERE location = ?', location, function(err, results, fields) {
 		if (err) return callback(err);
@@ -159,7 +163,6 @@ dbfuncs.createTopology = function(userid, toponame, callback) {
 };
 
 /* Updates the topology. May change the fields for: toponame
-	 returns the changed topology (the object must have the 'location' key-value)
 */
 dbfuncs.updateTopology = function(topoid, toponame, callback) {
 	conn.query('UPDATE topology SET toponame = ? WHERE Id = ?', [toponame, topoid], function(err, results, fields) {
@@ -169,6 +172,9 @@ dbfuncs.updateTopology = function(topoid, toponame, callback) {
 	});
 };
 
+/* Deletes the topology and its associated permissions
+
+*/
 dbfuncs.deleteTopology = function(topoloc, callback) {
 	conn.query('DELETE topology, permission FROM topology INNER JOIN permission WHERE topology.location = ? AND topology.Id = permission.topoid', topoloc, function(err, results, fields) {
 		if (err) return callback(err);

@@ -19,10 +19,10 @@ html(lang='en')
       a(href='/dashboard') Dashboard
       br
       br
-      div
-        textarea#fileName(contenteditable='true' placeholder='adfas')
-        button.btn.btn-default.btn-sm.custom-button(type='button' title='delete')
-          span.glyphicon.glyphicon-pencil
+      .precaption fileName
+      textarea#fileName(contenteditable='true' maxlength='25')= fileName || 'untitled'
+      br
+      br
       //- button(type='button' onclick='randomgraph()') big
       // I really don't know how to label these
       // also these bootstrap buttons look kinda out of place
@@ -117,7 +117,7 @@ html(lang='en')
         //return { source: d.toString(), target: "1" };
       }),
       obj = JSON.stringify({ nodes: rnodes, links: rlinks });
-    d3.select("textarea").property("value", obj);
+    d3.select("#jsontextarea").property("value", obj);
   }
 
 script.
@@ -143,7 +143,7 @@ script.
     $('#flashmessage').text("saving...").show(0);
     $.ajax({
       type: 'POST',
-      url: '/api/topo/' + this.href.substr(this.href.lastIndexOf('/') + 1), // gets last segment of url
+      url: '/api/topo/' + window.location.pathname.split("/").slice(-1)[0], // gets last segment of url
       data: { jsontopo: $('#jsontextarea').val() },
       success: function() { 
         $('#flashmessage').text("success").show(0).delay(3500).hide(0);
@@ -153,13 +153,19 @@ script.
       }
     });
   }
+  $('textarea').keydown(function(e){
+    if(e.keyCode == 13) {
+      e.preventDefault();
+      return false;
+    }
+  })
 
 
 if data
   script.
     function loadfile() {
       var data = !{JSON.stringify(data).replace(/<\//g, "<\\/")};
-      d3.select("textarea").property("value", data);
+      d3.select("#jsontextarea").property("value", data);
       SVGGRAPH.svg_import();
     }
 

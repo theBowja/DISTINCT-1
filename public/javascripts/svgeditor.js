@@ -419,14 +419,14 @@ var SVGGRAPH = function() {
 	}
 
 	function svg_clear() {
-		d3.select("textarea").property("value", JSON.stringify({"nodes":[],"links":[]}));
+		d3.select("#jsontextarea").property("value", JSON.stringify({"nodes":[],"links":[]}));
 		//SVGGRAPH.svg_import();
 	}
 
 	function svg_import() {
 		var data;
 		try {
-			data = JSON.parse(d3.select("textarea").property("value"));
+			data = JSON.parse(d3.select("#jsontextarea").property("value"));
 		} catch (e) { // ERR: not a valid json
 			console.error("IMPORT: not a valid json");
 			return;
@@ -469,6 +469,7 @@ var SVGGRAPH = function() {
 	function svg_export() {
 		var exportObj = {};
 		exportObj.version = "0.0.1";
+		exportObj.toponame = $('#fileName').val();
 		console.log(node.data());
 		exportObj.nodes = JSON.parse(JSON.stringify(node.data()));
 		// remove excessive stuff
@@ -488,7 +489,7 @@ var SVGGRAPH = function() {
 			exportObj.links.push({"source":link.data()[i].source.name, "target":link.data()[i].target.name});
 		}
 
-		d3.select("textarea").property("value", JSON.stringify(exportObj));
+		d3.select("#jsontextarea").property("value", JSON.stringify(exportObj));
 	}
 
 	// stuff we are exposing
