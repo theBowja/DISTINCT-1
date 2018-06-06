@@ -52,6 +52,36 @@ app.use(session({
 }));
 
 
+var java = require('java');
+var fs = require('fs');
+// java.classpath.push('C:/Users/Eric Xin/Desktop/ahab-master/ahab-master/libndl/src')
+java.classpath.pushDir(path.resolve(__dirname, "ahab"));
+//java.classpath.push(path.resolve(__dirname, "ahab/*.jar"));
+
+// java.classpath.push(path.resolve(__dirname, "ahab/libndl.jar"));
+// java.classpath.push(path.resolve(__dirname, "ahab/libtransport.jar"));
+// java.classpath.push(path.resolve(__dirname, "ahab/jung-graph.jar"));
+// java.classpath.push(path.resolve(__dirname, "ahab/jung-api-2.0.1.jar"));
+// java.classpath.push(path.resolve(__dirname, "ahab/test.jar"));
+// java.classpath.push(path.resolve(__dirname, "ahab/slick.jar"));
+
+// console.log('jar exists: ' + fs.existsSync(path.join(__dirname, "ahab/libndl.jar")));
+//console.log(path.resolve(__dirname, "hello.jar"));
+//java.classpath.push(path.resolve(__dirname,'hello.jar'));
+//console.log(java.findClassSync+"");
+//var Main = java.import('HelloWorld.Main');
+console.log("loading slice class");
+
+var slice = java.newInstanceSync("org.renci.ahab.libndl.Slice");
+
+java.callMethodSync(instance, "setName", "OBAMA");
+console.log(java.callMethodSync(instance, "getName"));
+//var Slice = java.import('org.renci.ahab.libndl.Slice');
+//var slice = new Slice();
+//slice.setName("OBAMA");
+//console.log(slice.getName());
+
+
 	
 var index = require('./routes/index');
 //var users = require('./routes/users');

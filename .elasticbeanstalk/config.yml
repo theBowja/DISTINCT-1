@@ -1,13 +1,13 @@
 branch-defaults:
   dev:
-    environment: teset-dev
+    environment: tsets-env
 environment-defaults:
-  teset-dev2:
+  Tsets-env:
     branch: null
     repository: null
 global:
-  application_name: teset
-  default_ec2_keyname: null
+  application_name: tsets
+  default_ec2_keyname: breilov
   default_platform: arn:aws:elasticbeanstalk:us-east-1::platform/Node.js running on
     64bit Amazon Linux/4.5.0
   default_region: us-east-1
