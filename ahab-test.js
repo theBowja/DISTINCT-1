@@ -47,6 +47,11 @@ for(var i = 0; i < options.length; i++) {
 			i+=2;
 			break;
 
+		case '-d': case '-delete': // delete slice
+			deleteSlice(options[i+1]);
+			i+=1;
+			break;
+
 	}
 }
 
@@ -60,17 +65,13 @@ function createSlicewithComputeNodes(slicename, numofnodes) {
 	java.callMethodSync(sctx, "addToken", "xin", t);
 	console.log(sctx+"");
 
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	console.log("Opening certificate and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+	var sliceProxy = getSliceProxy();
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", 'create', sliceProxy, sctx, slicename);
 
 	var i;
 	for( i = 0; i < numofnodes; i++) {
 		newnode = java.callMethodSync(s, "addComputeNode", "ComputeNode"+i);
-		java.callMethodSync(newnode, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","ERICXIN-centos");
+		java.callMethodSync(newnode, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","centos6.7-v1.1.0");
 		java.callMethodSync(newnode, "setNodeType", "XO Small");
 	//	java.callMethodSync(newnode, "setDomain", "RENCI (Chapel Hill, NC USA) XO Rack");
 	//	java.callMethodSync(newnode, "setPostBootScript", "master post boot script");
@@ -80,41 +81,22 @@ function createSlicewithComputeNodes(slicename, numofnodes) {
 	console.log("testNewSlice1: " + java.callMethodSync(s, "getRequest"));
 
 	java.callMethodSync(s, "commit");
-
-	// var node = java.callMethodSync(s, "getResourceByName", "ComputeNode1");
-	// if (node ==null)
-	// 	return console.log("node " + " not found");
-	// console.log("public ip of " + ": " + java.callMethodSync(node, "getManagementIP"));
-
-	//java.callMethodSync(s, "delete");
 }
 
 function deleteSlice(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+	var sliceProxy = getSliceProxy();
 
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 	java.callMethodSync(s, "delete");
 }
 
 function getStatus(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+	var sliceProxy = getSliceProxy();
 	console.log("getStatus: " + java.callMethodSync(sliceProxy, 'sliceStatus', slicename));
 }
 
 function getExtra(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+	var sliceProxy = getSliceProxy();
 
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 	console.log("getSliceGraphString: " + java.callMethodSync(s, "getSliceGraphString"));
@@ -123,13 +105,7 @@ function getExtra(slicename) {
 }
 
 function getNodeExtra(slicename, nodename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-
-	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
+	var sliceProxy = getSliceProxy();
 
 	var node = java.callMethodSync(s, "getResourceByName", nodename);
 	if (node ==null)
@@ -147,11 +123,7 @@ function getNodeExtra(slicename, nodename) {
 }
 
 function getRDFString(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+	var sliceProxy = getSliceProxy();
 
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 	console.log("testNewSlice1: " + java.callMethodSync(s, "getDebugString"));	
@@ -160,12 +132,8 @@ function getRDFString(slicename) {
 }
 
 function getPublicIP(slicename, nodename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
+	var sliceProxy = getSliceProxy();
 
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-	
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 	var node = java.callMethodSync(s, "getResourceByName", nodename);
 	if (node ==null)
@@ -175,13 +143,17 @@ function getPublicIP(slicename, nodename) {
 
 
 function listSlices() {
-	// test addcomputenode
+	var sliceProxy = getSliceProxy();
+	console.log(java.callMethodSync(sliceProxy, "listMySlices"));
+}
+
+function getSliceProxy() {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	console.log("Opening certificate " + pem + " and key " + pem);
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
 
 	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-	console.log(java.callMethodSync(sliceProxy, "listMySlices"));
+	return sliceProxy;
 }
 
 console.log("finished running code");
