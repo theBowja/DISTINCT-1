@@ -19,22 +19,37 @@ var OPTIONSPANEL = (function (shapes) {
 	}
 
 	// this is the schema example of how to create editable properties
-	//   "update" is not required but "label" and "type" is
+	// required properties: label, element
+	//     - label: must not contain spaces
+	//     - element: the type of element (like input, select, textarea, etc.)
+	//		   - if element is "input", then there is an optional property called
+	// 				 "inputtype" (like url, email, etc.) (default is "text")
+	//         - if element is "select", then you must have an "options" property
+	//               containing an array of options to select
+	// optional properties: update
+	//     - sublabel: a small message or warning that comes after label
+	//     - update: a function containing what to do after the element is updated
 	var base = [
 		{
 			label: "name",
-			type: "input",
+			element: "input",
 			update: function(formdata, node, panel) {
 				node.select("title").text(formdata);
 				panel.select(".panel-title").text(formdata);
 			}
 		}, {
-			label: "color",
-			type: "select",
-			options: ["black", "blue", "green", "grey"],
+			label: "nodetype",
+			element: "select",
+			options: ["XO Medium", "XO Extra large", "XO Large", "XO Small"],
 			update: function(formdata, node) {
 				node.attr("fill", formdata);
 			}
+		}, 
+		{
+			label: "image",
+			sublabel: "url to xml file",
+			element: "input",
+			inputtype: "url"
 		}
 	];
 
@@ -44,7 +59,7 @@ var OPTIONSPANEL = (function (shapes) {
 	var square = base.concat([
 		{
 			label: "blahblahblah",
-			type: "textarea",
+			element: "textarea",
 		}
 	]);
 	var star = base.concat([]);
@@ -115,12 +130,18 @@ var OPTIONSPANEL = (function (shapes) {
 			subform.append("label")
 				.attr("class", "control-label")
 				.text(trait.label+":");
-			var fcon = subform.append(trait.type)
+			if(trait.hasOwnProperty('sublabel')) {
+				subform.append("label")
+					.attr("class", "control-label")
+					.text(trait.sublabel);
+			}
+			var fcon = subform.append(trait.element)
 				.attr("class", "form-control")
 				.attr("id", trait.label); // the form is id'd as the label name (ie "name"/"color")
-			switch(trait.type) {
+			switch(trait.element) {
 				case("input"): 
-					fcon.attr("type", "text")
+					if(!trait.hasOwnProperty('inputtype')) trait.inputtype = 'text';
+					fcon.attr("type", trait.inputtype)
 						.attr("value", d[trait.label]);
 					break;
 				case("select"):

@@ -108,7 +108,7 @@ var SVGGRAPH = function() {
 		},
 		selections: { // TODO: should really make these their own functions
 			deletenodes: function() {
-				var seldats = d3.selectAll("#nodes .selected, .selectedforlink").data();
+				var seldats = d3.selectAll("#nodes .selected, .selectlinksource").data();
 				var newnodes = simulation.nodes();
 				var newlinks = simulation.force("link").links();
 				newnodes = newnodes.filter(function(dn) { // filters out any selected node
@@ -138,7 +138,7 @@ var SVGGRAPH = function() {
 			source: undefined, // stores selection except when undefined
 			deselectsource: function() {
 				if (typeof this.source !== "undefined")
-					this.source.classed("selectedforlink", false);
+					this.source.classed("selectlinksource", false);
 				this.source = undefined;
 			},
 			deletesource: function() {
@@ -167,10 +167,12 @@ var SVGGRAPH = function() {
 		.force("center", d3.forceCenter(width/2,height/2)) // force center
 		.on('tick', tick);
 
-	// link before node because of how svg is rendered
+	// link before node because of rendering order
 	var link = g.append("g")
 		.attr("id", "links")
 		.selectAll("line");
+	var draglink = g.append("line")
+		.attr("id", "draglink");
 	var node = g.append("g")
 		.attr("id", "nodes")
 		.selectAll("path");
@@ -201,12 +203,7 @@ var SVGGRAPH = function() {
 		// 		.size(function(d) { return d.size || 256; })
 		// 		.type(function(d) { return control.getShape(d.shape); }))
 		//  	.attr("fill", function(d) { return d.color; })
-		var nodenew = node.enter().append("image")
-			.attr("xlink:href", "/images/router.png")
-			.attr("x", -12)
-			.attr("y", -12)
-			.attr("width", "25px")
-			.attr("height", "25px")
+		var nodenew = node.enter().append("g")
 			.on("click", selectNode)
 			.on("dblclick", function(d) {
 				// Conditions to not open the options panel
@@ -216,7 +213,26 @@ var SVGGRAPH = function() {
 			.call(d3.drag()
 				.on("start", dragstarted)
 				.on("drag", dragged)
-				.on("end", dragended));
+				.on("end", dragended));	
+		nodenew.append("image")
+			.attr("xlink:href", "https://www.emulab.net/protogeni/jacks-stable/images/router.svg")
+			.attr("x", -12)
+			.attr("y", -12)
+			.attr("width", "25px")
+			.attr("height", "25px");
+		nodenew.append("circle")
+			.attr("cx", 0)	
+			.attr("cy", 0)
+			.attr("r", 18)
+			.attr("fill", "none");
+		nodenew.append("text")
+			.attr("text-anchor", "middle")
+			.attr("x", 0)
+			.attr("y", 16)
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "8px")
+			.text(function(d) { return d.name; });
+
 		nodenew.append("title") // allows us to see name when a node is moused over
 			.text(function(d) { return d.name; });
 		node = nodenew.merge(node); // merge with existing elements
@@ -237,34 +253,39 @@ var SVGGRAPH = function() {
 	}
 
 	function selectNode() {
-		var sel = d3.select(this);
+		var seltarget = d3.select(this);
 
 		// special selection for creating link
 		if (d3.event.shiftKey && control.canCreate) {
-			if (!sel.classed("selectedforlink")) { // selecting
+			if (!seltarget.classed("selectlinksource")) { // selecting
 				if (typeof control.selections.source === "undefined") { // selecting
-					sel.classed("selectedforlink", true);
-					control.selections.source = sel;
-				} else { // creating a link
+					seltarget.classed("selectlinksource", true);
+					control.selections.source = seltarget;
+				} else { // creating a link (addlink)
 					var newlinks = simulation.force("link").links();
 
-					var srcname = control.selections.source.datum().name;
-					// if link doesn't already exist
-					//if (newlinks.findIndex(function(d) {return d.source.name===srcname&&d.target.name===sel.datum().name;})===-1) {
+					// search for link if it already exists
+					var sourcename = control.selections.source.datum().name;
+					var targetname = seltarget.datum().name;
+					var notexist = newlinks.findIndex( function(d) {
+						return d.source.name===sourcename&&d.target.name===targetname ||
+							   d.source.name===targetname&&d.target.name===sourcename;
+					}) === -1;
+					if (notexist) { // if link doesn't already exist, then create link
 						newlinks.push({
 							source: control.selections.source.datum(),
-							target: sel.datum()
+							target: seltarget.datum()
 						});
 						updateLinks(newlinks);
 						tick();
-					//}
+					}
 					control.selections.deselectsource();
 				}
 			} else { // deselecting
 				control.selections.deselectsource();
 			}				
 		} else { // general selection
-			sel.classed("selected", !sel.classed("selected"));
+			seltarget.classed("selected", !seltarget.classed("selected"));
 		}
 	}
 
@@ -294,9 +315,9 @@ var SVGGRAPH = function() {
 			.attr("rx", 5)
 			.attr("ry", 5)
 			.attr("visibility", "collapse")
-			.style("fill", "none")
-			.style("stroke", "black")
-			.style("stroke-width", 2);
+			.style("fill", "none");
+			//.style("stroke", "black")
+			//.style("stroke-width", 2);
 
 		toolBox.attr("clip-path", "url(#toolclipBox)");
 
@@ -393,6 +414,12 @@ var SVGGRAPH = function() {
 			.attr("y1", function(d) { return d.source.y; })
 			.attr("x2", function(d) { return d.target.x; })
 			.attr("y2", function(d) { return d.target.y; });
+
+		console.log(mousemove());
+		draglink.attr("x1", function(d) { return d.source.x; })
+			    .attr("y1", function(d) { return d.source.y; })
+				.attr("x2", function(d) { return d.target.x; })
+				.attr("y2", function(d) { return d.target.y; });
 	}
 
 	function dragstarted(d) {
@@ -416,6 +443,15 @@ var SVGGRAPH = function() {
 		if (control.canPlay && !d3.event.active) simulation.alphaTarget(0);
 		d.fx = null;
 		d.fy = null;
+	}
+
+	/* returns an object containing the properties x and y of the mouse
+	*/
+	function mousemove(d) {
+		return {
+			x: d3.event.clientX,
+			y: d3.event.clientY
+		};
 	}
 
 	function svg_clear() {

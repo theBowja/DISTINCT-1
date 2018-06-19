@@ -67,17 +67,17 @@ svg#editor {
 	stroke-width: 1px;
 }
 
-	#nodes .optionsopen {
+	#nodes .optionsopen circle {
 		stroke: lightskyblue;
 		stroke-width: 2.5;
 	}
 
-	#nodes .selected {
+	#nodes .selected circle {
 		stroke: orange;
 		stroke-width: 2.5;
 	}
 
-	#nodes .selectedforlink {
+	#nodes .selectlinksource circle {
 		stroke: orange;
 		stroke-width: 2.5;
 
