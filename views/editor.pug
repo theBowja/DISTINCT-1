@@ -2,7 +2,7 @@ html(lang='en')
   head
     meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
     title editor
-    script(src='https://d3js.org/d3.v4.min.js')
+    script(src='https://d3js.org/d3.v5.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/ajv/5.0.0/ajv.min.js')
     script(src='/javascripts/svgeditor.js')
     script(src='/javascripts/svgeditor_optionspanel.js')
@@ -26,11 +26,12 @@ html(lang='en')
       //- button(type='button' onclick='randomgraph()') big
       // I really don't know how to label these
       // also these bootstrap buttons look kinda out of place
-      .btn-group.btn-group-xs#withDropdown
+      .btn-group.btn-group-sm#withDropdown
         button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load
-        button.btn.btn-default(type='button' onclick='saveAsFile()') save
+        button.btn.btn-default#savebutton(type='button') save
         ul.dropdown-menu(role='menu')
         span#flashmessage(style='display: none;') don't panic
+      button.btn.btn-default#reservebutton(type='button') reserve resource
       input(type='file')
       .btn-group.btn-group-sm
         button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_import();') import
@@ -138,8 +139,15 @@ script.
       });
     }
   }
-  function saveAsFile() {
-    event.preventDefault();
+
+  $('textarea').keydown(function(e){
+    if(e.keyCode == 13) {
+      e.preventDefault();
+      return false;
+    }
+  })
+  $('#savebutton').on('click', function(e){
+    e.preventDefault();
     $('#flashmessage').text("saving...").show(0);
     $.ajax({
       type: 'POST',
@@ -152,13 +160,16 @@ script.
         $('#flashmessage').text("incorrect format").show(0).delay(3500).hide(0);
       }
     });
-  }
-  $('textarea').keydown(function(e){
-    if(e.keyCode == 13) {
-      e.preventDefault();
-      return false;
-    }
-  })
+  });
+  $('#reservebutton').on('click', function(e) {
+    e.preventDefault();
+    $('#flashmessage').text('reserving resouce').show(0);
+    $.ajax({
+      type: 'POST',
+      url: '/api/ahab/'
+    })
+
+  });
 
 
 if data

@@ -48,6 +48,7 @@ dbfuncs.createuser = function(username, email, password, callback) {
 	});
 	
 };
+
 /* returns permission object
 
 */
@@ -183,6 +184,27 @@ dbfuncs.deleteTopology = function(topoloc, callback) {
 	});
 };
 
+// TODO: use moment.js to increment expiration date by 1
+dbfuncs.addActiveSlice = function(topoid, callback) {
+	var activeslice = {
+		topoid: topoid,
+		expiration: new Date().toISOString().slice(0, 19).replace('T', ' ')
+	};
+
+	conn.query('INSERT INTO activeslice SET ?', activeslice, function(err, results, fields) {
+		if (err) return callback(err);
+		return callback(null, results);
+	});
+
+};
+
+dbfuncs.listActiveSlices = function(userid, callback) {
+	conn.query('SELECT topology.toponame, topology.location FROM permisioon, topology, activeslice WHERE permission.userid = ? AND permission.topoid = activeslice.topoid;', userid, function(err, results, fields) {
+		if (err) return callback(err);
+		return callback(null, results);
+	});
+
+};
 
 
 module.exports = dbfuncs;

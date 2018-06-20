@@ -26,9 +26,25 @@ router.get('/scheduler', function(req, res) {
 });
 
 router.get('/organizer', function(req, res) {
+	var topologies = null;
+	var activeslices = null;
+
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
-		return res.render('fileorganizer', { attachments: data });
+		if (err) console.log(err);
+		topologies = data;
+		complete();
 	});
+
+	dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
+		if (err) console.log(err);
+		activeslices = data;
+		complete();
+	});
+
+	function complete() {
+		if (topologies !== null && activeslices !== null)
+			return res.render('fileorganizer', { topologies: topologies, activeslice: activeslices });
+	}
 });
 
 // query parameters: topoid, toponame

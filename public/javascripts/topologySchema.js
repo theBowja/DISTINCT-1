@@ -13,9 +13,13 @@ var topologySchema = {
 			    "type": "object",
 			    "properties": {
 			    	"name": { "type": "string" },
-			    	"color": { "type": "string" }
+			    	"nodetype": { "enum": ["XO Medium", "XO Extra large", "XO Large", "XO Small"] },
+			    	"image": {
+			    		"type": "string",
+			    		"format": "url"
+			    	}
 			    },
-			    "required": ["name", "color"]
+			    "required": ["name", "nodetype", "image"]
 			}
 		},
 		"links": {

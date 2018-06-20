@@ -5,6 +5,7 @@ var topologySchema = require('../public/javascripts/topologySchema.js');
 
 var dbfuncs = require('../database/dbfuncs.js');
 var fsfuncs = require('../database/fsfuncs.js');
+var ahabfuncs = require('../database/ahabfuncs.js');
 
 
 api.get('/topo/:topoloc', function(req, res) {

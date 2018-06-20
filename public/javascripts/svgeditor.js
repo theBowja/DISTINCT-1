@@ -18,7 +18,9 @@ var SVGGRAPH = function() {
 			}
 		});
 
-	var svg = d3.select("svg");
+	var svg = d3.select("svg")
+				.on("mousemove", linkdragmousemove);
+
 	var width = parseFloat(svg.style("width"), 10);
 	var height = parseFloat(svg.style("height"), 10);
 
@@ -40,13 +42,15 @@ var SVGGRAPH = function() {
 			var point = d3.mouse(this);
 			var transform = d3.zoomTransform(this);
 			var newnodes = simulation.nodes();
-			newnodes.push({
-				"name": "n" + control.toolshape + "-" + (Math.random().toString(36)+'00000000000000000').slice(2, 7+2), // TODO: guarantee that this string is a unique name
+			var tmpnode = {
+				"name": "n-" + (Math.random().toString(36)+'00000000000000000').slice(2, 7+2), // TODO: guarantee that this string is a unique name
 				"shape": control.toolshape,
-				"color": "black",
+				"nodetype": "XO Medium",
+				"image": "https://www.google.com",
 				"x": (point[0] - transform.x)/transform.k,
 				"y": (point[1] - transform.y)/transform.k
-			});
+			};
+			newnodes.push(tmpnode);
 
 			updateNodes(newnodes);
 			tick();
@@ -162,8 +166,10 @@ var SVGGRAPH = function() {
 	var links = [];
 
 	var simulation = d3.forceSimulation()
-		.force("link", d3.forceLink().id(function(d) { return d.name; })) // force link with id specified
-		.force("charge", d3.forceManyBody())
+		.force("link", d3.forceLink().distance(60).id(function(d) { return d.name; })) // force link with id specified
+		.force("charge", d3.forceManyBody().strength(-100))
+		.force("attractForce", d3.forceManyBody().strength(500).distanceMin(800))
+		.force("repelForce", d3.forceManyBody().strength(-200).distanceMax(60))
 		.force("center", d3.forceCenter(width/2,height/2)) // force center
 		.on('tick', tick);
 
@@ -172,7 +178,9 @@ var SVGGRAPH = function() {
 		.attr("id", "links")
 		.selectAll("line");
 	var draglink = g.append("line")
-		.attr("id", "draglink");
+		.attr("id", "draglink")
+		.attr("visibility", "collapse");
+	draglink.datum({source:null, target:{}});
 	var node = g.append("g")
 		.attr("id", "nodes")
 		.selectAll("path");
@@ -216,21 +224,21 @@ var SVGGRAPH = function() {
 				.on("end", dragended));	
 		nodenew.append("image")
 			.attr("xlink:href", "https://www.emulab.net/protogeni/jacks-stable/images/router.svg")
-			.attr("x", -12)
-			.attr("y", -12)
-			.attr("width", "25px")
-			.attr("height", "25px");
+			.attr("x", -20)
+			.attr("y", -20)
+			.attr("width", "40px")
+			.attr("height", "40px");
 		nodenew.append("circle")
 			.attr("cx", 0)	
 			.attr("cy", 0)
-			.attr("r", 18)
+			.attr("r", 25)
 			.attr("fill", "none");
 		nodenew.append("text")
 			.attr("text-anchor", "middle")
 			.attr("x", 0)
-			.attr("y", 16)
+			.attr("y", 23)
 			.attr("font-family", "sans-serif")
-			.attr("font-size", "8px")
+			.attr("font-size", "11px")
 			.text(function(d) { return d.name; });
 
 		nodenew.append("title") // allows us to see name when a node is moused over
@@ -254,18 +262,22 @@ var SVGGRAPH = function() {
 
 	function selectNode() {
 		var seltarget = d3.select(this);
+		//console.log(seltarget.datum())
 
 		// special selection for creating link
 		if (d3.event.shiftKey && control.canCreate) {
 			if (!seltarget.classed("selectlinksource")) { // selecting
-				if (typeof control.selections.source === "undefined") { // selecting
+				if (draglink.datum().source === null) { // selecting
+					draglink.datum().source = seltarget.datum();
+					tick(); // updates the svg once
+					draglink.attr("visibility", "visible");
 					seltarget.classed("selectlinksource", true);
-					control.selections.source = seltarget;
+					//control.selections.source = seltarget;
 				} else { // creating a link (addlink)
 					var newlinks = simulation.force("link").links();
 
-					// search for link if it already exists
-					var sourcename = control.selections.source.datum().name;
+					// search for if link already exists
+					var sourcename = draglink.datum().source.name;
 					var targetname = seltarget.datum().name;
 					var notexist = newlinks.findIndex( function(d) {
 						return d.source.name===sourcename&&d.target.name===targetname ||
@@ -273,20 +285,28 @@ var SVGGRAPH = function() {
 					}) === -1;
 					if (notexist) { // if link doesn't already exist, then create link
 						newlinks.push({
-							source: control.selections.source.datum(),
+							source: draglink.datum().source,
 							target: seltarget.datum()
 						});
 						updateLinks(newlinks);
 						tick();
 					}
-					control.selections.deselectsource();
+					deselectLinkSource();
 				}
 			} else { // deselecting
-				control.selections.deselectsource();
+				deselectLinkSource();
 			}				
 		} else { // general selection
 			seltarget.classed("selected", !seltarget.classed("selected"));
 		}
+	}
+
+	/* Deselects the source of draglink */
+	function deselectLinkSource() {
+		draglink.datum().source = null;
+		tick();
+		draglink.attr("visibility", "collapse");
+		d3.select(".selectlinksource").classed("selectlinksource", false);
 	}
 
 	function selectLink() {
@@ -410,16 +430,17 @@ var SVGGRAPH = function() {
 	function tick() {
 		node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
+		console.log(d3.select(link).datum())
 		link.attr("x1", function(d) { return d.source.x; })
 			.attr("y1", function(d) { return d.source.y; })
 			.attr("x2", function(d) { return d.target.x; })
 			.attr("y2", function(d) { return d.target.y; });
 
-		console.log(mousemove());
-		draglink.attr("x1", function(d) { return d.source.x; })
-			    .attr("y1", function(d) { return d.source.y; })
-				.attr("x2", function(d) { return d.target.x; })
-				.attr("y2", function(d) { return d.target.y; });
+		if(draglink.datum().source !== null)
+			draglink.attr("x1", function(d) { return d.source.x; })
+				    .attr("y1", function(d) { return d.source.y; })
+				    // .attr("x2", function(d) { return d.target().x; })
+				    // .attr("y2", function(d) { return d.target().y; });
 	}
 
 	function dragstarted(d) {
@@ -445,13 +466,14 @@ var SVGGRAPH = function() {
 		d.fy = null;
 	}
 
-	/* returns an object containing the properties x and y of the mouse
+	/* 
 	*/
-	function mousemove(d) {
-		return {
-			x: d3.event.clientX,
-			y: d3.event.clientY
-		};
+	function linkdragmousemove() {
+		var point = d3.mouse(this);
+		var transform = d3.zoomTransform(d3.select("#background").node());
+
+		draglink.attr("x2", (point[0] - transform.x)/transform.k)
+				.attr("y2", (point[1] - transform.y)/transform.k);
 	}
 
 	function svg_clear() {
@@ -506,10 +528,12 @@ var SVGGRAPH = function() {
 		var exportObj = {};
 		exportObj.version = "0.0.1";
 		exportObj.toponame = $('#fileName').val();
-		console.log(node.data());
+		//console.log(node.data());
 		exportObj.nodes = JSON.parse(JSON.stringify(node.data()));
-		// remove excessive stuff
+		// remove excessive stuff from exportObj.nodes
 		for(var i = 0; i < exportObj.nodes.length; i++) {
+			exportObj.nodes[i].x = +exportObj.nodes[i].x.toFixed(2);
+			exportObj.nodes[i].y = +exportObj.nodes[i].y.toFixed(2);
 			delete exportObj.nodes[i].vx;
 			delete exportObj.nodes[i].vy;
 			delete exportObj.nodes[i].index;

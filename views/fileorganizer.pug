@@ -8,32 +8,43 @@ html(lang='en')
     //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min.js')
   body
-    .left
-      a(href='dashboard') Dashboard
+    .flex-container
+      .sidebar
+        a(href='dashboard') Dashboard
+          br
+          br
+        form(method='post', enctype='multipart/form-data')
+          | Select something to upload: 
+          input#fileToUpload(type='file', name='fileToUpload')
+          |  
+          input(type='submit', value='Upload File', name='submit')
         br
         br
-      form(method='post', enctype='multipart/form-data')
-        | Select something to upload: 
-        input#fileToUpload(type='file', name='fileToUpload')
-        |  
-        input(type='submit', value='Upload File', name='submit')
-      br
-      br
-      br
-      br
-      p To download, right click the link of the file you wish to download and select "Save link as..."
-    .vertical
-    .right
-      if (attachments)
-        each val in attachments
-          div
-            button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+val.toponame+'","'+val.location+'")')
-              span.glyphicon.glyphicon-trash
-            button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
-              span.glyphicon.glyphicon-chevron-right
-            a(href='api/topo/'+val.location)= val.toponame
-            //- span.glyphicon.glyphicon-pencil
-              title rename
+        br
+        br
+        p To download, right click the link of the file you wish to download and select "Save link as..."
+      .left
+        .title topologies
+        .list
+          if (topologies)
+            each val in topologies
+              div
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+val.toponame+'","'+val.location+'")')
+                  span.glyphicon.glyphicon-trash
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
+                  span.glyphicon.glyphicon-chevron-right
+                a(href='api/topo/'+val.location)= val.toponame
+                //- span.glyphicon.glyphicon-pencil
+                  title rename
+      .right
+        .title active slices
+        .list
+          if (activeslices)
+            each val in activeslices
+              div
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
+                  span.glpyhicon.glyphicon-chevron-right
+                a(href='api/topo/'+val.location)= val.toponame
 
 
 script.

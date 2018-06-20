@@ -48,4 +48,15 @@ schema.defs.permission =
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
+schema.defs.activeslice = 
+`activeslice (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	topoid INT NOT NULL,
+	expiration DATETIME NOT NULL,
+
+	FOREIGN KEY (topoid) REFERENCES topology(Id) ON DELETE CASCADE,
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB`;
+
 module.exports = schema;
