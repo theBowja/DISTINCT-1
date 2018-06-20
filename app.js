@@ -1,133 +1,81 @@
-var express = require('express'), app = express(), http = require('http');
-var path = require('path'), fs = require('fs');
+var express = require('express');
+var path = require('path');
+//var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-var config = require('./config/config.js'); // I think this is how a config file should work
-var db = require('./database');
-
-
-// Configure jade as template engine
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
-
-// Serve static content from "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
-//app.use(express.static(path.join(__dirname + 'views'))); // to serve any file in this folder
-
-
-// middleware
-var bodyParser = require('body-parser'); // needed to touch body
 var session = require('express-session');
-var CloudantStore = require('connect-cloudant-store')(session);
-var store = new CloudantStore({
-	url: config.dbURL,
-	databaseName: 'sessions'
-	// ttl: 5 * 60 * 1000 // 5 minutes
-});
-var passport = require('passport');
-require('./config/auth.js'); // initialize
+var MySQLStore = require('express-mysql-session')(session);
 
+var config = require('./config/config.js');
+
+
+app = express();
+
+// view egine setup; template engine
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+
+
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // populates object with key-value pairs. value can be string or array when extended: false, or any type when extended: true.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+var options = {
+	host 		: config.db.hostname,
+	user		: config.db.username,
+	password	: config.db.password,
+	port        : config.db.port,
+	database	: config.db.dbname//'session_test'
+};
+
+var sessionStore = new MySQLStore(options);
 app.use(session({
-	store: store,
-	secret: 'bunny buddy',
-	resave: true,
+	key: 'session_cookie_name',
+	secret: 'session_cookie_',
+	store: sessionStore,
+	resave: false,
+	rolling: true, // resets expiration countdown of cookie
 	saveUninitialized: false,
-	//store: , // default is MemoryStore instance which is not for production
-	//rolling: true, // set cookie on every response. expiration set to original maxAge
 	cookie: {
-		maxAge: 5 * 60 * 1000 // 5 minute
+		maxAge: 60*60*1000 // 1 hour
 	}
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 
-store.on('connect', function() {
-	console.log("cloudant session store is ready for use");
-	// set cleanup job every other hour
-	// setInterval(function() {
-	// 	console.log("cleanup");
-	// 	store.cleanupExpired();
-	// }, 60 * 60 * 1000);
+	
+var index = require('./routes/index');
+//var users = require('./routes/users');
+app.use('/', index);
+//app.use('/users', users);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-  // application specific logging, throwing an error, or other logic here
-});
-
-// TODO: supply a favicon.ico file that is available at the root
-// app.get('/favicon.ico', function(req, res) {
-// 	console.log("favi");
-// 	res.sendStatus(204);
-// });
-
-var routes = require('./routes');
-app.use('/', routes);
-
-app.get('/session', function(req,res) {
-	res.send(req.session);
-});
-
-app.get('/test', function(req,res) {
-	//console.log(store.cleanupExpired)
-	store.cleanupExpired();
-	res.send("reload");
- 	//db.view("expired_sessions", "express_expired_sessions", {limit: 100}, function(err, body) {res.send(err)})
-
-	//res.send(""+store.cleanupExpired);
-	// db.list({include_docs: true},function(err, body) {
-	// 	var myarr = body.rows.map(function(ele) {
-	// 		return {
-	// 			username: ele.doc.username,
-	// 			email: ele.doc.email,
-	// 			role: ele.doc.role,
-	// 			timeCreated: ele.doc.timeCreated
-	// 		};
-	// 	});
-	// 	res.render('userlist', {data:myarr});
-	// });
-
-});
-
-app.get('/dbinit', function (req, res) {
-	console.log("GET request for /dbinit");
-	// TBD
-
-	db.profiles.list(function(err,body){
-		if(!err) {
-			body.rows.forEach(function(doc) {
-      			console.log(doc);
-    		});
-		}
-	});
-
-});
-
-
-
-// this is somehow producing an "Error: Can't set headers after they are sent."
-app.use('*', function(req,res){
-	console.log("404 /* =>", req.originalUrl);
-	res.status(404).send('404 page not found');
-});
-
-// error-handling middleware
+// error handler
 app.use(function(err, req, res, next) {
-	if (err) {
-		switch (err.code) {
-			case 'LIMIT_FILE_SIZE':
-				res.send('File size too large');
-			break;
-			default:
-				res.sendStatus(500);
-				//next(err);
-		}
-	} else {
-		next();
-	}
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
-app.listen(config.port, function() {
-	console.log('Express server listening on port ' + config.port);
-});
+module.exports = app;
+// app.listen(config.port, function() {
+// 	console.log('Express server listening on port ' + config.port);
+// });

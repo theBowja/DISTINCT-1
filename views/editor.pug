@@ -2,13 +2,13 @@ html(lang='en')
   head
     meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
     title editor
-    script(src='https://d3js.org/d3.v4.min.js')
+    script(src='https://d3js.org/d3.v5.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/ajv/5.0.0/ajv.min.js')
-    script(src='/scripts/svgeditor.js')
-    script(src='/scripts/svgeditor_optionspanel.js')
-    script(src='/scripts/topologySchema.js')
+    script(src='/javascripts/svgeditor.js')
+    script(src='/javascripts/svgeditor_optionspanel.js')
+    script(src='/javascripts/topologySchema.js')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/style/svgeditor.css')
+    link(rel='stylesheet', href='/stylesheets/svgeditor.css')
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
@@ -16,20 +16,22 @@ html(lang='en')
   body(onload='SVGGRAPH=SVGGRAPH();'+((data)?'loadfile()':''))
     .left
       button#help.btn.btn-info(type='button' data-toggle='modal' data-target='#helpModal') help
-      a(href='/u/dashboard') Dashboard
+      a(href='/dashboard') Dashboard
       br
-      if fileName
-        h4#fileName= fileName
-      else
-        br
+      br
+      .precaption fileName
+      textarea#fileName(contenteditable='true' maxlength='25')= fileName || 'untitled'
+      br
+      br
       //- button(type='button' onclick='randomgraph()') big
       // I really don't know how to label these
       // also these bootstrap buttons look kinda out of place
-      .btn-group.btn-group-xs#withDropdown
+      .btn-group.btn-group-sm#withDropdown
         button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load
-        button.btn.btn-default(type='button' onclick='saveAsFile()') save
+        button.btn.btn-default#savebutton(type='button') save
         ul.dropdown-menu(role='menu')
         span#flashmessage(style='display: none;') don't panic
+      button.btn.btn-default#reservebutton(type='button') reserve resource
       input(type='file')
       .btn-group.btn-group-sm
         button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_import();') import
@@ -116,7 +118,7 @@ html(lang='en')
         //return { source: d.toString(), target: "1" };
       }),
       obj = JSON.stringify({ nodes: rnodes, links: rlinks });
-    d3.select("textarea").property("value", obj);
+    d3.select("#jsontextarea").property("value", obj);
   }
 
 script.
@@ -127,38 +129,54 @@ script.
       drop.select(".dropdown-menu").html(null);
     } else { // if dropdown is not open, then get the list of attachments and show it
       $('#flashmessage').text("loading...").show(0);
-      $.get("/u/api/listattachments", function(result) {
-        drop.select(".dropdown-menu").selectAll("li").data(Object.keys(result))
+      $.get("/api/listtopologies", function(result) {
+        drop.select(".dropdown-menu").selectAll("li").data(result)
           .enter().append("li").append("a")
-            .attr("href", function(d) { return "/u/editor/" + d; })
+            .attr("href", function(d) { return "/editor/" + d.location; })
             .attr("tabindex", "-1")
-            .text(function(d) { return d; });
+            .text(function(d) { return d.toponame; });
         $('#flashmessage').text("loaded").hide(0);
       });
     }
   }
-  function saveAsFile() {
-    event.preventDefault();
+
+  $('textarea').keydown(function(e){
+    if(e.keyCode == 13) {
+      e.preventDefault();
+      return false;
+    }
+  })
+  $('#savebutton').on('click', function(e){
+    e.preventDefault();
     $('#flashmessage').text("saving...").show(0);
     $.ajax({
       type: 'POST',
-      url: '/u/api/upload/' + $('#fileName').text(),
-      data: { jsonfile: $('#jsontextarea').val() },
+      url: '/api/topo/' + window.location.pathname.split("/").slice(-1)[0], // gets last segment of url
+      data: { jsontopo: $('#jsontextarea').val() },
       success: function() { 
         $('#flashmessage').text("success").show(0).delay(3500).hide(0);
       },
       error: function() {
-        $('#flashmessage').text("not JSON format").show(0).delay(3500).hide(0);
+        $('#flashmessage').text("incorrect format").show(0).delay(3500).hide(0);
       }
     });
-  }
+  });
+  $('#reservebutton').on('click', function(e) {
+    e.preventDefault();
+    $('#flashmessage').text('reserving resouce').show(0);
+    $.ajax({
+      type: 'POST',
+      url: '/api/ahab/'
+    })
+
+  });
 
 
 if data
   script.
     function loadfile() {
       var data = !{JSON.stringify(data).replace(/<\//g, "<\\/")};
-      d3.select("textarea").property("value", data);
+      d3.select("#jsontextarea").property("value", data);
       SVGGRAPH.svg_import();
     }
 

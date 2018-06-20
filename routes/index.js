@@ -1,23 +1,83 @@
-/*
-This route handles whenever the user is not logged in
-*/
-var routes = require('express').Router();
-var user = require('./user/index.js');
+var express = require('express');
+var router = express.Router();
+var dbfuncs = require('../database/dbfuncs.js');
 
-var passport = require('passport');
-
-routes.use('/u', user);
-
-routes.get('/', function(req, res) {
+/* GET home page. */
+router.get('/', function(req, res) {
 	res.redirect('/login');
-	//res.render('main');
+    //res.render('index', { title: 'Express' });
 });
 
-routes.get('/login', function(req, res) {
-	res.render('login');
+var path = require('path');
+router.get('/test', function(req, res) {
+	var java = require('java');
+	console.log(path.resolve('ahab/libndl.jar'));
+	java.classpath.push(path.resolve('ahab/libndl.jar'));
+	java.classpath.push(path.resolve('ahab/libtransport.jar'));
+	var Slice = java.import('Slice');
+	Slice.setName("OBAMA");
+	console.log(Slice.getName());
+
 });
 
-routes.post('/login', passport.authenticate('local-login', { successRedirect:'/u/dashboard', failureRedirect: '/login'}) );
+router.get('/login', function(req, res) {
+	if (req.session.user) // probably already logged in
+		return res.redirect('dashboard');
+	return res.render('login');
+});
 
+router.post('/login', function(req, res) {
+	dbfuncs.login(req.body.username, req.body.password, function(err, data) {
+		if (err) {
+			console.log(err);
+			return res.send(err);
+		}
+		req.session.user = data; // assigns everything from data to the session.user
+		return res.redirect('dashboard');
+	});
 
-module.exports = routes;
+});
+
+router.get('/register', function(req, res) {
+	return res.render('register');
+});
+
+router.post('/register', function(req, res) {
+	dbfuncs.createuser(req.body.username, req.body.email, req.body.password, function(err, data) {
+		if (err) {
+			if (err.code == 'ER_DUP_ENTRY') {
+				return res.render('register', { taken: req.body.username, email: req.body.email, role: req.body.role} );
+			} else {
+				console.log(err);
+				return res.render('delayredirect', { message: 'some error happened', delay: 4000, url: '/u/register'});
+			}
+		}
+
+		// successful account creation
+		var message = "successful account creation of " + req.body.role + " " + req.body.username;
+		return res.render('delayredirect', { message: message, delay: 5000, url: '/u/dashboard'});
+	});
+});
+
+router.get('/logout', function(req, res) {
+	req.session.destroy( function(err) {
+		if(err) console.log('there was an error destroying the session');
+		return res.redirect('/login');
+	});
+});
+
+// this middleware checks if the user is logged in
+//   if the user is logged in, the continues down the route
+router.use( function(req, res, next) {
+	// if authenticated, then next
+	if( req.session.user && req.session.user.hasOwnProperty('Id') && req.session.user.hasOwnProperty('username')) {
+		next();
+	} else {
+		res.redirect('/login');
+	}
+});
+
+var user = require('./user.js');
+router.use('/', user);
+
+module.exports = router;

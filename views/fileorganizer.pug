@@ -3,48 +3,59 @@ html(lang='en')
     meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
     title organizer
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/style/fileorganizer.css')
+    link(rel='stylesheet', href='/stylesheets/fileorganizer.css')
     //- script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min.js')
   body
-    .left
-      a(href='dashboard') Dashboard
+    .flex-container
+      .sidebar
+        a(href='dashboard') Dashboard
+          br
+          br
+        form(method='post', enctype='multipart/form-data')
+          | Select something to upload: 
+          input#fileToUpload(type='file', name='fileToUpload')
+          |  
+          input(type='submit', value='Upload File', name='submit')
         br
         br
-      form(method='post', enctype='multipart/form-data')
-        | Select something to upload: 
-        input#fileToUpload(type='file', name='fileToUpload')
-        |  
-        input(type='submit', value='Upload File', name='submit')
-      br
-      br
-      br
-      br
-      p To download, right click the link of the file you wish to download and select "Save link as..."
-    .vertical
-    .right
-      if (attachments)
-        each val, key in attachments
-          div
-            button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+key+'")')
-              span.glyphicon.glyphicon-trash
-            button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+key+'"')
-              span.glyphicon.glyphicon-chevron-right
-            a(href='api/file/'+key)= key
-            //- span.glyphicon.glyphicon-pencil
-              title rename
+        br
+        br
+        p To download, right click the link of the file you wish to download and select "Save link as..."
+      .left
+        .title topologies
+        .list
+          if (topologies)
+            each val in topologies
+              div
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+val.toponame+'","'+val.location+'")')
+                  span.glyphicon.glyphicon-trash
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
+                  span.glyphicon.glyphicon-chevron-right
+                a(href='api/topo/'+val.location)= val.toponame
+                //- span.glyphicon.glyphicon-pencil
+                  title rename
+      .right
+        .title active slices
+        .list
+          if (activeslices)
+            each val in activeslices
+              div
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
+                  span.glpyhicon.glyphicon-chevron-right
+                a(href='api/topo/'+val.location)= val.toponame
 
 
 script.
-  function verifyDelete(fileName) {
+  function verifyDelete(fileName, fileloc) {
     if (confirm("You are about to delete " + fileName + ". Are you sure?")) {
       // success is called if ( status >= 200 && status < 300 || status === 304 )
-      //- $.ajax({url:"organizer/"+fileName, type:"DELETE", success: function(result) {
+      //- $.ajax({url:"organizer/"+fileloc, type:"DELETE", success: function(result) {
       //-   location.reload();
       //- }})
       var http = new XMLHttpRequest();
-      var url = "api/file/" + fileName;
+      var url = "api/topo/" + fileloc
       http.open("DELETE", url, true);
 
       http.onreadystatechange = function() {//Call a function when the state changes.
