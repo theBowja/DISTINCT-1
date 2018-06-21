@@ -1,0 +1,20 @@
+branch-defaults:
+  dev:
+    environment: tsets-env
+environment-defaults:
+  Tsets-env:
+    branch: null
+    repository: null
+global:
+  application_name: tsets
+  default_ec2_keyname: breilov
+  default_platform: arn:aws:elasticbeanstalk:us-east-1::platform/Node.js running on
+    64bit Amazon Linux/4.5.0
+  default_region: us-east-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  sc: git
+  workspace_type: Application
