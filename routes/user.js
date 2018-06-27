@@ -54,15 +54,29 @@ router.get('/editor', function(req, res) {
 
 router.get('/editor/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
-		if (err) { console.log(err); return res.redirect('editor'); }
+		if (err) { console.log(err); return res.redirect('editor'); } // no permission
 
 		fsfuncs.readfile(req.params.topoloc, function(err, body) {
-			return res.render('editor', { fileName: JSON.parse(body).toponame, data: body.toString() });
+			return res.render('editor', { fileName: JSON.parse(body).toponame, data: body.toString(), topoloc: req.params.topoloc });
 		});
 	});
 });
 
-var api = require('./api.js');
+router.get('/reserve', function(req, res) {
+	return res.render('reserve');
+});
+
+router.get('/reserve/:topoloc', function(req, res) {
+	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
+		if (err) { console.log(err); return res.redirect('editor'); } // no permission
+
+		fsfuncs.readfile(req.params.topoloc, function(err, body) {
+			return res.render('reserve', { topology: body.toString(), topoloc: req.params.topoloc });
+		});
+	});
+});
+
+var api = require('./api/index.js');
 router.use('/api', api);
 
 

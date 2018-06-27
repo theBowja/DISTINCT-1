@@ -151,7 +151,7 @@ script.
     $('#flashmessage').text("saving...").show(0);
     $.ajax({
       type: 'POST',
-      url: '/api/topo/' + window.location.pathname.split("/").slice(-1)[0], // gets last segment of url
+      url: '/api/topo/' + "#{topoloc}", // last segment of url
       data: { jsontopo: $('#jsontextarea').val() },
       success: function() { 
         $('#flashmessage').text("success").show(0).delay(3500).hide(0);
@@ -165,8 +165,8 @@ script.
     e.preventDefault();
     $('#flashmessage').text('reserving resouce').show(0);
     $.ajax({
-      type: 'POST',
-      url: '/api/ahab/'
+      type: 'GET',
+      url: '/api/ahab/reserve/' + "#{topoloc}" 
     })
 
   });

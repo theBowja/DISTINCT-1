@@ -6,6 +6,7 @@ var topologySchema = require('../../public/javascripts/topologySchema.js');
 var dbfuncs = require('../../database/dbfuncs.js');
 var fsfuncs = require('../../database/fsfuncs.js');
 
+
 topo.get('/topo/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
 		if (err) { console.log(err); return res.send("permission err"); }
