@@ -30,13 +30,13 @@ router.get('/organizer', function(req, res) {
 	var activeslices = null;
 
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
-		if (err) console.log(err);
+		if (err) return console.log(err);
 		topologies = data;
 		complete();
 	});
 
 	dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
-		if (err) console.log(err);
+		if (err) return console.log(err);
 		activeslices = data;
 		complete();
 	});
