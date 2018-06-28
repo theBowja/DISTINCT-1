@@ -35,15 +35,19 @@ router.get('/organizer', function(req, res) {
 		complete();
 	});
 
-	dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
-		if (err) return console.log(err);
-		activeslices = data;
-		complete();
-	});
+	// dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
+	// 	if (err) return console.log(err);
+	// 	activeslices = data;
+	// 	complete();
+	// });
+
+	// function complete() {
+	// 	if (topologies !== null && activeslices !== null)
+	// 		return res.render('fileorganizer', { topologies: topologies, activeslice: activeslices });
+	// }
 
 	function complete() {
-		if (topologies !== null && activeslices !== null)
-			return res.render('fileorganizer', { topologies: topologies, activeslice: activeslices });
+		return res.render('fileorganizer', { topologies: topologies });
 	}
 });
 

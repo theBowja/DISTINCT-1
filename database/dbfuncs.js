@@ -199,7 +199,7 @@ dbfuncs.addActiveSlice = function(topoid, callback) {
 };
 
 dbfuncs.listActiveSlices = function(userid, callback) {
-	conn.query('SELECT topology.toponame, topology.location FROM permisioon, topology, activeslice WHERE permission.userid = ? AND permission.topoid = activeslice.topoid;', userid, function(err, results, fields) {
+	conn.query('SELECT topology.toponame, topology.location FROM permission, topology, activeslice WHERE permission.userid = ? AND permission.topoid = activeslice.topoid;', userid, function(err, results, fields) {
 		if (err) return callback(err);
 		return callback(null, results);
 	});

@@ -50,6 +50,10 @@ var OPTIONSPANEL = (function (shapes) {
 			sublabel: "url to xml file",
 			element: "input",
 			inputtype: "url"
+		},
+		{
+			label: "post boot script",
+			element: "textarea"
 		}
 	];
 

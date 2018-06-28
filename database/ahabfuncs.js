@@ -12,10 +12,9 @@ var pub;
 /* pem is the file address to the ssl certificate issued by GENI
    pub is the file address to the ssh public key you want to use
 */
-ahabfuncs.loadProfile = function(private, public, callback) {
+ahabfuncs.loadProfile = function(private, public) {
 	pem = private;
 	pub = public;
-	callback(null, true)
 };
 
 
@@ -55,17 +54,34 @@ ahabfuncs.createSlice = function(topology) {
 	java.callMethodSync(s, "commit");
 };
 
-function getSliceProxy() {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	//console.log("Opening certificate " + pem + " and key " + pem);
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
+var getSliceProxy = (function() {
+	var sliceProxy;
+	return function() {
+		if(sliceProxy === undefined) {
+			var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
+			//console.log("Opening certificate " + pem + " and key " + pem);
+			var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
 
-	var url = java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc");
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-	return sliceProxy;
-}
+			sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+		}
+		return sliceProxy;
+	};
+})();
 
+ahabfuncs.deleteSlice = function(slicename) {
+	var sliceProxy = getSliceProxy();
+	var sliceList = ahabfuncs.listSlices();
+	if(!sliceList.includes(slicename)) return false;
 
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
+	java.callMethodSync(s, "delete");
+	return true;
+};
+
+ahabfuncs.listSlices = function() {
+	var sliceProxy = getSliceProxy();
+	return java.callMethodSync(sliceProxy, "listMySlices");
+};
 
 
 module.exports = ahabfuncs;

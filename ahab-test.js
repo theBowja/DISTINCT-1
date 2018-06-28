@@ -64,6 +64,11 @@ function evaluateOptions() {
 				i+=1;
 				break;
 
+			case '-si': case '-sliceinfo': // slice info
+				getSliceInfo(options[i+1]);
+				i+=1;
+				break;
+
 			case '-in': case '-infonode': // info node
 				getNodeExtra(options[i+1], options[i+2]);
 				i+=2;
@@ -297,12 +302,12 @@ function createSlicePromise(slicename, numofnodes) {
 	Promise.all([sP, nodesP])
 	.spread(function(s, links) {
 
-	var net = java.callMethodSync(s, "addBroadcastLink", "Link1");
+		var net = java.callMethodSync(s, "addBroadcastLink", "Link1");
 
-	var node1 = java.callMethodSync(s, "getResourceByName", "ComputeNode1");
-	var node2 = java.callMethodSync(s, "getResourceByName", "ComputeNode2");
-	java.callMethodSync(net, "stitch", node1);
-	java.callMethodSync(net, "stitch", node2);
+		var node1 = java.callMethodSync(s, "getResourceByName", "ComputeNode1");
+		var node2 = java.callMethodSync(s, "getResourceByName", "ComputeNode2");
+		java.callMethodSync(net, "stitch", node1);
+		java.callMethodSync(net, "stitch", node2);
 		return java.callMethodSync(s, 'commit');
 	});
 }
@@ -382,7 +387,30 @@ function getSliceProxy() {
 	return sliceProxy;
 }
 
+function getSliceInfo(slicename) {
+	var sliceProxy = getSliceProxy();
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, 'exslice1');
+	var funcs = ["getAllResources", "getInterfaces", "getLinks", "getBroadcastLinks", "getNodes", "getComputeNodes", "getStorageNodes", "getStitchPorts"];
+
+	for(let f of funcs) {
+		console.log(f + ": " + java.callMethodSync(s, f).toStringSync());
+	}
+}
+
 function test() {
+	getSliceInfo();
+	// get state of node
+	var sliceProxy = getSliceProxy();
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, 'exslice1');
+
+	//var cn = java.callMethodSync(s, 'getResourceByName', 'ComputeNode0');
+	//ar mn = java.callMethodSync(cn, 'getManifestNodes');
+	console.log(java.callMethodSync(s, 'getAllResources').toStringSync());
+	//console.log(java.callMethodSync(cn, 'getState'));
+
+
+
+	/* // add link
 	var sliceProxy = getSliceProxy();
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, "exslice2");
 
@@ -396,6 +424,7 @@ function test() {
 	console.log("getRequest: " + java.callMethodSync(s, "getRequest"));
 
 	java.callMethodSync(s, "commit");
+	*/
 }
 
 console.log("finished running code");
