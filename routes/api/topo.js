@@ -1,14 +1,13 @@
-var api = require('express').Router();
+var topo = require('express').Router();
 
 var Ajv = require('ajv');
-var topologySchema = require('../public/javascripts/topologySchema.js');
+var topologySchema = require('../../public/javascripts/topologySchema.js');
 
-var dbfuncs = require('../database/dbfuncs.js');
-var fsfuncs = require('../database/fsfuncs.js');
-var ahabfuncs = require('../database/ahabfuncs.js');
+var dbfuncs = require('../../database/dbfuncs.js');
+var fsfuncs = require('../../database/fsfuncs.js');
 
 
-api.get('/topo/:topoloc', function(req, res) {
+topo.get('/topo/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
 		if (err) { console.log(err); return res.send("permission err"); }
 
@@ -18,13 +17,13 @@ api.get('/topo/:topoloc', function(req, res) {
 				return res.send("Error: file probably not found");
 			}
 			
-			return res.send(""+body);
+			return res.send(body);
 			//return res.render('viewfile', { contents: body} );
 		});
 	});
 });
 
-api.post('/topo/:topoloc', function(req, res) {
+topo.post('/topo/:topoloc', function(req, res) {
 	var data = req.body.jsontopo;
 	// test if it is a json file, otherwise don't accept
 	try {
@@ -75,7 +74,7 @@ api.post('/topo/:topoloc', function(req, res) {
 	});
 });
 
-api.delete('/topo/:topoloc', function(req, res) {
+topo.delete('/topo/:topoloc', function(req, res) {
 	dbfuncs.deleteTopology(req.params.topoloc, function(err, data) {
 		if (err) { console.log(err); return res.sendStatus(500); }
 
@@ -87,7 +86,7 @@ api.delete('/topo/:topoloc', function(req, res) {
 	});
 });
 
-api.get('/listtopologies', function(req, res) {
+topo.get('/listtopologies', function(req, res) {
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
 		if (err) { console.log(err); return res.sendStatus(500); }
 
@@ -95,4 +94,4 @@ api.get('/listtopologies', function(req, res) {
 	});
 });
 
-module.exports = api;
+module.exports = topo;

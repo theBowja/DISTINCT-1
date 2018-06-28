@@ -4,7 +4,7 @@ html(lang='en')
     title organizer
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/fileorganizer.css')
-    //- script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min.js')
   body
@@ -29,7 +29,7 @@ html(lang='en')
           if (topologies)
             each val in topologies
               div
-                button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='verifyDelete("'+val.toponame+'","'+val.location+'")')
+                button.btn.btn-default.btn-sm.custom-button(type='button' title='delete' onclick='topoVerifyDelete("'+val.toponame+'","'+val.location+'")')
                   span.glyphicon.glyphicon-trash
                 button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
                   span.glyphicon.glyphicon-chevron-right
@@ -38,7 +38,14 @@ html(lang='en')
                   title rename
       .right
         .title active slices
-        .list
+        .form
+          form#ssl(method='post', enctype='multipart/form-data')
+            span upload your ssl certificate  
+            input#sslcert(type='file', name='sslcert', required)
+            input#sslsubmitbutton(type='submit', value='Query active slices', name='submit')
+
+
+        .list#slicelist
           if (activeslices)
             each val in activeslices
               div
@@ -48,7 +55,7 @@ html(lang='en')
 
 
 script.
-  function verifyDelete(fileName, fileloc) {
+  function topoVerifyDelete(fileName, fileloc) {
     if (confirm("You are about to delete " + fileName + ". Are you sure?")) {
       // success is called if ( status >= 200 && status < 300 || status === 304 )
       //- $.ajax({url:"organizer/"+fileloc, type:"DELETE", success: function(result) {
@@ -66,3 +73,70 @@ script.
       http.send();
     }
   }
+
+  function sliceVerifyDelete(slicename) {
+    if (confirm("You are about to delete " + slicename + ". Are you sure?")) {
+      var formdata = new FormData();
+      formdata.append('sslcert', $('#sslcert')[0].files[0] )
+      $.ajax({
+
+        url: 'api/ahab/'+slicename,
+        type: 'DELETE',
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function() {
+          $('#ssl').submit()
+          alert('success delete');
+        },
+        error: function() {
+          alert('error delete');
+        }
+      })
+    }
+  }
+
+  function relistslices(list) {
+    $('#slicelist').empty();
+    var ele = d3.select('#slicelist').selectAll('div').data(list)
+      .enter().append('div');
+    ele.append('button')
+      .attr('class', 'btn btn-default btn-sm custom-button')
+      .attr('type', 'button')
+      .attr('title', 'delete')
+      .attr('onclick', function(d) { return 'sliceVerifyDelete("'+d+'")' })
+      .append('span')
+        .attr('class','glyphicon glyphicon-trash');
+    ele.append('a')
+      .attr('href', 'api/topo/')
+      .text(function(d) { return d; });
+    /* for(let slicename of list) {
+
+      console.log(slicename);
+      $("<a href='api/topo/'>"+slicename+"</a>").appendTo("div").appendTo('#slicelist')
+    } */
+  }
+
+  $('#ssl').submit(function(e) {
+    e.preventDefault();
+    var formdata = new FormData();
+    formdata.append('sslcert', $('#sslcert')[0].files[0] )
+
+    $.ajax({
+      url: 'api/listactiveslices',
+      type: 'POST',
+      data: formdata,
+      processData: false,
+      contentType: false,
+      success: function(list) {
+        relistslices(list);
+        alert(list);
+      },
+      error: function() {
+        alert('some error');
+      }
+
+    })
+
+
+  })

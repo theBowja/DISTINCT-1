@@ -30,20 +30,24 @@ router.get('/organizer', function(req, res) {
 	var activeslices = null;
 
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
-		if (err) console.log(err);
+		if (err) return console.log(err);
 		topologies = data;
 		complete();
 	});
 
-	dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
-		if (err) console.log(err);
-		activeslices = data;
-		complete();
-	});
+	// dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
+	// 	if (err) return console.log(err);
+	// 	activeslices = data;
+	// 	complete();
+	// });
+
+	// function complete() {
+	// 	if (topologies !== null && activeslices !== null)
+	// 		return res.render('fileorganizer', { topologies: topologies, activeslice: activeslices });
+	// }
 
 	function complete() {
-		if (topologies !== null && activeslices !== null)
-			return res.render('fileorganizer', { topologies: topologies, activeslice: activeslices });
+		return res.render('fileorganizer', { topologies: topologies });
 	}
 });
 
@@ -54,15 +58,29 @@ router.get('/editor', function(req, res) {
 
 router.get('/editor/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
-		if (err) { console.log(err); return res.redirect('editor'); }
+		if (err) { console.log(err); return res.redirect('editor'); } // no permission
 
 		fsfuncs.readfile(req.params.topoloc, function(err, body) {
-			return res.render('editor', { fileName: JSON.parse(body).toponame, data: body.toString() });
+			return res.render('editor', { fileName: JSON.parse(body).toponame, data: body.toString(), topoloc: req.params.topoloc });
 		});
 	});
 });
 
-var api = require('./api.js');
+router.get('/reserve', function(req, res) {
+	return res.render('reserve');
+});
+
+router.get('/reserve/:topoloc', function(req, res) {
+	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
+		if (err) { console.log(err); return res.redirect('editor'); } // no permission
+
+		fsfuncs.readfile(req.params.topoloc, function(err, body) {
+			return res.render('reserve', { topology: body.toString(), topoloc: req.params.topoloc });
+		});
+	});
+});
+
+var api = require('./api/index.js');
 router.use('/api', api);
 
 

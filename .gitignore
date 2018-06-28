@@ -27,6 +27,7 @@ config/private.js
 # Debug log from npm
 npm-debug.log
 
+public/temp
 public/uploads
 
 # Logs

@@ -7,7 +7,9 @@ var fsfuncs = {};
 
 
 fsfuncs.readfile = function(fileloc, callback) {
-	fs.readFile(path.join(config.filedirectory,fileloc), callback);
+	fs.readFile(path.join(config.filedirectory,fileloc), function(err, data) {
+		callback(err, ""+data);
+	});
 };
 
 fsfuncs.writefile = function(fileloc, data, callback) {
