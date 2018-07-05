@@ -9,14 +9,58 @@ var dbfuncs = require('../../database/dbfuncs.js');
 var fsfuncs = require('../../database/fsfuncs.js');
 var ahabfuncs = require('../../database/ahabfuncs.js');
 
+// this middleware says that all following paths of this router require an ssl/pem
+ahab.use( function(req, res, next) {
+	if(req.session.pem) {
+		next();
+	} else {
+		next()
+		//res.redirect('/uploadpem');
+	}
+});
 
-ahab.post('/reserve/:topoloc', upload.fields([{ name: 'sslcert', maxCount: 1 }, { name: 'sshpub', maxCount: 1 }]), autoReap, function(req, res) {
-	res.on('autoreap', function(reapedFile) {
-	    console.log(reapedFile);
+ahab.delete('/ahab/:slicename', function(req, res) {
+	// req.session.pem
+
+	ahabfuncs.loadProfile(pem);
+	if(ahabfuncs.deleteSlice(req.params.slicename))
+		return res.sendStatus(200);
+	else
+		return res.sendStatus(500);
+});
+
+ahab.get('/listactiveslices', function(req, res) {
+	// req.session.pem
+
+	ahabfuncs.callFunction(req.session.pem, null, 'listSlices', null, function(err, data) {
+		if(err) return res.send(err);
+		return res.send(data);
+
 	});
 
-	var pem = path.join(__dirname, "../../"+req.files.sslcert[0].path);
-	var pub = path.join(__dirname, "../../"+req.files.sshpub[0].path);
+
+});
+
+ahab.get('/resources/:slicename', function(req, res) {
+	// req.session.pem
+
+
+
+})
+
+// this middleware says that all following paths of this router require an ssh/pub
+ahab.use( function(req, res, next) {
+	if( req.session.pub) {
+		next();
+	} else {
+		next()
+		//res.redirect('/uploadpub');
+	}
+});
+
+ahab.post('/reserve/:topoloc', function(req, res) {
+	// req.session.pem
+	// req.session.pub
 
 	// check if user has the read permission
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
@@ -37,30 +81,6 @@ ahab.post('/reserve/:topoloc', upload.fields([{ name: 'sslcert', maxCount: 1 }, 
 	// fsfuncs.deletefile(pub, function(err) { if (err) console.error(err); });
 });
 
-ahab.delete('/ahab/:slicename', upload.single('sslcert'), autoReap, function(req, res) {
-	res.on('autoreap', function(reapedFile) {
-	    console.log(reapedFile);
-	});
-
-	var pem = path.join(__dirname, "../../"+req.file.path);
-	ahabfuncs.loadProfile(pem);
-	if(ahabfuncs.deleteSlice(req.params.slicename))
-		return res.sendStatus(200);
-	else
-		return res.sendStatus(500);
-});
-
-ahab.post('/listactiveslices', upload.single('sslcert'), autoReap, function(req, res) {
-	res.on('autoreap', function(reapedFile) {
-	    console.log(reapedFile);
-	});
-
-	var pem = path.join(__dirname, "../../"+req.file.path);
-	ahabfuncs.loadProfile(pem);
-	return res.send(ahabfuncs.listSlices());
-
-
-});
 
 
 module.exports = ahab;

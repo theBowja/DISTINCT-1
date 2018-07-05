@@ -2,6 +2,10 @@ var fs = require('fs');
 var path = require('path');
 var config = require('../config/config.js');
 
+/**
+ * What is the point of this module? Well it's for in case you 
+ * want to implement a different way to store topologies
+ */
 
 var fsfuncs = {};
 

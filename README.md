@@ -24,7 +24,7 @@ Prerequisites:
 4. Dependency packages installed ( ```npm install```)
 5. In the config/config.js file, config.db must be set to match what you are using in your MySQL
 
-In command line in your downloaded repository's directory, type ```node app.js```.
+In command line in your downloaded repository's directory, type ```npm start```.
 
 ## AWS
 
@@ -161,7 +161,7 @@ A schema to verify the json of the topology. Uses AJV as its JSON Schema validat
 
 ## Versioning
 
-~~We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).~~lol
+~~We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).~~ lol
 
 ## Authors
 

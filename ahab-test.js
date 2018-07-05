@@ -398,14 +398,32 @@ function getSliceInfo(slicename) {
 }
 
 function test() {
-	getSliceInfo();
-	// get state of node
-	var sliceProxy = getSliceProxy();
-	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, 'exslice1');
 
-	//var cn = java.callMethodSync(s, 'getResourceByName', 'ComputeNode0');
-	//ar mn = java.callMethodSync(cn, 'getManifestNodes');
-	console.log(java.callMethodSync(s, 'getAllResources').toStringSync());
+	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
+	console.log(java.callMethodSync(ctx, 'toString'));
+
+
+
+
+
+
+	//getSliceInfo();
+	// get state of node
+	// var sliceProxy = getSliceProxy();
+	// var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, 'exslice1');
+
+	// //var cn = java.callMethodSync(s, 'getResourceByName', 'ComputeNode0');
+	// //ar mn = java.callMethodSync(cn, 'getManifestNodes');
+	// var resourcesStr = java.callMethodSync(s, 'getAllResources').toStringSync()
+	// var resources = resourcesStr.slice(1, -1).replace(/ /g,'').split(',');
+	// console.log(resources);
+	// // /console.log(java.callMethodSync(s, 'getAllResources').toStringSync().slice(1,-1).split(','))
+	// for(let r of resources) {
+	// 	var cn = java.callMethodSync(s, 'getResourceByName', r);
+	// 	var state = java.callMethodSync(cn, 'getState');
+	// 	console.log(r + ": " + state);
+	// }
+
 	//console.log(java.callMethodSync(cn, 'getState'));
 
 

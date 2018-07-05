@@ -4,6 +4,13 @@ var router = express.Router();
 var dbfuncs = require('../database/dbfuncs.js');
 var fsfuncs = require('../database/fsfuncs.js');
 
+var multer = require('multer');
+var upload = multer({
+	limits: {
+		fileSize: 50 * 1000 // 50KB
+	}
+});
+
 // middleware for user login authentication
 // checks swt
 
@@ -78,6 +85,15 @@ router.get('/reserve/:topoloc', function(req, res) {
 			return res.render('reserve', { topology: body.toString(), topoloc: req.params.topoloc });
 		});
 	});
+});
+
+router.get('/upload/ssl', function(req, res) {
+	return res.render('upload');
+});
+
+router.post('/upload/ssl', upload.single('ssl'), function(req, res) {
+	req.session.pem = req.file.buffer.toString();
+	return res.send("success");
 });
 
 var api = require('./api/index.js');
