@@ -1,9 +1,6 @@
 var ahab = require('express').Router();
 
 var path = require('path');
-var multer = require('multer');
-var upload = multer({ dest: 'public/temp/', limits: {fileSize: 100000 } });
-var autoReap = require('multer-autoreap');
 
 var dbfuncs = require('../../database/dbfuncs.js');
 var fsfuncs = require('../../database/fsfuncs.js');
@@ -20,17 +17,19 @@ ahab.use( function(req, res, next) {
 });
 
 ahab.delete('/ahab/:slicename', function(req, res) {
-	// req.session.pem
 
-	ahabfuncs.loadProfile(pem);
-	if(ahabfuncs.deleteSlice(req.params.slicename))
+	ahabfuncs.callFunction(req.session.pem, null, 'deleteSlice', req.params.slicename, function(err, data) {
+		if(err) return res.sendStatus(500);
 		return res.sendStatus(200);
-	else
-		return res.sendStatus(500);
+
+	});
 });
 
+/**
+ * returns an array of slice names that are "active"
+ *
+ */
 ahab.get('/listactiveslices', function(req, res) {
-	// req.session.pem
 
 	ahabfuncs.callFunction(req.session.pem, null, 'listSlices', null, function(err, data) {
 		if(err) return res.send(err);
@@ -41,12 +40,23 @@ ahab.get('/listactiveslices', function(req, res) {
 
 });
 
+/**
+ * returns an array of resources of the slice
+ */
 ahab.get('/resources/:slicename', function(req, res) {
-	// req.session.pem
+	ahabfuncs.callFunction(req.session.pem, null, 'getAllResources', [req.params.slicename], function(err, data) {
+		return res.send(data);
+	});
+});
 
-
-
-})
+/** 
+ * returns a javascript object of key-values with resource name as key and state as value
+ */
+ahab.get('/slicestatus/:slicename', function(req, res) {
+	ahabfuncs.callFunction(req.session.pem, null, 'getAllResourceStatuses', [req.params.slicename], function(err, data) {
+		return res.send(data);
+	});
+});
 
 // this middleware says that all following paths of this router require an ssh/pub
 ahab.use( function(req, res, next) {

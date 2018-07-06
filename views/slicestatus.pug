@@ -1,0 +1,33 @@
+doctype html
+html
+  head
+    title= title
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    h1= slicename
+    br
+    br
+    button(type='button' onclick='poll()') poll resource status
+    br
+    br
+    #listresources
+
+
+script.
+  function poll() {
+    $.ajax({
+      url: '/api/slicestatus/' + "#{slicename}",
+      type: 'GET',
+      success: function(data) {
+        console.log(data);
+        $('#listresources').empty();
+        for(var key in data) {
+          $('<p>'+key+': '+data[key]+'</p>').appendTo('#listresources')
+        }
+      }, 
+      error: function() {
+        alert('error listresources')
+      }
+    })
+  }

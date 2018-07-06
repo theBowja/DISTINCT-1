@@ -38,21 +38,8 @@ html(lang='en')
                   title rename
       .right
         .title active slices
-        .form
-          form#ssl(method='post', enctype='multipart/form-data')
-            span upload your ssl certificate  
-            input#sslcert(type='file', name='sslcert', required)
-            input#sslsubmitbutton(type='submit', value='Query active slices', name='submit')
-
-
+    
         .list#slicelist
-          if (activeslices)
-            each val in activeslices
-              div
-                button.btn.btn-default.btn-sm.custom-button(type='button' title='go to editor' onclick='location.href="editor/'+val.location+'"')
-                  span.glpyhicon.glyphicon-chevron-right
-                a(href='api/topo/'+val.location)= val.toponame
-
 
 script.
   function topoVerifyDelete(fileName, fileloc) {
@@ -96,7 +83,7 @@ script.
     }
   }
 
-  function relistslices(list) {
+  function listslices(list) {
     $('#slicelist').empty();
     var ele = d3.select('#slicelist').selectAll('div').data(list)
       .enter().append('div');
@@ -108,7 +95,7 @@ script.
       .append('span')
         .attr('class','glyphicon glyphicon-trash');
     ele.append('a')
-      .attr('href', 'api/topo/')
+      .attr('href', function(d) { return 'slicestatus/'+d; })
       .text(function(d) { return d; });
     /* for(let slicename of list) {
 
@@ -117,26 +104,15 @@ script.
     } */
   }
 
-  $('#ssl').submit(function(e) {
-    e.preventDefault();
-    var formdata = new FormData();
-    formdata.append('sslcert', $('#sslcert')[0].files[0] )
-
+if hasSSL
+  script.
     $.ajax({
       url: 'api/listactiveslices',
-      type: 'POST',
-      data: formdata,
-      processData: false,
-      contentType: false,
-      success: function(list) {
-        relistslices(list);
-        alert(list);
-      },
+      type: 'GET',
+      success: function(data) {
+        listslices(data);
+      }, 
       error: function() {
-        alert('some error');
+        alert('error listactiveslices')
       }
-
     })
-
-
-  })

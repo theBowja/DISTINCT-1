@@ -54,7 +54,7 @@ router.get('/organizer', function(req, res) {
 	// }
 
 	function complete() {
-		return res.render('fileorganizer', { topologies: topologies });
+		return res.render('fileorganizer', { topologies: topologies, hasSSL: (req.session.ssl!==null) });
 	}
 });
 
@@ -85,6 +85,10 @@ router.get('/reserve/:topoloc', function(req, res) {
 			return res.render('reserve', { topology: body.toString(), topoloc: req.params.topoloc });
 		});
 	});
+});
+
+router.get('/slicestatus/:slicename', function(req, res) {
+	return res.render('slicestatus', { slicename: req.params.slicename });
 });
 
 router.get('/upload/ssl', function(req, res) {
