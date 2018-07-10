@@ -54,7 +54,7 @@ router.get('/organizer', function(req, res) {
 	// }
 
 	function complete() {
-		return res.render('fileorganizer', { topologies: topologies, hasSSL: (req.session.ssl!==null) });
+		return res.render('fileorganizer', { topologies: topologies, haspem: req.session.hasOwnProperty('pem') });
 	}
 });
 
@@ -91,13 +91,30 @@ router.get('/slicestatus/:slicename', function(req, res) {
 	return res.render('slicestatus', { slicename: req.params.slicename });
 });
 
-router.get('/upload/ssl', function(req, res) {
-	return res.render('upload');
+router.get('/uploadkeys/', function(req, res) {
+	return res.render('upload', { pem: true, pub: true} );
 });
 
-router.post('/upload/ssl', upload.single('ssl'), function(req, res) {
-	req.session.pem = req.file.buffer.toString();
-	return res.send("success");
+router.get('/uploadkeys/:specific', function(req, res) {
+	if(req.params.specific === "pem")
+		return res.render('upload', { pem: true } );
+	else if(req.params.specific === "pub")
+		return res.render('upload', { pub: true } );
+});
+
+router.post('/uploadkeys', upload.fields([{ name: 'pem', maxCount: 1}, { name: 'pub', maxCount: 1 }]), function(req, res) {
+	if(req.files['pem']) {
+		req.session.pem = req.files['pem'][0];
+		req.session.pem.data = req.session.pem.buffer.toString();
+		delete req.session.pem.buffer
+	}
+	if(req.files['pub']) {
+		req.session.pub = req.files['pub'][0];
+		req.session.pub.data = req.session.pub.buffer.toString();
+		delete req.session.pub.buffer;
+	}
+
+	return res.render('delayredirect', { message: 'success', url: 'dashboard', delay: 2000 });
 });
 
 var api = require('./api/index.js');

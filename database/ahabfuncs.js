@@ -120,7 +120,7 @@ ahabFuncs.prototype.listSlices = function() {
 
 /* returns a javascript array of resource names
 */
-ahabFuncs.prototype.getAllResources = function(slicename) {
+ahabFuncs.prototype.getResourcesLists = function(slicename) {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
 	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
@@ -128,10 +128,19 @@ ahabFuncs.prototype.getAllResources = function(slicename) {
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 
 	java.callMethodSync(s, 'getAllResources').toStringSync()
+	var funcs = ["getAllResources", "getInterfaces", "getLinks", "getBroadcastLinks", "getNodes", "getComputeNodes", "getStorageNodes", "getStitchPorts"];
+	var names = ["allResources", "interfaces", "links", "broadcastLinks", "nodes", "computeNodes", "storageNodes", "stitchPorts"];
+
+	var resources = {};
+	for(let i = 0; i < funcs.length; i++) {
+		resources[names[i]] = java.callMethodSync(s, funcs).toStringSync().slice(1, -1).replace(/ /g,'').split(',');
+	}
+	return resources;
 }
 
-/* returns a javascript object of key-values with resource name as key and state as value
-*/
+/** 
+ * returns a javascript object of key-values with resource name as key and state as value
+ */
 ahabFuncs.prototype.getAllResourceStatuses = function(slicename) {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);

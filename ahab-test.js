@@ -389,7 +389,7 @@ function getSliceProxy() {
 
 function getSliceInfo(slicename) {
 	var sliceProxy = getSliceProxy();
-	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, 'exslice1');
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 	var funcs = ["getAllResources", "getInterfaces", "getLinks", "getBroadcastLinks", "getNodes", "getComputeNodes", "getStorageNodes", "getStitchPorts"];
 
 	for(let f of funcs) {
@@ -399,12 +399,38 @@ function getSliceInfo(slicename) {
 
 function test() {
 
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-	console.log(java.callMethodSync(ctx, 'toString'));
+	var sctx = java.newInstanceSync('org.renci.ahab.libtransport.SliceAccessContext');
+	var fac = java.newInstanceSync('org.renci.ahab.libtransport.util.SSHAccessTokenFileFactory', pub, false);
+	var t = java.callMethodSync(fac, "getPopulatedToken");
+	java.callMethodSync(sctx, "addToken", "xin", "xin", t);
+	java.callMethodSync(sctx, "addToken", "xin", t);
+	console.log(sctx+"");
+
+	var sliceProxy = getSliceProxy();
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", 'create', sliceProxy, sctx, 'excross2');
+
+	var n1 = java.callMethodSync(s, "addComputeNode", "ComputeNode0");
+	java.callMethodSync(n1, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","centos6.7-v1.1.0");
+	java.callMethodSync(n1, "setNodeType", "XO Small");
+	java.callMethodSync(n1, "setDomain", "RENCI (Chapel Hill, NC USA) XO Rack");
+	//	java.callMethodSync(newnode, "setPostBootScript", "master post boot script");
+
+	var n2 = java.callMethodSync(s, "addComputeNode", "ComputeNode1");
+	java.callMethodSync(n2, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","centos6.7-v1.1.0");
+	java.callMethodSync(n2, "setNodeType", "XO Small");
+	java.callMethodSync(n2, "setDomain", "UvA (Amsterdam, The Netherlands) XO Rack");
 
 
 
+	var net = java.callMethodSync(s, "addBroadcastLink", "Link1");
 
+	var node1 = java.callMethodSync(s, "getResourceByName", "ComputeNode0");
+	var node2 = java.callMethodSync(s, "getResourceByName", "ComputeNode1");
+	java.callMethodSync(net, "stitch", node1);
+	java.callMethodSync(net, "stitch", node2);
+
+
+	java.callMethodSync(s, "commit");
 
 
 	//getSliceInfo();

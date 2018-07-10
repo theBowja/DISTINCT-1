@@ -11,14 +11,14 @@ html, body {
 	order: 1;
 	flex: 1;
 	padding: 15px;
-	border-right: 2px solid black;
+	border-right: 1px dotted grey;
 }
 
 .left {
 	order: 2;
 	flex: 2;
 	padding: 15px;
-	border-right: 1px solid black;
+	border-right: 3px solid black;
 	overflow-y: auto;
 
 	display: flex;
@@ -27,9 +27,9 @@ html, body {
 
 .right {
 	order: 3;
-	flex: 2;
+	flex: 3;
 	padding: 15px;
-	border-left: 1px solid black;
+	border-left: 2px solid black;
 	overflow-y: auto;
 
 	display: flex;
