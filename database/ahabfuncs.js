@@ -118,9 +118,9 @@ ahabFuncs.prototype.listSlices = function() {
 	return java.callMethodSync(sliceProxy, "listMySlices");
 };
 
-/* returns a javascript array of resource names
+/* returns a javascript object of resource names
 */
-ahabFuncs.prototype.getResourcesLists = function(slicename) {
+ahabFuncs.prototype.listResources = function(slicename) {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
 	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
@@ -141,7 +141,7 @@ ahabFuncs.prototype.getResourcesLists = function(slicename) {
 /** 
  * returns a javascript object of key-values with resource name as key and state as value
  */
-ahabFuncs.prototype.getAllResourceStatuses = function(slicename) {
+ahabFuncs.prototype.listResourceStatuses = function(slicename) {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
 	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));

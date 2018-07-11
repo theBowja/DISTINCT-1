@@ -64,6 +64,11 @@ function evaluateOptions() {
 				i+=1;
 				break;
 
+			case '-m': case '-manifest': // manifest
+				getManifest(options[i+1]);
+				i+=1;
+				break;
+
 			case '-si': case '-sliceinfo': // slice info
 				getSliceInfo(options[i+1]);
 				i+=1;
@@ -85,125 +90,6 @@ function evaluateOptions() {
 		}
 	}
 	console.log("options finished evaluating");
-}
-
-function listSlicesAsync() {
-	console.log("listSlicesAsync()");
-	//var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-
-	var ifacP = java.newInstancePromise('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctxP = java.newInstancePromise('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-	var urlP = java.newInstancePromise('java.net.URL', 'https://geni.renci.org:11443/orca/xmlrpc');
-	var p1 = Promise.all([ifacP, ctxP, urlP])
-		.then( function([ifac, ctx, url]) {
-			return java.callMethodSync(ifac, "getSliceProxy", ctx, url);
-		})
-		.then( function(sliceProxy) {
-			//console.log(sliceProxy);
-			return java.callMethodSync(sliceProxy, "listMySlices");
-		})
-		.then( function(list) {
-			console.log(list);
-		})
-		.catch(function(err) {
-			console.log(err);
-		});
-
-	// console.log("callback h");
-	// var ifac = null;
-	// var ctx = null;
-	// var url = null;
-
-	// java.newInstance('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory', function(err, instance) {
-	// 	if (err) return console.log("1:"+err);
-	// 	ifac = instance;
-	// 	complete();
-	// });
-	// java.newInstance('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem, function(err, instance) {
-	// 	if (err) return console.log("2:"+err);
-	// 	ctx = instance;
-	// 	complete();
-	// });
-	// java.newInstance('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc", function(err, instance) {
-	// 	if (err) return console.log("3:"+err);
-	// 	url = instance;
-	// 	complete();
-	// });
-
-	// function complete() {
-	// 	if (ifac === null || ctx === null || url === null) return;
-	// 	//console.log(ifac);
-	// 	java.callMethod(ifac, 'getSliceProxy', ctx, url, function(err, sliceProxy) {
-	// 		if (err) return console.log("4:"+err);
-	// 		console.log(ifac);
-	// 		java.callMethodSync(sliceProxy, "listMySlices")
-	// 		// java.callMethod(sliceProxy, 'listMySlices', function(err, list) {
-	// 		// 	if (err) return console.log("5:"+err);
-	// 		// 	console.log(list);
-	// 		// });
-	// 	});
-	// }
-
-	// java.newInstance('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory', function(err, ifac) {
-	// 	if (err) return console.log("1: "+err);
-
-	// 	java.newInstance('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem, function(err, ctx) {
-	// 		if (err) return console.log("2: "+err);
-
-	// 		java.newInstance('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc", function(err, url) {
-	// 			if (err) return console.log("3: "+err);
-
-	// 			java.callMethod(ifac, 'getSliceProxy', ctx, url, function(err, sliceProxy) {
-	// 				if (err) return console.log("4: "+err);
-	// 					console.log(sliceProxy);
-	// 					// var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	// 					// var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-	// 					// var url = java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc");
-	// 					//var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, url);
-
-	// 					java.callMethod(sliceProxy, "listMySlices", function(err, list) {
-	// 						if (err) return console.log("5: "+err);
-	// 						return console.log(list);
-	// 					});
-	// 					//console.log(java.callMethodSync(sliceProxy, "listMySlices"));
-	// 			});
-	// 		});
-	// 	});
-	// });
-
-}
-
-// java.ensureJvm(function(err) {
-// 	console.log("ensurejvm");
-// 	if(err) return console.log(err);
-// 	listSlicesAsync();
-// });
-
-//listSlicesAsync();
-
-// setTimeout(function() {
-// 	listSlicesAsync();
-// }, 5000);
-
-function promisemeplease() {
-
-
-	var ifacP = java.newInstancePromise('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctxP = java.newInstancePromise('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
-	var urlP = java.newInstancePromise('java.net.URL', 'https://geni.renci.org:11443/orca/xmlrpc');
-	var p1 = Promise.all([ifacP, ctxP, urlP])
-		.then( function([ifac, ctx, url]) {
-			return java.callMethodPromise(ifac, "getSliceProxy", ctx, url);
-		})
-		.then( function(sliceProxy) {
-			return java.callMethodPromise(sliceProxy, "listMySlices");
-		})
-		.then( function(list) {
-			console.log(list);
-		})
-		.catch(function(err) {
-			console.log(err);
-		});
 }
 
 function createSlicewithComputeNodes(slicename, numofnodes) {
@@ -237,80 +123,8 @@ function createSlicewithComputeNodes(slicename, numofnodes) {
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getDebugString"));
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getRequest"));
 
-
 	java.callMethodSync(s, "commit");
 }	
-
-function createSlicePromise(slicename, numofnodes) {
-	var sliceProxy = getSliceProxy();
-
-	var sctxP = java.newInstancePromise('org.renci.ahab.libtransport.SliceAccessContext');
-	var facP = java.newInstancePromise('org.renci.ahab.libtransport.util.SSHAccessTokenFileFactory', pub, false);
-	var tP = facP.then(function(fac) {
-		return java.callMethodPromise(fac, "getPopulatedToken");
-	});
-	var sP = Promise.all([sctxP, tP])
-	.spread(function(sctx, t) {
-		return Promise.all([sctxP, java.callMethodPromise(sctx, "addToken", "root", "root", t), 
-								   java.callMethodPromise(sctx, "addToken", "root", t)]);
-	})
-	.spread(function(sctx) {
-		return java.callStaticMethodPromise('org.renci.ahab.libndl.Slice', 'create', sliceProxy, sctx, slicename);
-	});
-
-	var nodesP = sP.then(function(s) { // add all nodes
-		var nodes = [{ name:"ComputeNode1", nodetype:"XO Small"}, {name:"ComputeNode2", nodetype:"XO Small"}];
-
-		return Promise.map(nodes, function(node) {
-			return java.callMethodPromise(s, 'addComputeNode', node.name).then(function(newnode) {
-				return Promise.all([java.callMethodPromise(newnode, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","centos6.7-v1.1.0"),
-									java.callMethodPromise(newnode, "setNodeType", node.nodetype) ]);
-			});
-		});
-	});
-
-	// var commitP = Promise.all([sP, nodesP])
-	// .spread(function(s, links) {
-	// 	return java.callMethodSync(s, 'commit');
-	// });
-
-	// var linksP = Promise.all([sP, nodesP])
-	// .spread(function(s, nodes) {
-	// 	var links = [{Name:"Link1", Source:"ComputeNode1", Target:"ComputeNode2"}];
-	// 	var link = links[0];
-	// 	// var net = java.callMethodSync(s, "addBroadcastLink", link.Name);
-
-	// 	// var node1 = java.callMethodSync(s, "getResourceByName", link.Source);
-	// 	// var node2 = java.callMethodSync(s, "getResourceByName", link.Target);
-	// 	// java.callMethodSync(net, "stitch", node1);
-	// 	// java.callMethodSync(net, "stitch", node2);
-	// 	// return true;
-
-	// 	return Promise.map(links, function(link) {
-	// 		var node1P = java.callMethodPromise(s, "getResourceByName", link.Source);
-	// 		var node2P = java.callMethodPromise(s, "getResourceByName", link.Target);
-	// 		var netP = java.callMethodPromise(s, "addBroadcastLink", link.Name);
-
-	// 		return Promise.all([node1P, node2P, netP]).spread(function(node1, node2, net) {
-	// 			return Promise.all([java.callMethodPromise(net, "stitch", node1),
-	// 								java.callMethodPromise(net, "stitch", node2)]);
-	// 		});
-	// 	});
-	// });
-
-
-	Promise.all([sP, nodesP])
-	.spread(function(s, links) {
-
-		var net = java.callMethodSync(s, "addBroadcastLink", "Link1");
-
-		var node1 = java.callMethodSync(s, "getResourceByName", "ComputeNode1");
-		var node2 = java.callMethodSync(s, "getResourceByName", "ComputeNode2");
-		java.callMethodSync(net, "stitch", node1);
-		java.callMethodSync(net, "stitch", node2);
-		return java.callMethodSync(s, 'commit');
-	});
-}
 
 function deleteSlice(slicename) {
 	var sliceProxy = getSliceProxy();
@@ -370,6 +184,15 @@ function getPublicIP(slicename, nodename) {
 	console.log("public ip of " + nodename + ": " + java.callMethodSync(node, "getManagementIP"));
 }
 
+function getManifest(slicename) {
+	var sliceProxy = getSliceProxy();
+	var manifest = java.callMethodSync(sliceProxy, 'sliceStatus', slicename);
+	var fs = require('fs');
+	var fpath = 'tmp/' + slicename + '.txt';
+	fs.writeFile(fpath, manifest, function() {
+		console.log('manifest done: ' + fpath);
+	});
+}
 
 function listSlices() {
 	var sliceProxy = getSliceProxy();
@@ -398,7 +221,15 @@ function getSliceInfo(slicename) {
 }
 
 function test() {
+	var sliceProxy = getSliceProxy();
+	var manifest = java.callMethodSync(sliceProxy, 'sliceStatus', 'excross2');
+	//console.log(manifest);
+	var fs = require('fs');
+	fs.writeFile('tmp/manifest.txt', manifest, function() {
+		console.log('manifest done: tmp/manifest.txt');
+	})
 
+	/*
 	var sctx = java.newInstanceSync('org.renci.ahab.libtransport.SliceAccessContext');
 	var fac = java.newInstanceSync('org.renci.ahab.libtransport.util.SSHAccessTokenFileFactory', pub, false);
 	var t = java.callMethodSync(fac, "getPopulatedToken");
@@ -431,6 +262,7 @@ function test() {
 
 
 	java.callMethodSync(s, "commit");
+	/*
 
 
 	//getSliceInfo();

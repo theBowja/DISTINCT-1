@@ -39,7 +39,7 @@ ahab.get('/listactiveslices', function(req, res) {
  * returns an object of resources of the slice
  */
 ahab.get('/listresources/:slicename', function(req, res) {
-	ahabfuncs.callFunction(req.session.pem.data, null, 'getResourcesList', [req.params.slicename], function(err, data) {
+	ahabfuncs.callFunction(req.session.pem.data, null, 'listResources', [req.params.slicename], function(err, data) {
 		return res.send(data);
 	});
 });
@@ -47,8 +47,8 @@ ahab.get('/listresources/:slicename', function(req, res) {
 /** 
  * returns a javascript object of key-values with resource name as key and state as value
  */
-ahab.get('/slicestatus/:slicename', function(req, res) {
-	ahabfuncs.callFunction(req.session.pem.data, null, 'getAllResourceStatuses', [req.params.slicename], function(err, data) {
+ahab.get('/resourcestatuses/:slicename', function(req, res) {
+	ahabfuncs.callFunction(req.session.pem.data, null, 'listResourceStatuses', [req.params.slicename], function(err, data) {
 		return res.send(data);
 	});
 });

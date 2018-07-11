@@ -1,49 +1,10 @@
-function postEvent(newEvent) {
-	$.ajax({
-		type: 'POST',
-		url: '/u/api/events',
-		data: { newevent: newEvent },
-		success: function() {
-			$('#calendar').fullCalendar('refetchEvents');
-			$('#addeventalert').text('success').show(0).delay(5000).hide(0);
-			$('#addeventmodal').modal('toggle');
-		},
-		error: function() {
-			console.log("error");
-			$('#calendar').fullCalendar('refetchEvents');
-			$('#addeventalert').text("error").show(0).delay(5000).hide(0);
-		}
-	});
-}
-
-// closure to emulate private variables
-// This function merely toggles and updates the active states of the buttons
-var updateStates = (function() {
-	var states = {
-		toggleList: false,
-		viewMyEvents: false
-	};
-
-	return function(toggle) {
-		states[toggle] = !states[toggle];
-		$(".fc-toggleList-button").toggleClass("fc-state-active", states.toggleList);
-		$(".fc-viewMyEvents-button").toggleClass("fc-state-active", states.viewMyEvents);
-	};
-})();
-
 $(document).ready(function() {
-	$("#eventform").on("submit", function(e) {
-		e.preventDefault();
-		$('#addeventalert').text("creating...").show(0);
+	$('#calendar').fullCalendar({
+		defaultView: 'timelineWeek',
+		events: {
+			url: "/api/events"
+		},
 
-		var eventdata = $('#eventform').serializeArray().reduce(function(obj, item) {
-			obj[item.name] = item.value;
-			return obj;
-		}, {});
-		eventdata.start = new Date(eventdata.start).toISOString();
-		eventdata.end = new Date(eventdata.end).toISOString();
-
-		postEvent(eventdata);
 	});
 
 	$("#calendar").fullCalendar({
@@ -71,11 +32,7 @@ $(document).ready(function() {
 			url: "/u/api/events"
 		},
 		timezone: "local",
-		buttonText: {
-			listDay: "day",
-			listWeek: "week",
-			listMonth: "month"
-		},
+
 		customButtons: {
 			toDashboard: {
 				text: "Dashboard",
@@ -193,3 +150,18 @@ $(document).ready(function() {
 	});
 
 });
+
+// closure to emulate private variables
+// This function merely toggles and updates the active states of the buttons
+var updateStates = (function() {
+	var states = {
+		toggleList: false,
+		viewMyEvents: false
+	};
+
+	return function(toggle) {
+		states[toggle] = !states[toggle];
+		$(".fc-toggleList-button").toggleClass("fc-state-active", states.toggleList);
+		$(".fc-viewMyEvents-button").toggleClass("fc-state-active", states.viewMyEvents);
+	};
+})();

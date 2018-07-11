@@ -164,10 +164,11 @@ script.
   $('#reservebutton').on('click', function(e) {
     e.preventDefault();
     $('#flashmessage').text('reserving resouce').show(0);
-    $.ajax({
-      type: 'GET',
-      url: '/api/ahab/reserve/' + "#{topoloc}" 
-    })
+    window.location.href = '/reserve/' + "#{topoloc}";
+    //$.ajax({
+    //  type: 'GET',
+    //  url: '/reserve/' + "#{topoloc}" 
+    //})
 
   });
 
