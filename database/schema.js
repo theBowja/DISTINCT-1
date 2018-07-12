@@ -61,17 +61,17 @@ schema.defs.activeslice =
 
 /* ========================== powergrid testbed resources ==================== */
 
-var resources = 'res1'
+schema.rsvnresources = ['res1','res2']
 /**
  * also known as 'event'
  * times are stored in UTC
  */
-schema.reservation = 
+schema.defs.reservation = 
 `reservation (
 	Id INT NOT NULL AUTO_INCREMENT,
 
 	userid INT NOT NULL,
-	resource SET(${resources}) NOT NULL,
+	resource SET(${"'"+schema.rsvnresources.join("','")+"'"}) NOT NULL,
 	slicename VARCHAR(63) NOT NULL,
 
 	start DATETIME NOT NULL,

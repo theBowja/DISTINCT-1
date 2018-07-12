@@ -6,15 +6,34 @@ html(lang='en')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.min.js')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.min.css')
     //- the following is for datetime picker
     script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css')
 
-    script.
-      var GROUP = '#{group}';
-    script(src='/javascripts/scheduler.js')
+    link(rel='stylesheet', href='/stylesheets/scheduler.css')
 
-  body(style='height:100%-0px;padding:10px;')
-    .left
-    .right
-      #calendar
+    script(src='/javascripts/scheduler.js')
+    script.
+
+  body(style='height:100%')
+    .flex-container
+      .left
+        a(href='/dashboard') Dashboard
+        .datetimepicker#start
+        input#duration(type='button' value='duration')
+
+        button clear all resources
+        .lisel add resourcce (arrow)
+        button restore all resources
+        br
+        br
+        br
+        div selected resources:
+        ul.list-group
+        button reserve selected resources
+
+
+      .right
+        #calendar

@@ -244,7 +244,6 @@ function test() {
 	java.callMethodSync(n1, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","centos6.7-v1.1.0");
 	java.callMethodSync(n1, "setNodeType", "XO Small");
 	java.callMethodSync(n1, "setDomain", "RENCI (Chapel Hill, NC USA) XO Rack");
-	//	java.callMethodSync(newnode, "setPostBootScript", "master post boot script");
 
 	var n2 = java.callMethodSync(s, "addComputeNode", "ComputeNode1");
 	java.callMethodSync(n2, "setImage", "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml","0c22c525b8a4f0f480f17587557b57a7a111d198","centos6.7-v1.1.0");

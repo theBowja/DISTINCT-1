@@ -310,7 +310,7 @@ dbfuncs.deleteReservation = function(userid, rsvnid, callback) {
  * @param rsvnid {string} - id for the specific reservation
  * @param resources {array} - of strings
  */
-dbfuncs.updateReservationResource = function(userid, rsvnid, resources callback) {
+dbfuncs.updateReservationResource = function(userid, rsvnid, resources, callback) {
 	conn.query('UPDATE reservation SET resources = ? WHERE userid = ? AND Id = ?', [resources.join(), userid, rsvnid], function(err, results, fields) {
 		return callback(err, resultss);
 	});

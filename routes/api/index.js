@@ -8,8 +8,8 @@ var rsvn = require('./reservation.js');
 
 
 api.use('/', topo);
-api.use('/', ahab);
 api.use('/', rsvn)
+api.use('/', ahab);
 
 
 module.exports = api;

@@ -29,7 +29,7 @@ router.get('/profile', function(req, res) {
 });
 
 router.get('/scheduler', function(req, res) {
-	return res.render('scheduler', { group: req.user._id} );
+	return res.render('scheduler');
 });
 
 router.get('/organizer', function(req, res) {
@@ -73,16 +73,16 @@ router.get('/editor/:topoloc', function(req, res) {
 	});
 });
 
-router.get('/reserve', function(req, res) {
-	return res.render('reserve');
+router.get('/createslice', function(req, res) {
+	return res.render('createslice');
 });
 
-router.get('/reserve/:topoloc', function(req, res) {
+router.get('/createslice/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
 		if (err) { console.log(err); return res.redirect('editor'); } // no permission
 
 		fsfuncs.readfile(req.params.topoloc, function(err, body) {
-			return res.render('reserve', { topology: body.toString(), topoloc: req.params.topoloc });
+			return res.render('createslice', { topology: body.toString(), topoloc: req.params.topoloc });
 		});
 	});
 });
@@ -103,6 +103,7 @@ router.get('/uploadkeys/:specific', function(req, res) {
 });
 
 router.post('/uploadkeys', upload.fields([{ name: 'pem', maxCount: 1}, { name: 'pub', maxCount: 1 }]), function(req, res) {
+	console.log(req.files['pem'][0]);
 	if(req.files['pem']) {
 		req.session.pem = req.files['pem'][0];
 		req.session.pem.data = req.session.pem.buffer.toString();

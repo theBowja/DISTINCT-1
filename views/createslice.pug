@@ -16,7 +16,7 @@ html
           button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load topology
           ul.dropdown-menu(role='menu')
 
-        form(method='post', action='/api/reserve/'+topoloc, enctype='multipart/form-data')
+        form(method='post', action='/api/topo/'+topoloc, enctype='multipart/form-data')
           span Upload your ssl certificate and public ssh key
           br
           br

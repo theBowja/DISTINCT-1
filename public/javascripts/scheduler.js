@@ -1,12 +1,37 @@
 $(document).ready(function() {
 	$('#calendar').fullCalendar({
+		height: "parent",
+		header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'timelineWeek,timelineMonth,timelineYear'
+        },
+        resourceAreaWidth: '20%',
+        resourceRender: function(resourceObj, labelTds, bodyTds) {
+        	labelTds.data(resourceObj)
+        	labelTds.on("click", function() {
+        		labelTds.toggleClass('selected');
+        		updateSelectedList();
+        	});
+        },
 		defaultView: 'timelineWeek',
-		events: {
-			url: "/api/events"
-		},
+		resources: '/api/rsvnresources',
+		events: '/api/listreservations'
 
 	});
+});
 
+function updateSelectedList() {
+	$('ul.list-group').empty();
+	$('.selected').each(function(index, element) {
+		let id = $(element).data().id;
+		let l = $('<li>'+id+'</id>');
+		l.data(id)
+		l.appendTo($('ul.list-group'))
+	})
+}
+
+/*
 	$("#calendar").fullCalendar({
 		height: "parent",
 		navLinks: true,
@@ -165,3 +190,4 @@ var updateStates = (function() {
 		$(".fc-viewMyEvents-button").toggleClass("fc-state-active", states.viewMyEvents);
 	};
 })();
+*/
