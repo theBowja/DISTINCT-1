@@ -549,7 +549,7 @@ var SVGGRAPH = function() {
 			exportObj.links.push({"source":link.data()[i].source.name, "target":link.data()[i].target.name});
 		}
 
-		d3.select("#jsontextarea").property("value", JSON.stringify(exportObj));
+		return JSON.stringify(exportObj);
 	}
 
 	// stuff we are exposing

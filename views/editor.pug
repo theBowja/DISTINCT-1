@@ -4,14 +4,17 @@ html(lang='en')
     title editor
     script(src='https://d3js.org/d3.v5.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/ajv/5.0.0/ajv.min.js')
-    script(src='/javascripts/svgeditor.js')
-    script(src='/javascripts/svgeditor_optionspanel.js')
+    script(src='/javascripts/editor.js')
+    script(src='/javascripts/editor_svg.js')
+    script(src='/javascripts/editor_svgoptionspanel.js')
     script(src='/javascripts/topologySchema.js')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/svgeditor.css')
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.js')
 
   body(onload='SVGGRAPH=SVGGRAPH();'+((data)?'loadfile()':''))
     .left
@@ -26,17 +29,20 @@ html(lang='en')
       //- button(type='button' onclick='randomgraph()') big
       // I really don't know how to label these
       // also these bootstrap buttons look kinda out of place
-      .btn-group.btn-group-sm#withDropdown
-        button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load
-        button.btn.btn-default#savebutton(type='button') save
+      br
+      #withDropdown
+        button.btn.btn-default(type='button' onclick='listAttachments()' title='loads topology into textarea and svg' data-toggle='dropdown') load topology
         ul.dropdown-menu(role='menu')
-        span#flashmessage(style='display: none;') don't panic
+      .btn-group.btn-group-sm
+        button.btn.btn-default#savetextareabutton(type='button' title='saves topology from textarea') save from textarea
+        button.btn.btn-default#savesvgbutton(type='button' title='saves topology from svg') save from graph
+      span#flashmessage(style='display: none;') don't panic
       button.btn.btn-default#reservebutton(type='button') reserve resource
       input(type='file')
       .btn-group.btn-group-sm
         button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_import();') import
         button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_clear()') clear
-        button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_export();') export
+        button.btn.btn-default#exportbutton(type='button') export
       textarea#jsontextarea(name='jsontextarea')
     .right
       #svgfocus(tabindex='0' style='display:inline-block')
@@ -120,58 +126,6 @@ html(lang='en')
       obj = JSON.stringify({ nodes: rnodes, links: rlinks });
     d3.select("#jsontextarea").property("value", obj);
   }
-
-script.
-  function listAttachments() {
-    var drop = d3.select("#withDropdown");
-    // if it is already open, then destroy the dropdown list
-    if (drop.classed("open")) { 
-      drop.select(".dropdown-menu").html(null);
-    } else { // if dropdown is not open, then get the list of attachments and show it
-      $('#flashmessage').text("loading...").show(0);
-      $.get("/api/listtopologies", function(result) {
-        drop.select(".dropdown-menu").selectAll("li").data(result)
-          .enter().append("li").append("a")
-            .attr("href", function(d) { return "/editor/" + d.location; })
-            .attr("tabindex", "-1")
-            .text(function(d) { return d.toponame; });
-        $('#flashmessage').text("loaded").hide(0);
-      });
-    }
-  }
-
-  $('textarea').keydown(function(e){
-    if(e.keyCode == 13) {
-      e.preventDefault();
-      return false;
-    }
-  })
-  $('#savebutton').on('click', function(e){
-    e.preventDefault();
-    $('#flashmessage').text("saving...").show(0);
-    $.ajax({
-      type: 'POST',
-      url: '/api/topo/' + "#{topoloc}", // last segment of url
-      data: { jsontopo: $('#jsontextarea').val() },
-      success: function() { 
-        $('#flashmessage').text("success").show(0).delay(3500).hide(0);
-      },
-      error: function() {
-        $('#flashmessage').text("incorrect format").show(0).delay(3500).hide(0);
-      }
-    });
-  });
-  $('#reservebutton').on('click', function(e) {
-    e.preventDefault();
-    $('#flashmessage').text('reserving resouce').show(0);
-    window.location.href = '/reserve/' + "#{topoloc}";
-    //$.ajax({
-    //  type: 'GET',
-    //  url: '/reserve/' + "#{topoloc}" 
-    //})
-
-  });
-
 
 if data
   script.

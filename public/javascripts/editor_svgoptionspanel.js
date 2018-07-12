@@ -93,7 +93,7 @@ var OPTIONSPANEL = (function (shapes) {
 			.attr("x", d.x)
 			.attr("y", d.y)
 			.attr("width", "300px")
-			.attr("height", "275px"); // required for firefox because width/height does not map from css
+			.attr("height", "346px"); // required for firefox because width/height does not map from css
 		var panel = foreignObject.append("xhtml:div")
 			.attr("class", "panel-default");
 		// HEADER
@@ -167,7 +167,9 @@ var OPTIONSPANEL = (function (shapes) {
 			.attr("class", "btn btn-default btn-sm")
 			.attr("type", "submit")
 			.on("click", function() { updateNodeOptionsPanel(panel,d3.select(shapedNode),shape); })
-			.text("Save changes");	        	
+			.text("Save changes");
+
+		$('.panel-body').slimScroll({ wheelStep: 2 });
 	}
 
 	function dragFilterNodeOptionsPanel(d,i) {
