@@ -37,11 +37,11 @@ var VISUALIZE = function() {
     	.text(function(d) { return d.id; });
 
 	simulation
-    	.nodes(graph.nodes)
+    	.nodes(nodes)
     	.on("tick", ticked);
 
 	simulation.force("link")
-      .links(graph.links);
+      .links(links);
 
 	function ticked() {
     	link

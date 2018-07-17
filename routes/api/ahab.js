@@ -62,7 +62,7 @@ ahab.use( function(req, res, next) {
 	}
 });
 
-ahab.post('/create/:topoloc', function(req, res) {
+ahab.get('/create/:topoloc', function(req, res) {
 
 	// check if user has the read permission
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
@@ -78,8 +78,6 @@ ahab.post('/create/:topoloc', function(req, res) {
 		});
 	});
 
-	// fsfuncs.deletefile(pem, function(err) { if (err) console.error(err); });
-	// fsfuncs.deletefile(pub, function(err) { if (err) console.error(err); });
 });
 
 

@@ -7,9 +7,12 @@ html
     link(rel='stylesheet', href='/stylesheets/slicestatus.css')
 
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='/javascripts/visualize.js')
+
   body(onload='VISUALIZE=VISUALIZE();')
     .flex-container
       .left
+        a(href='/dashboard') Dashboard
         h1= slicename
         br
         span#message loading graph...
@@ -46,7 +49,7 @@ script.
     url: '/api/listresources/' + "#{slicename}",
     type: 'GET',
     success: function(data) {
-      #('#message').empty();
+      $('#message').empty();
       VISUALIZE.svg_import(data);
     },
     error: function() {

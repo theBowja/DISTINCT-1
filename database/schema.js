@@ -61,7 +61,7 @@ schema.defs.activeslice =
 
 /* ========================== powergrid testbed resources ==================== */
 
-schema.rsvnresources = ['res1','res2']
+schema.rsvnresources = ['res1','res2','res3'];
 /**
  * also known as 'event'
  * times are stored in UTC

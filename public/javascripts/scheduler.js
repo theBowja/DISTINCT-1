@@ -1,4 +1,20 @@
 $(document).ready(function() {
+	$('#dtpstart').datetimepicker({
+		minDate: moment(),
+		stepping: 30
+	});
+	$('#dtpend').datetimepicker({
+		maxDate: moment().add(1, "years"),
+		stepping: 30,
+		useCurrent: false
+	});
+    $("#dtpstart").on("dp.change", function (e) {
+        $('#dtpstart').data("DateTimePicker").minDate(e.date);
+    });
+    $("#dtpend").on("dp.change", function (e) {
+        $('#dtpend').data("DateTimePicker").maxDate(e.date);
+    });
+
 	$('#calendar').fullCalendar({
 		height: "parent",
 		header: {
@@ -19,6 +35,7 @@ $(document).ready(function() {
 		events: '/api/listreservations'
 
 	});
+
 });
 
 function updateSelectedList() {

@@ -4,10 +4,13 @@ html
     title createslice
     script(src='https://d3js.org/d3.v5.min.js')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/reserve.css')
+    link(rel='stylesheet', href='/stylesheets/createslice.css')
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+
+    script(src='/javascripts/createslice.js')
+
   body
     .flex-container
       .left
@@ -19,18 +22,25 @@ html
           ul.dropdown-menu(role='menu')
         br
         if topology
-          form(method='post', action='/api/topo/'+topoloc, enctype='multipart/form-data')
+          form#upload(method='post', enctype='multipart/form-data')
             span Upload your ssl certificate and public ssh key
             br
+            span 'Choose File' will overwrite what's saved in your session
+            br
+            br
             span SSL certificate given by GENI certificate manager
-            input(type='file', name='sslcert', required)
+            input#pem(type='file', name='pem')
+            span#pemname= pemname
             br
             br
             span SSH public key
-            input(type='file', name='sshpub', required)
+            input#pub(type='file', name='pub')
+            span#pubname= pubname
             br
             br
-            input#reservebutton(type='submit', value='Make slice!', name='submit')
+            span#flashmessage(style='display: none;') don't panic
+            br
+            input#createslicebutton(type='submit', value='Make slice!', name='submit')
       .right
 
         if topology
@@ -42,22 +52,5 @@ html
 if topology
   script.
     var topology = JSON.parse( !{JSON.stringify(topology).replace(/<\//g, "<\\/")} );
-
 script.
-  function listAttachments() {
-    var drop = d3.select("#withDropdown");
-    // if it is already open, then destroy the dropdown list
-    if (drop.classed("open")) { 
-      drop.select(".dropdown-menu").html(null);
-    } else { // if dropdown is not open, then get the list of attachments and show it
-      //$('#flashmessage').text("loading...").show(0);
-      $.get("/api/listtopologies", function(result) {
-        drop.select(".dropdown-menu").selectAll("li").data(result)
-          .enter().append("li").append("a")
-            .attr("href", function(d) { return "/createslice/" + d.location; })
-            .attr("tabindex", "-1")
-            .text(function(d) { return d.toponame; });
-        //$('#flashmessage').text("loaded").hide(0);
-      });
-    }
-  }
+  TOPOLOC = "#{topoloc}";
