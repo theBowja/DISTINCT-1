@@ -430,7 +430,6 @@ var SVGGRAPH = function() {
 	function tick() {
 		node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-		console.log(d3.select(link).datum())
 		link.attr("x1", function(d) { return d.source.x; })
 			.attr("y1", function(d) { return d.source.y; })
 			.attr("x2", function(d) { return d.target.x; })

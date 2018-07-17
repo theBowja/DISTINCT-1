@@ -4,46 +4,52 @@ html(lang='en')
     title editor
     script(src='https://d3js.org/d3.v5.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/ajv/5.0.0/ajv.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.js')
+
     script(src='/javascripts/editor.js')
     script(src='/javascripts/editor_svg.js')
     script(src='/javascripts/editor_svgoptionspanel.js')
     script(src='/javascripts/topologySchema.js')
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/svgeditor.css')
-
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.js')
+    link(rel='stylesheet', href='/stylesheets/editor.css')
+    link(rel='stylesheet', href='/stylesheets/editor_svg.css')
 
   body(onload='SVGGRAPH=SVGGRAPH();'+((data)?'loadfile()':''))
     .left
-      button#help.btn.btn-info(type='button' data-toggle='modal' data-target='#helpModal') help
-      a(href='/dashboard') Dashboard
-      br
-      br
-      .precaption fileName
-      textarea#fileName(contenteditable='true' maxlength='25')= fileName || 'untitled'
-      br
-      br
-      //- button(type='button' onclick='randomgraph()') big
-      // I really don't know how to label these
-      // also these bootstrap buttons look kinda out of place
-      br
-      #withDropdown
-        button.btn.btn-default(type='button' onclick='listAttachments()' title='loads topology into textarea and svg' data-toggle='dropdown') load topology
-        ul.dropdown-menu(role='menu')
-      .btn-group.btn-group-sm
-        button.btn.btn-default#savetextareabutton(type='button' title='saves topology from textarea') save from textarea
-        button.btn.btn-default#savesvgbutton(type='button' title='saves topology from svg') save from graph
-      span#flashmessage(style='display: none;') don't panic
-      button.btn.btn-default#reservebutton(type='button') reserve resource
-      input(type='file')
-      .btn-group.btn-group-sm
-        button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_import();') import
-        button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_clear()') clear
-        button.btn.btn-default#exportbutton(type='button') export
-      textarea#jsontextarea(name='jsontextarea')
+      .top
+        button#help.btn.btn-info(type='button' data-toggle='modal' data-target='#helpModal') help
+        a(href='/dashboard') Dashboard
+        br
+        a(href='/organizer') Organizer
+        br
+        p(contenteditable='true') LOL
+        br
+        .precaption fileName
+        textarea#fileName(contenteditable='true' maxlength='25')= fileName || 'untitled'
+        br
+        br
+        //- button(type='button' onclick='randomgraph()') big
+        // I really don't know how to label these
+        // also these bootstrap buttons look kinda out of place
+        br
+        #withDropdown
+          button.btn.btn-default(type='button' onclick='listAttachments()' title='loads topology into textarea and svg' data-toggle='dropdown') load topology 
+            span.caret
+          ul.dropdown-menu(role='menu')
+        .btn-group.btn-group-sm
+          button.btn.btn-default#savetextareabutton(type='button' title='saves topology from textarea') save from textarea
+          button.btn.btn-default#savesvgbutton(type='button' title='saves topology from svg') save from graph
+        span#flashmessage(style='display: none;') don't panic
+        button.btn.btn-sm.btn-default#createslicebutton(type='button') create slice (please save first)
+        input(type='file')
+      .bottom
+        button.btn.btn-sm.btn-default(type='button' onclick='SVGGRAPH.svg_clear()') clear textarea
+        .btn-group.btn-group-sm
+          button.btn.btn-default(type='button' onclick='SVGGRAPH.svg_import();') textarea to graph
+          button.btn.btn-default#exportbutton(type='button') graph to textarea
+        textarea#jsontextarea(name='jsontextarea')
     .right
       #svgfocus(tabindex='0' style='display:inline-block')
         svg#editor(width='100%' height='100%' style='border: 1px solid black;')

@@ -1,60 +1,3 @@
-body {
-	display: flex;
-}
-
-.left {
-	order: 1;
-	flex: 1;
-
-	padding: 10px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	height: 100%;
-/*	position: relative;
-*/}
-
-.right {
-	order: 2;
-	flex: 4;
-
-	padding: 10px;
-
-	height: 100%;
-}
-
-#fileName {
-	font-size: 20px;
-}
-
-button#help {
-	position: relative;
-	float: right;
-}
-
-.precaption {
-	font-size: 10px;
-}
-
-#withDropdown {
-	position: relative; /* allows menu to display properly */
-}
-
-textarea {
-	width: 100%;
-	max-width: 100%;
-}
-
-textarea#fileName {
-	height: 36px;
-}
-
-textarea#jsontextarea {
-	height: 250px;
-	max-height: 100%;
-}
-
-/* The following marks all the SVG graph stuff */
-
 svg#editor {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -192,7 +135,11 @@ line#draglink {
 		background-color: inherit;
 	}
 
-	option {
+	foreignObject option {
 		font-size: 16px;
 	}
 
+	textarea.form-control {
+		resize: vertical;
+		overflow: hidden; /* because Chrome freaks out when it sees a scrollbar */
+	}

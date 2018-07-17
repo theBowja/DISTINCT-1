@@ -23,6 +23,10 @@ topo.get('/topo/:topoloc', function(req, res) {
 	});
 });
 
+/**
+ * Creates a new topology file. 
+ * @returns topoloc on success
+ */
 topo.post('/topo/:topoloc', function(req, res) {
 	var data = req.body.jsontopo;
 	// test if it is a json file, otherwise don't accept
@@ -47,7 +51,8 @@ topo.post('/topo/:topoloc', function(req, res) {
 
 	// check if user has the write permission
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
-		if (err && err === "PERMISSION_NOT_FOUND" || perm && perm.role === "readonly") return res.sendStatus(403); // FORBIDDEN
+		if (err && err === "PERMISSION_NOT_FOUND" || perm && perm.role === "readonly")
+			{ console.log(err); return res.sendStatus(403); } // FORBIDDEN
 		if (err && err !== "FILE_NOT_FOUND") { console.log(err); return res.sendStatus(500); }
 
 		// writing the file
@@ -57,7 +62,7 @@ topo.post('/topo/:topoloc', function(req, res) {
 				if (err) { console.log(err); return res.sendStatus(500); }
 				fsfuncs.writefile(topo.location, data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
-					return res.sendStatus(200);
+					return res.send(topo.location);
 				});
 			});
 		} else { 
@@ -67,7 +72,7 @@ topo.post('/topo/:topoloc', function(req, res) {
 				fsfuncs.writefile(req.params.topoloc, data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
 
-					return res.sendStatus(200);
+					return res.send(req.params.topoloc);
 				});
 			});
 		}

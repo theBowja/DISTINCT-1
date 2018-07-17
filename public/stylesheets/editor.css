@@ -1,0 +1,72 @@
+body {
+	display: flex;
+}
+
+.left {
+	order: 1;
+	flex: 1;
+
+	padding: 10px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 100%;
+/*	position: relative; */
+	
+	display: flex;
+	flex-direction: column;
+}
+
+.top {
+	order: 1;
+	padding-bottom: 10px;
+	border-bottom: 1px solid grey;
+}
+
+.bottom {
+	order: 2;
+	padding-top: 10px;
+/*	border-top: 1px solid grey; */
+}
+
+.right {
+	order: 2;
+	flex: 4;
+
+	padding: 10px;
+
+	height: 100%;
+}
+
+#fileName {
+	font-size: 20px;
+}
+
+button#help {
+	position: relative;
+	float: right;
+}
+
+.precaption {
+	font-size: 10px;
+}
+
+#withDropdown {
+	position: relative; /* allows menu to display properly */
+}
+
+textarea {
+	width: 100%;
+	max-width: 100%;
+	resize: vertical;
+}
+
+textarea#fileName {
+	height: 36px;
+}
+
+textarea#jsontextarea {
+	height: 250px;
+	max-height: 100%;
+}
+
+

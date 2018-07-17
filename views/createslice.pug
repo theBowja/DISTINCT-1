@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title reserve
+    title createslice
     script(src='https://d3js.org/d3.v5.min.js')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/reserve.css')
@@ -11,24 +11,26 @@ html
   body
     .flex-container
       .left
+        a(href='/dashboard') Dashboard
+        br
         .btn-group.btn-group-sm#withDropdown
-
-          button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load topology
+          button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load topology 
+            span.caret
           ul.dropdown-menu(role='menu')
-
-        form(method='post', action='/api/topo/'+topoloc, enctype='multipart/form-data')
-          span Upload your ssl certificate and public ssh key
-          br
-          br
-          span SSL certificate given by GENI certificate manager
-          input(type='file', name='sslcert', required)
-          br
-          br
-          span SSH public key
-          input(type='file', name='sshpub', required)
-          br
-          br
-          input#reservebutton(type='submit', value='Make slice!', name='submit')
+        br
+        if topology
+          form(method='post', action='/api/topo/'+topoloc, enctype='multipart/form-data')
+            span Upload your ssl certificate and public ssh key
+            br
+            span SSL certificate given by GENI certificate manager
+            input(type='file', name='sslcert', required)
+            br
+            br
+            span SSH public key
+            input(type='file', name='sshpub', required)
+            br
+            br
+            input#reservebutton(type='submit', value='Make slice!', name='submit')
       .right
 
         if topology
@@ -52,7 +54,7 @@ script.
       $.get("/api/listtopologies", function(result) {
         drop.select(".dropdown-menu").selectAll("li").data(result)
           .enter().append("li").append("a")
-            .attr("href", function(d) { return "/reserve/" + d.location; })
+            .attr("href", function(d) { return "/createslice/" + d.location; })
             .attr("tabindex", "-1")
             .text(function(d) { return d.toponame; });
         //$('#flashmessage').text("loaded").hide(0);

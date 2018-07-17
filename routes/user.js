@@ -33,29 +33,10 @@ router.get('/scheduler', function(req, res) {
 });
 
 router.get('/organizer', function(req, res) {
-	var topologies = null;
-	var activeslices = null;
-
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
 		if (err) return console.log(err);
-		topologies = data;
-		complete();
+		return res.render('fileorganizer', { topologies: data, haspem: req.session.hasOwnProperty('pem') });
 	});
-
-	// dbfuncs.listActiveSlices(req.session.user.Id, function(err, data) {
-	// 	if (err) return console.log(err);
-	// 	activeslices = data;
-	// 	complete();
-	// });
-
-	// function complete() {
-	// 	if (topologies !== null && activeslices !== null)
-	// 		return res.render('fileorganizer', { topologies: topologies, activeslice: activeslices });
-	// }
-
-	function complete() {
-		return res.render('fileorganizer', { topologies: topologies, haspem: req.session.hasOwnProperty('pem') });
-	}
 });
 
 // query parameters: topoid, toponame
@@ -77,12 +58,17 @@ router.get('/createslice', function(req, res) {
 	return res.render('createslice');
 });
 
+/**
+ * if user does NOT have permission to access the topology, then it'll redirect to createslice
+ */
 router.get('/createslice/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
-		if (err) { console.log(err); return res.redirect('editor'); } // no permission
+		if (err) { console.log(err); return res.redirect('createslice'); } // no permission
 
 		fsfuncs.readfile(req.params.topoloc, function(err, body) {
-			return res.render('createslice', { topology: body.toString(), topoloc: req.params.topoloc });
+			var pemname = (req.session.pem) ? req.session.pem.originalname : "";
+			var pubname = (req.session.pub) ? req.session.pub.originalname : "";
+			return res.render('createslice', { topology: body.toString(), topoloc: req.params.topoloc, pemname: pemname, pubname: pubname });
 		});
 	});
 });
@@ -100,10 +86,11 @@ router.get('/uploadkeys/:specific', function(req, res) {
 		return res.render('upload', { pem: true } );
 	else if(req.params.specific === "pub")
 		return res.render('upload', { pub: true } );
+	else
+		return res.redirect('uploadkeys');
 });
 
 router.post('/uploadkeys', upload.fields([{ name: 'pem', maxCount: 1}, { name: 'pub', maxCount: 1 }]), function(req, res) {
-	console.log(req.files['pem'][0]);
 	if(req.files['pem']) {
 		req.session.pem = req.files['pem'][0];
 		req.session.pem.data = req.session.pem.buffer.toString();
