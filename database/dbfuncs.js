@@ -5,10 +5,11 @@ var uuidv4 = require('uuid/v4');
 var dbfuncs = {};
 
 
-/* Verifies user login using params: username, plaintextpassword.
-	Use bcrypt to compare passwords.
-	Returns: a user object containing: id, username
-*/
+/** 
+ * Verifies user login using params: username, plaintextpassword.
+ * Use bcrypt to compare passwords.
+ * Returns: a user object containing: id, username
+ */
 dbfuncs.login = function(username, password, callback) {
 	conn.query('SELECT * FROM user WHERE username = ?;', username, function(err, results, fields) {
 		if (err) return callback(err);
@@ -29,10 +30,11 @@ dbfuncs.login = function(username, password, callback) {
 
 };
 
-/* Creates a user in the database using params: username, email, and password.
-     This function hashes the password before inserting into the database.
-     Duplicate username is also checked and returns an error if there is.
-*/
+/**
+ * Creates a user in the database using params: username, email, and password.
+ * This function hashes the password before inserting into the database.
+ * Duplicate username is also checked and returns an error if there is.
+ */
 dbfuncs.createuser = function(username, email, password, callback) {
 	bcrypt.hash(password, 10, function(err, hash) {
 		var user = {
@@ -49,9 +51,14 @@ dbfuncs.createuser = function(username, email, password, callback) {
 	
 };
 
-/* returns permission object
+/* ========================================================================================= */
+/* ============================== DB FUNCTIONS: PERMISSION ================================= */
+/* ========================================================================================= */
 
-*/
+/**
+ * @returns {object} permission object
+ *
+ */
 dbfuncs.getPermission = function(userid, topoid, callback) {
 	conn.query('SELECT * FROM permission WHERE userid=? AND topoid=?', [userid, topoid], function(err, results, fields) {
 		if (err) return callback(err);
@@ -61,9 +68,10 @@ dbfuncs.getPermission = function(userid, topoid, callback) {
 	});
 };
 
-/* Gets the permission associated with the user and file location
-     callback: err may be FILE_NOT_FOUND or PERMISSION_NOT_FOUND
-     returns permission object
+/**
+ * Gets the permission associated with the user and file location
+ * @callback.err may be FILE_NOT_FOUND or PERMISSION_NOT_FOUND
+ * @returns {object} permission object
 */
 dbfuncs.getPermissionbyLocation = function(userid, location, callback) {
 	dbfuncs.getIdbyLocation(location, function(err, fileid) {
@@ -77,8 +85,9 @@ dbfuncs.getPermissionbyLocation = function(userid, location, callback) {
 	});
 };
 
-/* updates the permission associated with 
-*/
+/**
+ * updates the permission associated with 
+ */
 dbfuncs.updatePermission = function(role, callback) {
 	conn.query('UPDATE permission SET role = ? WHERE userid = ?', function(err, results, fields) {
 		if (err) return callback(err);
@@ -87,8 +96,9 @@ dbfuncs.updatePermission = function(role, callback) {
 	});
 };
 
-/* Gets the id associated with the file location.
-*/
+/**
+ * Gets the id associated with the file location.
+ */
 dbfuncs.getIdbyLocation = function(location, callback) {
 	conn.query('SELECT Id FROM topology WHERE location = ?', location, function(err, results, fields) {
 		if (err) return callback(err);
@@ -98,8 +108,13 @@ dbfuncs.getIdbyLocation = function(location, callback) {
 	});
 };
 
-/* Gets the topology object based on topoid
-*/
+/* =================================================================================== */
+/* ============================= DB FUNCTIONS: TOPOLOGY ============================== */
+/* =================================================================================== */
+
+/**
+ * Gets the topology object based on topoid
+ */
 dbfuncs.getTopology = function(topoid, callback) {
 	conn.query('SELECT * FROM topology WHERE Id = ?', topoid, function(err, results, fields) {
 		if (err) return callback(err);
@@ -108,8 +123,9 @@ dbfuncs.getTopology = function(topoid, callback) {
 	});
 };
 
-/* Gets the topology object association with the location
-*/
+/**
+ * Gets the topology object association with the location
+ */
 dbfuncs.getTopologybyLocation = function(location, callback) {
 	conn.query('SELECT * FROM topology WHERE location = ?', location, function(err, results, fields) {
 		if (err) return callback(err);
@@ -118,9 +134,10 @@ dbfuncs.getTopologybyLocation = function(location, callback) {
 	});
 };
 
-/* Gets a list of all topologies the user has access to using: userid.
-	 Returns an array of objects. The objects are of format: { toponame: toponame, location: locaiton }
-*/
+/**
+ * Gets a list of all topologies the user has access to using: userid.
+ * @returns {array} of objects. The objects are of format: { toponame: String, location: String }
+ */
 dbfuncs.listTopologies = function(userid, callback) {
 	conn.query('SELECT topology.toponame, topology.location FROM permission, topology WHERE permission.userid = ? AND permission.topoid = topology.Id;', userid, function (err, results, fields) {
 		if (err) return callback(err);
@@ -129,9 +146,10 @@ dbfuncs.listTopologies = function(userid, callback) {
 	});
 };
 
-/* creates a topology and its corresponding permission with userid and toponame
-     if something fails, then it undos any changes made.
-     returns the topology object (the object must have the 'location' key-value)
+/**
+ * creates a topology and its corresponding permission with userid and toponame
+ * if something fails, then it undos any changes made.
+ * @returns {object} - the topology object (the object must have the 'location' key-value)
 */
 dbfuncs.createTopology = function(userid, toponame, callback) {
 	var topology = {
@@ -163,8 +181,9 @@ dbfuncs.createTopology = function(userid, toponame, callback) {
 	});
 };
 
-/* Updates the topology. May change the fields for: toponame
-*/
+/**
+ * Updates the topology. May change the fields for: toponame
+ */
 dbfuncs.updateTopology = function(topoid, toponame, callback) {
 	conn.query('UPDATE topology SET toponame = ? WHERE Id = ?', [toponame, topoid], function(err, results, fields) {
 		if (err) return callback(err);
@@ -173,9 +192,9 @@ dbfuncs.updateTopology = function(topoid, toponame, callback) {
 	});
 };
 
-/* Deletes the topology and its associated permissions
-
-*/
+/**
+ * Deletes the topology and its associated permissions
+ */
 dbfuncs.deleteTopology = function(topoloc, callback) {
 	conn.query('DELETE topology, permission FROM topology INNER JOIN permission WHERE topology.location = ? AND topology.Id = permission.topoid', topoloc, function(err, results, fields) {
 		if (err) return callback(err);
@@ -183,6 +202,10 @@ dbfuncs.deleteTopology = function(topoloc, callback) {
 		return callback(null, results);
 	});
 };
+
+/* =================================================================================== */
+/* ============================== DB FUNCTIONS: SLICES =============================== */
+/* =================================================================================== */
 
 // TODO: use moment.js to increment expiration date by 1
 dbfuncs.addActiveSlice = function(topoid, callback) {
@@ -206,5 +229,106 @@ dbfuncs.listActiveSlices = function(userid, callback) {
 
 };
 
+/* =================================================================================== */
+/* ============================= DB FUNCTIONS: SCHEDULER ============================= */
+/* =================================================================================== */
+
+/**
+ * lists all reservations
+ * @returns {array} - of objects: { Id: {string}, resource: {array}, slicename: {string}, start: {string}, end: {string} }
+ * the UTC times are returned in format: YYYY-MM-DD HH:MM:SS
+ */
+dbfuncs.listAllReservations = function(callback) {
+	conn.query('SELECT * FROM reservation', function(err, results, fields) {
+		if (err) return callback(err);
+		var reservations = [];
+		for(let r of results) {
+			reservations.push({
+				Id: r.Id,
+				slicename: r.slicename,
+				start: r.start,
+				end: r.end
+			})
+		}
+		return callback(null, reservations);
+	});
+}
+
+/**
+ * lists all reservations made by userid
+ * @returns {array} - of objects
+ * the UTC times are returned in format: YYYY-MM-DD HH:MM:SS
+ */
+dbfuncs.listUserReservations = function(userid, callback) {
+	conn.query('SELECT * FROM reservation WHERE userid = ?', userid, function(err, results, fields) {
+		if (err) return callback(err);
+		var reservations = [];
+		for(let r of results) {
+			reservations.push({
+				Id: r.Id,
+				slicename: r.slicename,
+				start: r.start,
+				end: r.end
+			})
+		}
+		return callback(null, reservations);
+	});
+}
+
+/**
+ * @param resources {array} - of strings
+ * @param slicename {string} -
+ * @param start {string} - UTC time in format: YYYY-MM-DD HH:MM:SS
+ * @param end {string} - UTC time in format: YYYY-MM-DD HH:MM:SS
+ */
+dbfuncs.addReservation = function(userid, resources, slicename, start, end, callback) {
+	var reservation = {
+		userid: userid,
+		resource: resources.join(),
+		slicename: slicename,
+		start: start,
+		end: end
+	}
+	console.log("querying")
+	var q = conn.query('INSERT INTO reservation SET ?', reservation, function(err, results, fields) {
+		return callback(err, results);
+	});
+	console.log(q.sql);
+};
+
+/**
+ * deletes the reservation based on userid and rsvnid
+ * @param rsvnid {string} - id for the specific reservation
+ */
+dbfuncs.deleteReservation = function(userid, rsvnid, callback) {
+	conn.query('DELETE FROM reservation WHERE Id = ? AND userid = ?', [rsvnid, userid], function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+/**
+ * Overwrites the resources assigned to the reservation
+ * @param userid {string} - is required because validation
+ * @param rsvnid {string} - id for the specific reservation
+ * @param resources {array} - of strings
+ */
+dbfuncs.updateReservationResource = function(userid, rsvnid, resources, callback) {
+	conn.query('UPDATE reservation SET resources = ? WHERE userid = ? AND Id = ?', [resources.join(), userid, rsvnid], function(err, results, fields) {
+		return callback(err, resultss);
+	});
+};
+
+/**
+ *
+ * @param userid {string} - is required because validation
+ * @param rsvnid {string} - id for the specific reservation
+ * @param start {string} - UTC in format YYYY-MM-DD HH:MM:SS
+ * @param end {string} - UTC in format YYYY-MM-DD HH:MM:SS
+ */
+dbfuncs.updateReservationTime = function(userid, rsvnid, start, end, callback) {
+	conn.query('UPDATE reservation SET start = ?, end = ? WHERE userid = ? AND Id = ?', [start, end, userid, rsvnid], function(err, results, fields) {
+		return callback(err, results);
+	});
+};
 
 module.exports = dbfuncs;

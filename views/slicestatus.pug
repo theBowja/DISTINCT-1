@@ -1,0 +1,58 @@
+doctype html
+html
+  head
+    title= title
+    script(src='https://d3js.org/d3.v5.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    link(rel='stylesheet', href='/stylesheets/slicestatus.css')
+
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='/javascripts/visualize.js')
+
+  body(onload='VISUALIZE=VISUALIZE();')
+    .flex-container
+      .left
+        a(href='/dashboard') Dashboard
+        h1= slicename
+        br
+        span#message loading graph...
+        br
+        button(type='button' onclick='poll()') poll resource status
+        br
+        br
+        #listresources
+      .right
+        svg#visual(width='100%' height='100%' style='border: 1px solid black;')
+
+
+script.
+  function poll() {
+    $('#listresources').empty()
+
+
+    $.ajax({
+      url: '/api/resourcestatuses/' + "#{slicename}",
+      type: 'GET',
+      success: function(data) {
+        console.log(d3.keys(data));
+        $('#listresources').empty();
+        d3.select('#listresources').selectAll('li').data(d3.keys(data)).enter().append('li')
+          .text(function(k) { return k+': '+data[k]; })
+      }, 
+      error: function() {
+        alert('error resourcestatus')
+      }
+    })
+  }
+
+  $.ajax({
+    url: '/api/listresources/' + "#{slicename}",
+    type: 'GET',
+    success: function(data) {
+      $('#message').empty();
+      VISUALIZE.svg_import(data);
+    },
+    error: function() {
+      alert('error listresources')
+    }
+  })

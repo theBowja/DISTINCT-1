@@ -8,18 +8,6 @@ router.get('/', function(req, res) {
     //res.render('index', { title: 'Express' });
 });
 
-var path = require('path');
-router.get('/test', function(req, res) {
-	var java = require('java');
-	console.log(path.resolve('ahab/libndl.jar'));
-	java.classpath.push(path.resolve('ahab/libndl.jar'));
-	java.classpath.push(path.resolve('ahab/libtransport.jar'));
-	var Slice = java.import('Slice');
-	Slice.setName("OBAMA");
-	console.log(Slice.getName());
-
-});
-
 router.get('/login', function(req, res) {
 	if (req.session.user) // probably already logged in
 		return res.redirect('dashboard');

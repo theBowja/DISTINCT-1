@@ -1,0 +1,33 @@
+html, body {
+	height: 100%;
+}
+
+.flex-container {
+	display: flex;
+	height: 100%;
+}
+
+.left {
+	order: 1;
+	flex: 1;
+	
+	padding: 15px;
+
+}
+
+.right {
+	order: 2;
+	flex: 4;
+	
+	padding: 15px;
+}
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}

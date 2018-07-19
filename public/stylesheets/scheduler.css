@@ -1,0 +1,50 @@
+html, body {
+	height: 100%;
+	margin: 0px;
+}
+
+.flex-container {
+	display: flex;
+	height: 100%;
+}
+
+.left {
+	order: 1;
+	flex: 2;
+	
+	padding: 10px;
+	overflow-y: auto;
+}
+
+.right {
+	order: 2;
+	flex: 7;
+	
+	padding: 10px;
+}
+
+.list-group {
+	height: 200px;
+	padding: 5px;
+	margin: 0px;
+	list-style-type: none;
+	border: 1px solid black;
+	overflow: auto;
+}
+
+/**
+ * alternating background
+ */
+.list-group li { background: white; }
+.list-group li:nth-child(odd) { background: #EEEEEE; }
+
+/**
+ * for the resources column in the calendar
+ */
+.selected {
+	background-color: lightgrey;
+}
+
+#withDropdown {
+	position: relative; /* allows menu to display properly */
+}

@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    .form
+      form(method='post', enctype='multipart/form-data')
+        if pem
+          span upload your ssl certificate (available only for this session)
+          input#pem(type='file', name='pem')
+        br
+        if pub
+          span upload your ssh pub key (available only for this session)
+          input#pub(type='file', name='pub')
+
+        input#sslsubmitbutton(type='submit', value='upload', name='submit')
+      

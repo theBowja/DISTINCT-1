@@ -1,0 +1,56 @@
+doctype html
+html
+  head
+    title createslice
+    script(src='https://d3js.org/d3.v5.min.js')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/createslice.css')
+
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+
+    script(src='/javascripts/createslice.js')
+
+  body
+    .flex-container
+      .left
+        a(href='/dashboard') Dashboard
+        br
+        .btn-group.btn-group-sm#withDropdown
+          button.btn.btn-default(type='button' onclick='listAttachments()' data-toggle='dropdown') load topology 
+            span.caret
+          ul.dropdown-menu(role='menu')
+        br
+        if topology
+          form#upload(method='post', enctype='multipart/form-data')
+            span Upload your ssl certificate and public ssh key
+            br
+            span 'Choose File' will overwrite what's saved in your session
+            br
+            br
+            span SSL certificate given by GENI certificate manager
+            input#pem(type='file', name='pem')
+            span#pemname= pemname
+            br
+            br
+            span SSH public key
+            input#pub(type='file', name='pub')
+            span#pubname= pubname
+            br
+            br
+            span#flashmessage(style='display: none;') don't panic
+            br
+            input#createslicebutton(type='submit', value='Make slice!', name='submit')
+      .right
+
+        if topology
+          script.
+           // var topology = JSON.parse( !{JSON.stringify(topology).replace(/<\//g, "<\\/")} );
+
+          h4= JSON.stringify(topology).replace(/<\//g, "<\\/")
+
+if topology
+  script.
+    var topology = JSON.parse( !{JSON.stringify(topology).replace(/<\//g, "<\\/")} );
+script.
+  TOPOLOC = "#{topoloc}";

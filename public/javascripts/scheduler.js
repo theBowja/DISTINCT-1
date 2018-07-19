@@ -1,51 +1,104 @@
-function postEvent(newEvent) {
-	$.ajax({
-		type: 'POST',
-		url: '/u/api/events',
-		data: { newevent: newEvent },
-		success: function() {
-			$('#calendar').fullCalendar('refetchEvents');
-			$('#addeventalert').text('success').show(0).delay(5000).hide(0);
-			$('#addeventmodal').modal('toggle');
-		},
-		error: function() {
-			console.log("error");
-			$('#calendar').fullCalendar('refetchEvents');
-			$('#addeventalert').text("error").show(0).delay(5000).hide(0);
-		}
+$(document).ready(function() {
+	$('#dtpstart').datetimepicker({
+		minDate: moment(),
+		stepping: 30
+	});
+	$('#dtpend').datetimepicker({
+		maxDate: moment().add(1, "years"),
+		stepping: 30,
+		useCurrent: false
+	});
+    $("#dtpstart").on("dp.change", function (e) {
+        $('#dtpend').data("DateTimePicker").minDate(e.date);
+    });
+    $("#dtpend").on("dp.change", function (e) {
+        $('#dtpstart').data("DateTimePicker").maxDate(e.date);
+    });
+
+    $("#checkout").on("click", function(e) {
+    	var resArr = $(".lresource").map(function() {
+    		return $(this).data("id");
+    	}).get();
+
+    	var start = $('#dtpstart').data("DateTimePicker").date();
+    	var end = $('#dtpend').data("DateTimePicker").date();
+
+    	// var formData = new FormData();
+    	// formData.append('start', moment.utc(start).format("YYYY-MM-DD HH:mm:ss"));
+    	// formData.append('end', moment.utc(end).format("YYYY-MM-DD HH:mm:ss"));
+    	// formData.append('resources', resArr);
+    	var data = {
+    		start: moment.utc(start).format("YYYY-MM-DD HH:mm:ss"),
+    		end: moment.utc(end).format("YYYY-MM-DD HH:mm:ss"),
+    		resources: resArr
+    	}
+		$.ajax({
+			url: '/api/rsvn/' + window.location.pathname.split("/").slice(-1)[0],
+			type: 'POST',
+			data: data,
+			success: function(data) {
+				alert("successfully reserved")
+			},
+			error: function() {
+
+			}
+
+		});
+
+    	//console.log(resArr);
+    });
+
+	$('#calendar').fullCalendar({
+		height: "parent",
+		header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'timelineWeek,timelineMonth,timelineYear'
+        },
+        resourceAreaWidth: '20%',
+        resourceRender: function(resourceObj, labelTds, bodyTds) {
+        	labelTds.data(resourceObj)
+        	labelTds.on("click", function() {
+        		labelTds.toggleClass('selected');
+        		updateSelectedList();
+        	});
+        },
+		defaultView: 'timelineWeek',
+		resources: '/api/rsvnresources',
+		events: '/api/listreservations'
+
+	});
+
+});
+
+function updateSelectedList() {
+	$('ul.list-group').empty();
+	$('.selected').each(function(index, element) {
+		let id = $(element).data().id;
+		let l = $('<li class="lresource">'+id+'</id>');
+		l.data("id", id)
+		l.appendTo($('ul.list-group'))
+	})
+}
+
+function listActiveSlices() {
+	$(".dropdown-menu").empty();
+	
+	if($("#withDropdown").hasClass("open")) return;
+
+	//$('#flashmessage').text("loading...").show(0);
+	$("<li>loading...</li>").appendTo(".dropdown-menu");
+	$.get("/api/listactiveslices", function(result) {
+		$(".dropdown-menu").empty();
+		result.forEach(function(slicename) {
+			var ele = $(`<li><a href='javascript:window.history.pushState("${slicename}", "", "/scheduler/${slicename}");'>${slicename}</a></li>`)
+			ele.appendTo(".dropdown-menu")
+		});
+		//$('#flashmessage').text("loaded").hide(0);
 	});
 }
 
-// closure to emulate private variables
-// This function merely toggles and updates the active states of the buttons
-var updateStates = (function() {
-	var states = {
-		toggleList: false,
-		viewMyEvents: false
-	};
-
-	return function(toggle) {
-		states[toggle] = !states[toggle];
-		$(".fc-toggleList-button").toggleClass("fc-state-active", states.toggleList);
-		$(".fc-viewMyEvents-button").toggleClass("fc-state-active", states.viewMyEvents);
-	};
-})();
-
-$(document).ready(function() {
-	$("#eventform").on("submit", function(e) {
-		e.preventDefault();
-		$('#addeventalert').text("creating...").show(0);
-
-		var eventdata = $('#eventform').serializeArray().reduce(function(obj, item) {
-			obj[item.name] = item.value;
-			return obj;
-		}, {});
-		eventdata.start = new Date(eventdata.start).toISOString();
-		eventdata.end = new Date(eventdata.end).toISOString();
-
-		postEvent(eventdata);
-	});
-
+/*
 	$("#calendar").fullCalendar({
 		height: "parent",
 		navLinks: true,
@@ -71,11 +124,7 @@ $(document).ready(function() {
 			url: "/u/api/events"
 		},
 		timezone: "local",
-		buttonText: {
-			listDay: "day",
-			listWeek: "week",
-			listMonth: "month"
-		},
+
 		customButtons: {
 			toDashboard: {
 				text: "Dashboard",
@@ -193,3 +242,19 @@ $(document).ready(function() {
 	});
 
 });
+
+// closure to emulate private variables
+// This function merely toggles and updates the active states of the buttons
+var updateStates = (function() {
+	var states = {
+		toggleList: false,
+		viewMyEvents: false
+	};
+
+	return function(toggle) {
+		states[toggle] = !states[toggle];
+		$(".fc-toggleList-button").toggleClass("fc-state-active", states.toggleList);
+		$(".fc-viewMyEvents-button").toggleClass("fc-state-active", states.viewMyEvents);
+	};
+})();
+*/

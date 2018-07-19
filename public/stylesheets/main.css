@@ -16,13 +16,24 @@ body.centerpls {
 	background-color: lightblue;
 }
 
+.flex-container {
+	display: flex;
+	height: 100%;
+}
+
 .left {
-	width: 20%;
-	float: left;
+	order: 1;
+	flex: 1;
+
 	padding: 10px;
 
-	height: 100%;
-	position: relative;
+}
+
+.right {
+	order: 2;
+	flex: 4;
+
+	padding: 10px;
 }
 
 .login-container {

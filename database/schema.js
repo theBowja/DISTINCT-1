@@ -59,4 +59,31 @@ schema.defs.activeslice =
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
+/* ========================== powergrid testbed resources ==================== */
+
+schema.rsvnresources = ['res1','res2','res3'];
+/**
+ * also known as 'event'
+ * times are stored in UTC
+ */
+schema.defs.reservation = 
+`reservation (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	userid INT NOT NULL,
+	resource SET(${"'"+schema.rsvnresources.join("','")+"'"}) NOT NULL,
+	slicename VARCHAR(63) NOT NULL,
+
+	start DATETIME NOT NULL,
+	end DATETIME NOT NULL,
+
+	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB`;
+
+schema.stitch = 
+`
+
+) ENGINE=InnoDB`;
+
 module.exports = schema;

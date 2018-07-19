@@ -3,52 +3,59 @@ html(lang='en')
     meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
     title schedule
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js')
-    script(src='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js')
-    link(rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css')
-    //- the following is for bootstrap modals
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-    link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.min.js')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.9.4/scheduler.min.css')
     //- the following is for datetime picker
     script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css')
 
-    script.
-      var GROUP = '#{group}';
-    script(src='/javascripts/scheduler.js')
+    link(rel='stylesheet', href='/stylesheets/scheduler.css')
 
-  body(style='height:100%-0px;padding:10px;')
-    #calendar
-    #addeventmodal.modal.fade(tabindex='-1')
-      .modal-dialog
-        .modal-content
-          .modal-header
-            button.close(type='button' data-dismiss='modal') &times;
-            h4.modal-title Create new event
-          .modal-body
-            form#eventform(autocomplete='off')
-              .form-group
-                label.form-control-label(for='title') Event title:
-                input#title.form-control(type='text' name='title' required)
-              .form-group
-                label.form-control-label(for='dtpstart') Start:
-                input#dtpstart.form-control(type='text' name='start' required)
-              .form-group
-                label.form-control-label(for='dtpend') End:
-                input#dtpend.form-control(type='text' name='end' required)
-              input#hiddensubmit(type='submit' style='display:none;')
-          .modal-footer
-            span#addeventalert(style='float:left; display:none;') don't panic
-            button.btn.btn-primary(type='submit' onclick='$("#hiddensubmit").click()') Create event
-            button.btn.btn-default(type='button' data-dismiss='modal') Close
-    #manageeventsmodal.modal.fade(tabindex='-1')
-      .modal-dialog
-        .modal-content
-          .modal-header
-            button.close(type='button' data-dismiss='modal') &times;
-            h4.modal-title Manage events
-          .modal-body
-            table#managetable.table.table-bordered
-          .modal-footer
-            span#manageeventalert(style='float:left; display:none;') don't panic
-            button.btn.btn-default(type='button' data-dismiss='modal') Close
+    script(src='/javascripts/scheduler.js')
+    script.
+
+  body(style='height:100%')
+    .flex-container
+      .left
+        a(href='/dashboard') Dashboard
+        br
+        br
+        span Filter
+        .form-group
+          span timestart
+          .input-group.date#dtpstart
+            input.form-control(type='text' class='form-control')
+            span.input-group-addon
+              span.glyphicon.glyphicon-calendar
+        .form-group
+          span timeend
+          .input-group.date#dtpend
+            input.form-control(type='text' class='form-control')
+            span.input-group-addon
+              span.glyphicon.glyphicon-calendar
+
+        button apply as filter
+        input#duration(type='button' value='duration')
+
+        button clear all resources
+        .lisel add resourcce (arrow)
+        button restore all resources
+        br
+        br
+        #withDropdown
+          button.btn.btn-default(type='button' onclick='listActiveSlices()' data-toggle='dropdown') select active slice 
+            span.caret
+          ul.dropdown-menu(role='menu')
+        br
+        div selected resources:
+        ul.list-group
+        button#checkout checkout selected resources
+
+
+      .right
+        #calendar

@@ -7,20 +7,34 @@ html(lang='en')
   body
     .top
       h4= username
-    .left
-      if (role === 'admin')
-        a(href='register') Register a new user!
-        br
-        a(href='list') List all registered users
-        br
-      a(href='scheduler') Scheduler
-      br
-      a(href='organizer') File organizer
-      br
-      a(href='editor') Editor
-      br
-      a(href='reserve') Reserve
-      br
-      br
+    .flex-container
+      .left
+        if (role === 'admin')
+          a(href='register') Register a new user!
+          br
+          a(href='list') List all registered users
+          br
 
-      a(href='logout') Logout
+        a(href='organizer') Organizer
+        br
+        a(href='editor') Editor
+        br
+        a(href='createslice') Create Slice
+        br
+        a(href='scheduler') Scheduler
+        br
+        a(href='reserve') Reserve Resource
+        br
+        br
+        a(href='uploadkeys') Upload keys
+        br
+        br
+        br
+
+        a(href='logout') Logout
+      .right
+        p steps to take:
+        p first go to editor and create your topology
+        p then go to createslice to create your slice
+        p then go to scheduler to reserve resources
+        p finally stitch your resources to your slice
