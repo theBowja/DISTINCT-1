@@ -9,10 +9,43 @@ $(document).ready(function() {
 		useCurrent: false
 	});
     $("#dtpstart").on("dp.change", function (e) {
-        $('#dtpstart').data("DateTimePicker").minDate(e.date);
+        $('#dtpend').data("DateTimePicker").minDate(e.date);
     });
     $("#dtpend").on("dp.change", function (e) {
-        $('#dtpend').data("DateTimePicker").maxDate(e.date);
+        $('#dtpstart').data("DateTimePicker").maxDate(e.date);
+    });
+
+    $("#checkout").on("click", function(e) {
+    	var resArr = $(".lresource").map(function() {
+    		return $(this).data("id");
+    	}).get();
+
+    	var start = $('#dtpstart').data("DateTimePicker").date();
+    	var end = $('#dtpend').data("DateTimePicker").date();
+
+    	// var formData = new FormData();
+    	// formData.append('start', moment.utc(start).format("YYYY-MM-DD HH:mm:ss"));
+    	// formData.append('end', moment.utc(end).format("YYYY-MM-DD HH:mm:ss"));
+    	// formData.append('resources', resArr);
+    	var data = {
+    		start: moment.utc(start).format("YYYY-MM-DD HH:mm:ss"),
+    		end: moment.utc(end).format("YYYY-MM-DD HH:mm:ss"),
+    		resources: resArr
+    	}
+		$.ajax({
+			url: '/api/rsvn/' + window.location.pathname.split("/").slice(-1)[0],
+			type: 'POST',
+			data: data,
+			success: function(data) {
+				alert("successfully reserved")
+			},
+			error: function() {
+
+			}
+
+		});
+
+    	//console.log(resArr);
     });
 
 	$('#calendar').fullCalendar({
@@ -42,10 +75,27 @@ function updateSelectedList() {
 	$('ul.list-group').empty();
 	$('.selected').each(function(index, element) {
 		let id = $(element).data().id;
-		let l = $('<li>'+id+'</id>');
-		l.data(id)
+		let l = $('<li class="lresource">'+id+'</id>');
+		l.data("id", id)
 		l.appendTo($('ul.list-group'))
 	})
+}
+
+function listActiveSlices() {
+	$(".dropdown-menu").empty();
+	
+	if($("#withDropdown").hasClass("open")) return;
+
+	//$('#flashmessage').text("loading...").show(0);
+	$("<li>loading...</li>").appendTo(".dropdown-menu");
+	$.get("/api/listactiveslices", function(result) {
+		$(".dropdown-menu").empty();
+		result.forEach(function(slicename) {
+			var ele = $(`<li><a href='javascript:window.history.pushState("${slicename}", "", "/scheduler/${slicename}");'>${slicename}</a></li>`)
+			ele.appendTo(".dropdown-menu")
+		});
+		//$('#flashmessage').text("loaded").hide(0);
+	});
 }
 
 /*

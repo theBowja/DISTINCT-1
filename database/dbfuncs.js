@@ -250,7 +250,7 @@ dbfuncs.listAllReservations = function(callback) {
 				end: r.end
 			})
 		}
-		return reservations;
+		return callback(null, reservations);
 	});
 }
 
@@ -271,7 +271,7 @@ dbfuncs.listUserReservations = function(userid, callback) {
 				end: r.end
 			})
 		}
-		return reservations;
+		return callback(null, reservations);
 	});
 }
 
@@ -286,12 +286,14 @@ dbfuncs.addReservation = function(userid, resources, slicename, start, end, call
 		userid: userid,
 		resource: resources.join(),
 		slicename: slicename,
-		timestart: start,
-		timeend: end
+		start: start,
+		end: end
 	}
-	conn.query('INSERT INTO reservation SET ?', reservation, function(err, results, fields) {
+	console.log("querying")
+	var q = conn.query('INSERT INTO reservation SET ?', reservation, function(err, results, fields) {
 		return callback(err, results);
 	});
+	console.log(q.sql);
 };
 
 /**

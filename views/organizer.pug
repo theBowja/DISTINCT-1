@@ -8,23 +8,16 @@ html(lang='en')
     //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min.js')
   body
+    .top
+      a(href='dashboard') Dashboard 
+      a(href='editor') Editor 
+      a(href='createslice') Create Slice 
+      a(href='scheduler') Scheduler 
+
     .flex-container
-      .sidebar
-        a(href='dashboard') Dashboard
-          br
-          br
-        form(method='post', enctype='multipart/form-data')
-          | Topology upload: 
-          input#fileToUpload(type='file', name='fileToUpload')
-          |  
-          input(type='submit', value='Upload Topology', name='submit')
-        br
-        br
-        br
-        br
-        p To download a topology, right click the link of the file you wish to download and click "Save link as..."
-      .left
+      .section.topologies
         .title topologies
+        .subtitle To download a topology, right click the link of the file you wish to download and click "Save link as..."
         .list
           if (topologies)
             each val in topologies
@@ -36,12 +29,25 @@ html(lang='en')
                 a(href='api/topo/'+val.location)= val.toponame
                 //- span.glyphicon.glyphicon-pencil
                   title rename
-      .right
+        form.after(method='post', enctype='multipart/form-data')
+          | Topology upload: 
+          input#fileToUpload(type='file', name='fileToUpload')
+          |  
+          input(type='submit', value='Upload Topology', name='submit')
+      .section.activeslices
         .title active slices
-    
+        if !haspem
+          a.subtitle(href='uploadkeys') you have no yet uploaded your ssl certificate    
         .list#slicelist
-          if !haspem
-            a(href='uploadkeys') you have no yet uploaded your ssl certificate
+
+      .section.reservations
+        .title reservations
+        .list#resourcelist
+          if (reservations)
+            each val in reservations
+              div
+                a(href='api/topo/'+val.Id)= val.Id
+                span= val.start       
 
 script.
   function topoVerifyDelete(fileName, fileloc) {

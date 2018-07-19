@@ -46,10 +46,9 @@ rsvn.get('/rsvnresources', function(req, res) {
 });
 
 rsvn.post('/rsvn/:slicename', function(req, res) {
-
-	var start;
-	var end
-	dbfuncs.addReservation(req.session.user.Id, req.body.resources, req.params.slicename, start, end, function(err, data) {
+	var tmp = req.body['resources[]'];
+	var resources = Array.isArray(tmp) ? tmp : [tmp];
+	dbfuncs.addReservation(req.session.user.Id, resources, req.params.slicename, req.body.start, req.body.end, function(err, data) {
 		if (err) { console.log(err); return res.sendStatus(500); }
 		return res.sendStatus(200);
 	});

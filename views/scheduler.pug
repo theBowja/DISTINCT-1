@@ -47,10 +47,14 @@ html(lang='en')
         button restore all resources
         br
         br
+        #withDropdown
+          button.btn.btn-default(type='button' onclick='listActiveSlices()' data-toggle='dropdown') select active slice 
+            span.caret
+          ul.dropdown-menu(role='menu')
         br
         div selected resources:
         ul.list-group
-        button checkout selected resources
+        button#checkout checkout selected resources
 
 
       .right

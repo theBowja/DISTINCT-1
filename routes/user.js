@@ -4,6 +4,8 @@ var router = express.Router();
 var dbfuncs = require('../database/dbfuncs.js');
 var fsfuncs = require('../database/fsfuncs.js');
 
+var schema = require('../database/schema.js');
+
 var multer = require('multer');
 var upload = multer({
 	limits: {
@@ -28,15 +30,27 @@ router.get('/profile', function(req, res) {
 
 });
 
-router.get('/scheduler', function(req, res) {
-	return res.render('scheduler');
-});
-
 router.get('/organizer', function(req, res) {
+	var topologies = null;
+	var reservations = null;
 	dbfuncs.listTopologies(req.session.user.Id, function(err, data) {
-		if (err) return console.log(err);
-		return res.render('fileorganizer', { topologies: data, haspem: req.session.hasOwnProperty('pem') });
+		if (err) console.log(err);
+		topologies = data;
+		complete(err);
 	});
+
+	dbfuncs.listUserReservations(req.session.user.Id, function(err, data) {
+		if (err) console.log(err);
+		reservations = data;
+		complete(err);
+	});
+	
+	function complete(err) {
+		if(err)
+			return res.send(err);
+		if(topologies !== null && reservations !== null)
+			return res.render('organizer', { topologies: topologies, haspem: req.session.hasOwnProperty('pem'), reservations: reservations });
+	}
 });
 
 // query parameters: topoid, toponame
@@ -76,6 +90,32 @@ router.get('/createslice/:topoloc', function(req, res) {
 router.get('/slicestatus/:slicename', function(req, res) {
 	return res.render('slicestatus', { slicename: req.params.slicename });
 });
+
+router.get('/scheduler', function(req, res) {
+	return res.render('scheduler');
+});
+
+// query: start, duration, end, res
+// /reserveresource?res[]=res1&res[]=res2
+router.get('/reserveresource', function(req, res) {
+	var resarr = (Array.isArray(req.query.res)) ? filterValidResources(req.query.res) : [];
+
+	return res.render('reserveresource', { resarr: resarr });
+})
+
+router.get('/reserveresource/:slicename', function(req, res) {
+	var resarr = (Array.isArray(req.query.res)) ? filterValidResources(req.query.res) : [];
+
+	return res.render('reserveresource', { resarr: resarr, slicename: slicename });
+})
+
+/**
+ * @param resarr {array} - array of resources to filter out
+ */
+function filterValidResources(resarr) {
+	var resset = new Set(schema.rsvnresources);
+	return resarr.filter(r => resset.has(r));	
+}
 
 router.get('/uploadkeys/', function(req, res) {
 	return res.render('upload', { pem: true, pub: true} );

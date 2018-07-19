@@ -10,7 +10,7 @@ html, body {
 
 .left {
 	order: 1;
-	flex: 1;
+	flex: 2;
 	
 	padding: 10px;
 	overflow-y: auto;
@@ -18,7 +18,7 @@ html, body {
 
 .right {
 	order: 2;
-	flex: 4;
+	flex: 7;
 	
 	padding: 10px;
 }
@@ -43,4 +43,8 @@ html, body {
  */
 .selected {
 	background-color: lightgrey;
+}
+
+#withDropdown {
+	position: relative; /* allows menu to display properly */
 }
