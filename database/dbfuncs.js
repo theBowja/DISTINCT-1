@@ -248,11 +248,11 @@ dbfuncs.listAllReservations = function(callback) {
 				slicename: r.slicename,
 				start: r.start,
 				end: r.end
-			})
+			});
 		}
 		return callback(null, reservations);
 	});
-}
+};
 
 /**
  * lists all reservations made by userid
@@ -269,11 +269,11 @@ dbfuncs.listUserReservations = function(userid, callback) {
 				slicename: r.slicename,
 				start: r.start,
 				end: r.end
-			})
+			});
 		}
 		return callback(null, reservations);
 	});
-}
+};
 
 /**
  * @param resources {array} - of strings
@@ -288,12 +288,10 @@ dbfuncs.addReservation = function(userid, resources, slicename, start, end, call
 		slicename: slicename,
 		start: start,
 		end: end
-	}
-	console.log("querying")
+	};
 	var q = conn.query('INSERT INTO reservation SET ?', reservation, function(err, results, fields) {
 		return callback(err, results);
 	});
-	console.log(q.sql);
 };
 
 /**
