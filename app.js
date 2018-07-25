@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+console.log("please eb work");
 
 var options = {
 	host 		: config.db.hostname,
@@ -38,23 +38,23 @@ var options = {
 	database	: config.db.dbname//'session_test'
 };
 
-var sessionStore = new MySQLStore(options);
-app.use(session({
-	key: 'session_cookie_name',
-	secret: 'session_cookie_',
-	store: sessionStore,
-	resave: false,
-	rolling: true, // resets expiration countdown of cookie
-	saveUninitialized: false,
-	cookie: {
-		maxAge: 60*60*1000 // 1 hour
-	}
-}));
+// var sessionStore = new MySQLStore(options);
+// app.use(session({
+// 	key: 'session_cookie_name',
+// 	secret: 'session_cookie_',
+// 	store: sessionStore,
+// 	resave: false,
+// 	rolling: true, // resets expiration countdown of cookie
+// 	saveUninitialized: false,
+// 	cookie: {
+// 		maxAge: 60*60*1000 // 1 hour
+// 	}
+// }));
 
 	
-var index = require('./routes/index');
+//var index = require('./routes/index');
 //var users = require('./routes/users');
-app.use('/', index);
+//app.use('/', index);
 //app.use('/users', users);
 
 // catch 404 and forward to error handler
