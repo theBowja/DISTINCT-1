@@ -8,6 +8,7 @@ schema.defs.user =
 	username VARCHAR(40) NOT NULL,
 	email VARCHAR(255) NOT NULL,
 	password CHAR(60) BINARY NOT NULL,
+	role ENUM('admin', 'user') DEFAULT 'user' NOT NULL,
 
 	UNIQUE (username),
 	PRIMARY KEY (Id)
@@ -61,7 +62,19 @@ schema.defs.activeslice =
 
 /* ========================== powergrid testbed resources ==================== */
 
-schema.rsvnresources = ['res1','res2','res3'];
+/**
+ * only users with admin role can add to this table
+ */
+schema.defs.resource =
+`resource (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	resname VARCHAR(63) NOT NULL,
+	stitchport VARCHAR(63) NOT NULL,
+
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB`;
+
 /**
  * also known as 'event'
  * times are stored in UTC
@@ -71,15 +84,17 @@ schema.defs.reservation =
 	Id INT NOT NULL AUTO_INCREMENT,
 
 	userid INT NOT NULL,
-	resource SET(${"'"+schema.rsvnresources.join("','")+"'"}) NOT NULL,
+	resourceid INT NOT NULL,
 	slicename VARCHAR(63) NOT NULL,
 
 	start DATETIME NOT NULL,
 	end DATETIME NOT NULL,
 
 	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+	FOREIGN KEY (resourceid) REFERENCES resource(Id) ON DELETE CASCADE,
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
+
 
 schema.stitch = 
 `

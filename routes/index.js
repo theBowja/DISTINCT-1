@@ -16,10 +16,8 @@ router.get('/login', function(req, res) {
 
 router.post('/login', function(req, res) {
 	dbfuncs.login(req.body.username, req.body.password, function(err, data) {
-		if (err) {
-			console.log(err);
-			return res.send(err);
-		}
+		if (err) { console.log(err); return res.send(err); }
+
 		req.session.user = data; // assigns everything from data to the session.user
 		return res.redirect('dashboard');
 	});
@@ -31,7 +29,7 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', function(req, res) {
-	dbfuncs.createuser(req.body.username, req.body.email, req.body.password, function(err, data) {
+	dbfuncs.createuser(req.body.username, req.body.email, req.body.password, req.body.role, function(err, data) {
 		if (err) {
 			if (err.code == 'ER_DUP_ENTRY') {
 				return res.render('register', { taken: req.body.username, email: req.body.email, role: req.body.role} );
@@ -43,7 +41,7 @@ router.post('/register', function(req, res) {
 
 		// successful account creation
 		var message = "successful account creation of " + req.body.role + " " + req.body.username;
-		return res.render('delayredirect', { message: message, delay: 5000, url: '/u/dashboard'});
+		return res.render('delayredirect', { message: message, delay: 4500, url: '/u/dashboard'});
 	});
 });
 

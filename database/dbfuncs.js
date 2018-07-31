@@ -8,7 +8,7 @@ var dbfuncs = {};
 /** 
  * Verifies user login using params: username, plaintextpassword.
  * Use bcrypt to compare passwords.
- * Returns: a user object containing: id, username
+ * Returns: a user object containing: id, username, role
  */
 dbfuncs.login = function(username, password, callback) {
 	conn.query('SELECT * FROM user WHERE username = ?;', username, function(err, results, fields) {
@@ -22,7 +22,8 @@ dbfuncs.login = function(username, password, callback) {
 			//   update lastlogin
 			var user = {
 				Id : results[0].Id,
-				username : results[0].username
+				username : results[0].username,
+				role: results[0].role
 			};
 			return callback(null, user);
 		});
@@ -35,12 +36,13 @@ dbfuncs.login = function(username, password, callback) {
  * This function hashes the password before inserting into the database.
  * Duplicate username is also checked and returns an error if there is.
  */
-dbfuncs.createuser = function(username, email, password, callback) {
+dbfuncs.createuser = function(username, email, password, role, callback) {
 	bcrypt.hash(password, 10, function(err, hash) {
 		var user = {
 			username: username,
 			email: email,
-			password: hash
+			password: hash,
+			role: role
 		};
 
 		conn.query('INSERT INTO user SET ?', user, function(err, results, fields) {
@@ -330,3 +332,32 @@ dbfuncs.updateReservationTime = function(userid, rsvnid, start, end, callback) {
 };
 
 module.exports = dbfuncs;
+
+/* ====================================================================================== */
+/* ============================== DB FUNCTIONS: RESOURCES =============================== */
+/* ====================================================================================== */
+
+/**
+ * @returns {array} resources object
+ */
+dbfuncs.listResources = function(callback) {
+	conn.query('SELECT * FROM resource', function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+dbfuncs.addResource = function(resname, stitchport, callback) {
+	var reso = {
+		resname: resname,
+		stitchport: stitchport
+	};
+	conn.query('INSERT INTO resource SET ?', reso, function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+dbfuncs.deleteResource = function(resoid, callback) {
+	conn.query('DELETE FROM resource WHERE Id = ?', resoid, function(err, results, fields) {
+		return callback(err, results);
+	});
+};

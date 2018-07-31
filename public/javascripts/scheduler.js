@@ -57,14 +57,14 @@ $(document).ready(function() {
         },
         resourceAreaWidth: '20%',
         resourceRender: function(resourceObj, labelTds, bodyTds) {
-        	labelTds.data(resourceObj)
+        	labelTds.data(resourceObj);
         	labelTds.on("click", function() {
         		labelTds.toggleClass('selected');
         		updateSelectedList();
         	});
         },
 		defaultView: 'timelineWeek',
-		resources: '/api/rsvnresources',
+		resources: '/api/listresources-fs',
 		events: '/api/listreservations'
 
 	});
@@ -74,10 +74,11 @@ $(document).ready(function() {
 function updateSelectedList() {
 	$('ul.list-group').empty();
 	$('.selected').each(function(index, element) {
-		let id = $(element).data().id;
-		let l = $('<li class="lresource">'+id+'</id>');
-		l.data("id", id)
-		l.appendTo($('ul.list-group'))
+		let res = $(element).data();
+		let l = $('<li class="lresource">'+res.title+'</id>');
+		l.data(res);
+		console.log(l.data());
+		l.appendTo($('ul.list-group'));
 	})
 }
 
