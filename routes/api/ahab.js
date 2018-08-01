@@ -64,12 +64,14 @@ ahab.use( function(req, res, next) {
 
 ahab.get('/create/:topoloc', function(req, res) {
 
-	// check if user has the read permission
+	// check if user has the read permission of topology
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
 		if (err) return res.sendStatus(403); // FORBIDDEN (or not found lol)
 
 		fsfuncs.readfile(req.params.topoloc, function(err, topology) {
 			if (err) { console.log(err); return res.sendStatus(500); }
+
+			// save file fa
 
 			ahabfuncs.callFunction(req.session.pem.data, req.session.pub.data, 'createSlice', [JSON.parse(topology)], function(err, data) {
 				if(err) return res.sendStatus(500);
