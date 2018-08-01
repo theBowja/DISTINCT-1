@@ -9,11 +9,7 @@ html(lang='en')
       h4= username
     .flex-container
       .left
-        if (role === 'admin')
-          a(href='register') Register a new user!
-          br
-          a(href='list') List all registered users
-          br
+
 
         a(href='organizer') Organizer
         br
@@ -30,7 +26,13 @@ html(lang='en')
         br
         br
         br
-
+        if (role === 'admin')
+          span admin pages
+          br
+          a(href='register') Register a new user!
+          br
+          a(href='resource') Resources
+          br
         a(href='logout') Logout
       .right
         p steps to take:

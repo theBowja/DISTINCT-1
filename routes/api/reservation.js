@@ -34,17 +34,6 @@ rsvn.get('/listmyreservations', function(req, res) {
 	});
 });
 
-rsvn.get('/rsvnresources', function(req, res) {
-	var rsvnresources = [];
-	for(let rr of schema.rsvnresources) {
-		rsvnresources.push({
-			id: rr,
-			title: rr
-		})
-	}
-	return res.send(rsvnresources)
-});
-
 rsvn.post('/rsvn/:slicename', function(req, res) {
 	var tmp = req.body['resources[]'];
 	var resources = Array.isArray(tmp) ? tmp : [tmp];

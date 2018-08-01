@@ -1,0 +1,48 @@
+doctype html
+html
+  head
+    title resource
+    link(rel='stylesheet', href='/stylesheets/resource.css')
+
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+
+    script(src='/javascripts/resource.js')
+
+  body
+    .flex-container
+      .left
+        a(href='/dashboard') Dashboard
+        br
+        br
+        br
+        br
+        form#resform(method='post' action='/api/addresource')
+          h4 add resource
+          .form-group
+            label.sr-only(for='resn') resource name
+            |  
+            input#resn.form-control(type='text', name='resname', placeholder='resource name', required)
+          .form-group
+            label.sr-only(for='stpt') stitchport
+            |  
+            input#stpt.form-control(type='text', name='stitchport', placeholder='stitchport', required)
+          |  
+          button.btn.btn-primary(type='submit') Add Resource
+      .right
+        table.table.table-striped
+          tr
+            th.col-md-1  
+            th.col-md-2 Id
+            th.col-md-3 resource name
+            th.col-md-3 stitchport
+          if resources
+            each res in resources
+              tr
+                td
+                  button.btn.btn-default.btn-sm.custom-button(type='button' title='delete resource' onclick='resoVerifyDelete("'+res.Id+'","'+res.resname+'")')
+                    span.glyphicon.glyphicon-trash
+                td= res.Id
+                td= res.resname
+                td= res.stitchport

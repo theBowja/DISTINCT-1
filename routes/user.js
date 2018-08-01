@@ -23,7 +23,8 @@ router.get('/', function(req, res) {
 });
 
 router.get('/dashboard', function(req, res) {
-	return res.render('dashboard');
+	console.log(req.session.user.role);
+	return res.render('dashboard', { role: req.session.user.role } );
 });
 
 router.get('/profile', function(req, res) {
@@ -143,6 +144,13 @@ router.post('/uploadkeys', upload.fields([{ name: 'pem', maxCount: 1}, { name: '
 	}
 
 	return res.render('delayredirect', { message: 'success', url: 'dashboard', delay: 2000 });
+});
+
+router.get('/resource', function(req, res) {
+	dbfuncs.listResources(function(err, data) {
+		if (err) { console.log(err); return res.sendStatus(500); }
+		return res.render('resource', { resources: data } );
+	});	
 });
 
 var api = require('./api/index.js');
