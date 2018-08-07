@@ -1,10 +1,15 @@
-avar fs = require('fs');
+var fs = require('fs');
 var path = require('path');
 var config = require('../config/config.js');
 var uuidv4 = require('uuid/v4');
 
 var java = require('java');
 java.classpath.pushDir(path.resolve(__dirname, "../ahab"));
+
+process.on('message', (method) => {
+	const sum = longComputation();
+	process.send(sum);
+});
 
 /* the all-purpose function
    first, it creates a child thread to run everything on

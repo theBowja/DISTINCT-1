@@ -4,9 +4,10 @@ var fs = require('fs-extra');
 var path = require('path');
 var config = require('../../config/config.js');
 var uuidv4 = require('uuid/v4');
+var { fork } = require('child_process');
 
 var dbfuncs = require('../../database/dbfuncs.js');
-var ahabfuncs = require('../../database/ahabfuncs.js');
+var ahabfuncs = require('../../ahab/ahabfuncs.js');
 
 // this middleware says that all following paths of this router require an ssl/pem
 ahab.use( function(req, res, next) {
@@ -80,6 +81,10 @@ ahab.get('/create/:topoloc', function(req, res) {
 			fs.copy(topopath, newtopopath)
 			.then(() => { return fs.writeFile(pempath, req.session.pem.data); })
 			.then(() => { return fs.writeFile(pubpath, req.session.pub.data); })
+			.then(() => {
+				const test = fork('../../ahab/ahabfuncs.js');
+
+			})
 			.then(() => {
 				ahabfuncs.callFunction(pempath, pubpath, 'createSlice', [JSON.parse(topology)], function(err, data) {
 					if(err) return res.sendStatus(500);
