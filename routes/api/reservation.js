@@ -3,8 +3,6 @@ var rsvn = require('express').Router();
 var path = require('path');
 
 var dbfuncs = require('../../database/dbfuncs.js');
-var fsfuncs = require('../../database/fsfuncs.js');
-
 var schema = require('../../database/schema.js');
 
 /**

@@ -2,9 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 var dbfuncs = require('../database/dbfuncs.js');
-var fsfuncs = require('../database/fsfuncs.js');
-
 var schema = require('../database/schema.js');
+
+var fs = require('fs');
+var path = require('path');
+var config = require('../config/config.js');
 
 var multer = require('multer');
 var upload = multer({
@@ -63,8 +65,9 @@ router.get('/editor/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
 		if (err) { console.log(err); return res.redirect('editor'); } // no permission
 
-		fsfuncs.readfile(req.params.topoloc, function(err, body) {
-			return res.render('editor', { fileName: JSON.parse(body).toponame, data: body.toString(), topoloc: req.params.topoloc });
+		fs.readFile(path.join(config.filedirectory, req.params.topoloc), function(err, data) {
+			console.log(data);
+			return res.render('editor', { fileName: JSON.parse(data).toponame, data: data.toString(), topoloc: req.params.topoloc });
 		});
 	});
 });
@@ -80,10 +83,10 @@ router.get('/createslice/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, permission) {
 		if (err) { console.log(err); return res.redirect('createslice'); } // no permission
 
-		fsfuncs.readfile(req.params.topoloc, function(err, body) {
+		fs.readFile(path.join(config.filedirectory, req.params.topoloc), function(err, data) {
 			var pemname = (req.session.pem) ? req.session.pem.originalname : "";
 			var pubname = (req.session.pub) ? req.session.pub.originalname : "";
-			return res.render('createslice', { topology: body.toString(), topoloc: req.params.topoloc, pemname: pemname, pubname: pubname });
+			return res.render('createslice', { topology: data.toString(), topoloc: req.params.topoloc, pemname: pemname, pubname: pubname });
 		});
 	});
 });

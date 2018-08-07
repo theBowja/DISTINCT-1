@@ -1,4 +1,4 @@
-var fs = require('fs');
+avar fs = require('fs');
 var path = require('path');
 var config = require('../config/config.js');
 var uuidv4 = require('uuid/v4');
@@ -17,35 +17,27 @@ java.classpath.pushDir(path.resolve(__dirname, "../ahab"));
 	@param {array} [args] - an array of arguments that will be provided to the method
 	@callback
 */
-module.exports.callFunction = function(private, public, method, args, callback) {
-	if(!private) return callback("ssl cert is needed");
+module.exports.callFunction = function(pem, pub, method, args, callback) {
+	if(!pem) return callback("ssl cert is needed");
 
 	// create a new child thread
 
-	var pem = path.join(__dirname,"../tmp/"+uuidv4());
-	var pub = path.join(__dirname,"../tmp/"+uuidv4());
-	fs.writeFileSync(pem, private);
-	if(public !== null)
-		fs.writeFileSync(pub, public);
-
 	try {
 		var profile = new ahabFuncs(pem, pub);
-		var result = profile[method].apply(profile, args)
+		var result = profile[method].apply(profile, args);
+
+		callback(null, result);
 	}
 	catch(err) {
 		console.log(err);
+		callback(err);
 	}
 
-	fs.unlinkSync(pem)
-	if(public !== null)
-		fs.unlinkSync(pub)
-
-	callback(null, result);
 
 	// end child thread
 	//   return callback
 	//   child thread can also catch any throws (hopefully)
-}
+};
 
 /**
  * constructor
@@ -58,7 +50,7 @@ function ahabFuncs(pem, pub) {
 }
 
 ahabFuncs.prototype.createSlice = function(topology) {
-	console.log(topology);
+	//console.log(topology);
 	console.log("creating slice");
 	var sctx = java.newInstanceSync('org.renci.ahab.libtransport.SliceAccessContext');
 	var fac = java.newInstanceSync('org.renci.ahab.libtransport.util.SSHAccessTokenFileFactory', this.pub, false);
