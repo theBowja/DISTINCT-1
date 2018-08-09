@@ -44,9 +44,9 @@ var SVGGRAPH = function() {
 			var newnodes = simulation.nodes();
 			var tmpnode = {
 				"name": "n-" + (Math.random().toString(36)+'00000000000000000').slice(2, 7+2), // TODO: guarantee that this string is a unique name
-				"shape": control.toolshape,
+				"shape": control.currentToolshape().shapename,
 				"nodetype": "XO Medium",
-				"image": "https://www.google.com",
+				"image": "http://geni-images.renci.org/images/standard/centos/centos6.7-v1.1.0/centos6.7-v1.1.0.xml",
 				"x": (point[0] - transform.x)/transform.k,
 				"y": (point[1] - transform.y)/transform.k
 			};
@@ -69,11 +69,11 @@ var SVGGRAPH = function() {
 		updateMediaButton: function(state) {
 			if (state === undefined || typeof state !== 'boolean') state = this.canPlay;
 			if (state === true) {
-				d3.select("#media-path").attr("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); // pause icon
+				d3.select("#media-icon").attr("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); // pause icon
 				d3.select("#media-title").text("Currently running (click here to pause force simulation)");
 				simulation.alpha(0.3).restart();
 			} else if (state === false) {
-				d3.select("#media-path").attr("d", "M8 5v14l11-7z"); // play icon
+				d3.select("#media-icon").attr("d", "M8 5v14l11-7z"); // play icon
 				d3.select("#media-title").text("Currently paused (click here to resume force simulation)");
 				simulation.stop();
 			}
@@ -83,11 +83,11 @@ var SVGGRAPH = function() {
 		updateInteractionButton: function(state) {
 			if (state === undefined || typeof state !== 'boolean') state = this.canCreate;
 			if (state === true) {
-				d3.select("#interaction-path").attr("d", "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"); // circle plus icon
+				d3.select("#interaction-icon").attr("d", "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"); // circle plus icon
 				d3.select("#interaction-title").text("Create node (DOUBLE CLICK)/link (SHIFT+CLICK two nodes) or remove a selected node/link (DELETE)");
 				d3.select("#toolBoundBox").attr("height", 72); // shows shape
 			} else if (state === false) {
-				d3.select("#interaction-path").attr("d", "M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z"); // drag cursor icon
+				d3.select("#interaction-icon").attr("d", "M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z"); // drag cursor icon
 				d3.select("#interaction-title").text("Drag node/link or edit its properties (DOUBLE CLICK)");
 				d3.select("#toolBoundBox").attr("height", 48); // hides shape
 				control.selections.deselectsource();
@@ -97,17 +97,23 @@ var SVGGRAPH = function() {
 			// move icon; probably useless
 			//.attr("d", "M13,6V11H18V7.75L22.25,12L18,16.25V13H13V18H16.25L12,22.25L7.75,18H11V13H6V16.25L1.75,12L6,7.75V11H11V6H7.75L12,1.75L16.25,6H13Z")
 		},
-		shapes: ["circle", "cross", "diamond", "square", "star", "triangle", "wye"],
+		shapesIndex: [{ shapename: "router",  href: "/images/router.svg" }, 
+					  { shapename: "default", href: "/images/default.svg" },
+					  { shapename: "server",  href: "/images/server.svg" }],
+		currentShape: 0, // TODO: move into a closure function for the currentToolshape function
+		currentToolshape: function(s) { // sets current toolshape if param s is provided, otherwise just returns the current toolshape
+			return (s !== undefined) ? this.currentShape = this.getShape(s).shapename : this.getShape(this.currentShape);
+		},
 		toolshape: 0, // index of the array above
-		getShape: function(s) { // defaults to 0: circle
+		getShape: function(s) { // defaults to 0: object for router
 			switch (typeof s) {
 				case "number":
-					return d3.symbols[s >= 0 && s <= 6 ? s : 0];
+					return this.shapesIndex[s >= 0 && s < this.shapesIndex.length ? s : 0];
 				case "string":
-					var index = this.shapes.indexOf(s.toLowerCase());
-					return d3.symbols[index !== -1 ? index : 0];
+					var obj = this.shapesIndex.find((obj) => obj.shapename===s.toLowerCase());
+					return obj !==undefined ? obj : this.shapesIndex[0];
 				default:
-					return d3.symbols[0];
+					return this.shapesIndex[0];
 			}
 		},
 		selections: { // TODO: should really make these their own functions
@@ -160,7 +166,7 @@ var SVGGRAPH = function() {
 			canZoom: true // unimplemented
 		},
 	};
-	OPTIONSPANEL = OPTIONSPANEL(control.shapes);
+	OPTIONSPANEL = OPTIONSPANEL(control.shapesIndex);
 
 	var nodes = [];
 	var links = [];
@@ -223,7 +229,7 @@ var SVGGRAPH = function() {
 				.on("drag", dragged)
 				.on("end", dragended));	
 		nodenew.append("image")
-			.attr("xlink:href", "https://www.emulab.net/protogeni/jacks-stable/images/router.svg")
+			.attr("xlink:href", function(d) { return control.getShape(d.shape).href; })
 			.attr("x", -20)
 			.attr("y", -20)
 			.attr("width", "40px")
@@ -330,7 +336,7 @@ var SVGGRAPH = function() {
 		clip.append("rect")
 			.attr("id", "shapesBoundBox")
 			.attr("transform", "translate(24,48)")
-			.attr("width", 24*control.shapes.length)
+			.attr("width", 24*control.shapesIndex.length)
 			.attr("height", 24)
 			.attr("rx", 5)
 			.attr("ry", 5)
@@ -342,7 +348,7 @@ var SVGGRAPH = function() {
 		toolBox.attr("clip-path", "url(#toolclipBox)");
 
 		// MEDIA ICON
-		var mediabutton = toolboxButtonMaker("media","translate(0,0)");
+		var mediabutton = toolboxButtonMaker("media", "translate(0,0)", "path");
 		mediabutton.on("click", function() { // when user clicks this, this function alternates media symbols
 			control.canPlay = !control.canPlay;
 			control.updateMediaButton();
@@ -350,7 +356,7 @@ var SVGGRAPH = function() {
 		control.updateMediaButton();
 
 		// INTERACTION ICON - drag/edit properties vs. create/delete
-		var interactionbutton = toolboxButtonMaker("interaction","translate(0,24)");
+		var interactionbutton = toolboxButtonMaker("interaction", "translate(0,24)", "path");
 		interactionbutton.on("click", function() { // when user clicks this, it alternates levels of interactivity
 				control.canCreate = !control.canCreate;
 				control.updateInteractionButton();
@@ -358,7 +364,7 @@ var SVGGRAPH = function() {
 		control.updateInteractionButton();
 
 		// SHAPE MENU - allows you to choose what shape is created when you double-click background
-		var shapebutton = toolboxButtonMaker("shape","translate(0,48)");
+		var shapebutton = toolboxButtonMaker("shape", "translate(0,48)", "image");
 		shapebutton.on("click", function() { // when user clicks this, it opens up a shape menu
 			var shapesMenu = d3.select("#shapesBoundBox");
 			if (shapesMenu.attr("visibility") === "visible") {
@@ -369,11 +375,10 @@ var SVGGRAPH = function() {
 		});
 		shapebutton.select("title")
 			.text("Click here to open shapes menu");
-		shapebutton.select("path")
-			.attr("transform", "translate(12,12)")
-			.attr("d", d3.symbol()
-				.size(150)
-				.type(control.getShape(control.toolshape)));
+		shapebutton.select("image")
+			.attr("href", control.currentToolshape().href)
+			.attr("width", "24px")
+			.attr("height", "24px");
 		initShapeMenu(shapebutton);
 
 		// make visible the actual outline we used
@@ -386,32 +391,35 @@ var SVGGRAPH = function() {
 	}
 
 	function initShapeMenu() {
-		for (var i = 0; i < control.shapes.length; i++) {
-			var shapebutton = toolboxButtonMaker(control.shapes[i],"translate("+(24*(i+1))+",48)");
+		for (var i = 0; i < control.shapesIndex.length; i++) {
+			var shapebutton = toolboxButtonMaker(control.shapesIndex[i].shapename,"translate("+(24*(i+1))+",48)", "image");
 			shapebutton.on("click", function() {
-				var name = control.shapes[i];
+				var name = control.shapesIndex[i].shapename;
 				return function () {
-					control.toolshape = name;
-					d3.select("#shape-path")
-						.attr("transform", "translate(12,12)")
-						.attr("d", d3.symbol()
-							.size(150)
-							.type(control.getShape(name)));
+					control.currentToolshape(name); // sets current shape
+					d3.select("#shape-icon")
+						.attr("href", control.getShape(name).href)
+						.attr("width", "24px")
+						.attr("height", "24px");
 					//d3.select("#shapesBoundBox").attr("visibility", "collapse");
 				};
 			}());
 			shapebutton.select("title")
-				.text(control.shapes[i]);
-			shapebutton.select("path")
-				.attr("transform", "translate(12,12)")
-				.attr("d", d3.symbol()
-					.size(150)
-					.type(d3.symbols[i]));
+				.text(control.shapesIndex[i].shapename);
+			shapebutton.select("image")
+				.attr("href", control.shapesIndex[i].href)
+				.attr("width", "24px")
+				.attr("height", "24px");
 		}
 	}
 
-	// one function to create them all!
-	function toolboxButtonMaker(name,transform) {
+	/** 
+	 * One function to create them all!
+	 * @param {string} name - used as id
+	 * @param {string} transform - the transform to position the button
+	 * @param {string} icontype - SVG element (like path or img)
+	 */
+	function toolboxButtonMaker(name, transform, icontype) {
 		var custombutton = toolBox.append("g")
 			.attr("class", "toolbox-button")
 			.attr("transform", transform);
@@ -422,8 +430,8 @@ var SVGGRAPH = function() {
 			.attr("width", 24)
 			.attr("height", 24)
 			.attr("shape-rendering", "crispEdges");
-		custombutton.append("path")
-			.attr("id", name + "-path");
+		custombutton.append(icontype)
+			.attr("id", name + "-icon");
 		return custombutton;
 	}
 
