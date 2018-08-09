@@ -1,72 +1,39 @@
 var fs = require('fs');
 var path = require('path');
-var config = require('../config/config.js');
-var uuidv4 = require('uuid/v4');
 
 var java = require('java');
-java.classpath.pushDir(path.resolve(__dirname, "../ahab"));
-
-process.on('message', (method) => {
-	const sum = longComputation();
-	process.send(sum);
-});
-
-/* the all-purpose function
-   first, it creates a child thread to run everything on
-   second, it writes any file that is needed
-   third, it calls the 'exposed' ahab function
-   finally, it deletes the file and terminates the child thread while returning the result
-	@param {string} private - 
-	@param {string} [public] - 
-	@param {string} method - 
-	@param {array} [args] - an array of arguments that will be provided to the method
-	@callback
-*/
-module.exports.callFunction = function(pem, pub, method, args, callback) {
-	if(!pem) return callback("ssl cert is needed");
-
-	// create a new child thread
-
-	try {
-		var profile = new ahabFuncs(pem, pub);
-		var result = profile[method].apply(profile, args);
-
-		callback(null, result);
-	}
-	catch(err) {
-		console.log(err);
-		callback(err);
-	}
-
-
-	// end child thread
-	//   return callback
-	//   child thread can also catch any throws (hopefully)
-};
+java.classpath.pushDir(path.resolve(__dirname, "libs"));
 
 /**
- * constructor
- * @param {string} pem - path to pem file
- * @param {string} pub - path to pub file
+ * This function is called by a child thread.
+ * second, it writes any file that is needed
+ * third, it calls the 'exposed' ahab function
+ *  @param {string} method - 
+ *  @argv - an array of arguments provided by the child process
  */
-function ahabFuncs(pem, pub) {
-	this.pem = pem;
-	this.pub = pub;
-}
+process.on('message', (method) => {
+	var args = process.argv.slice(2);
 
-ahabFuncs.prototype.createSlice = function(topology) {
+	var result = ahabfuncs[method].apply(ahabfuncs, args);
+
+	process.send(result);
+});
+
+var ahabfuncs = {};
+
+/**
+ * @return slicename
+ */
+ahabfuncs.createSlice = function(pem, pub, topopath) {
+	var topology = JSON.parse(fs.readFileSync(topopath));
 	//console.log(topology);
-	console.log("creating slice");
 	var sctx = java.newInstanceSync('org.renci.ahab.libtransport.SliceAccessContext');
-	var fac = java.newInstanceSync('org.renci.ahab.libtransport.util.SSHAccessTokenFileFactory', this.pub, false);
+	var fac = java.newInstanceSync('org.renci.ahab.libtransport.util.SSHAccessTokenFileFactory', pub, false);
 	var t = java.callMethodSync(fac, "getPopulatedToken");
-	java.callMethodSync(sctx, "addToken", "xin", "xin", t);
-	java.callMethodSync(sctx, "addToken", "xin", t);
+	java.callMethodSync(sctx, "addToken", "distinct", "distinct", t);
+	java.callMethodSync(sctx, "addToken", "distinct", t);
 
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-
+	var sliceProxy = this.getSliceProxy(pem);
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", 'create', sliceProxy, sctx, topology.toponame);
 
 	for(let node of topology.nodes) {
@@ -90,14 +57,15 @@ ahabFuncs.prototype.createSlice = function(topology) {
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getRequest"));
 
 	java.callMethodSync(s, "commit");
+
+	// return the slicename
+	return topology.toponame;
 };
 
-ahabFuncs.prototype.deleteSlice = function(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+ahabfuncs.deleteSlice = function(pem, slicename) {
+	var sliceProxy = this.getSliceProxy(pem);
 
-	var sliceList = ahabfuncs.listSlices();
+	var sliceList = this.listSlices(pem);
 	if(!sliceList.includes(slicename)) return false;
 
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
@@ -107,21 +75,16 @@ ahabFuncs.prototype.deleteSlice = function(slicename) {
 
 /* returns a javascript array
 */
-ahabFuncs.prototype.listSlices = function() {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
+ahabfuncs.listSlices = function(pem) {
+	var sliceProxy = this.getSliceProxy(pem);
 
 	return java.callMethodSync(sliceProxy, "listMySlices");
 };
 
 /* returns a javascript object of resource names
 */
-ahabFuncs.prototype.listResources = function(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-
+ahabfuncs.listResources = function(pem, slicename) {
+	var sliceProxy = this.getSliceProxy(pem);
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 
 	java.callMethodSync(s, 'getAllResources').toStringSync()
@@ -133,16 +96,13 @@ ahabFuncs.prototype.listResources = function(slicename) {
 		resources[names[i]] = java.callMethodSync(s, funcs).toStringSync().slice(1, -1).replace(/ /g,'').split(',');
 	}
 	return resources;
-}
+};
 
 /** 
  * returns a javascript object of key-values with resource name as key and state as value
  */
-ahabFuncs.prototype.listResourceStatuses = function(slicename) {
-	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
-	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", this.pem, this.pem);
-	var sliceProxy = java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
-
+ahabfuncs.listResourceStatuses = function(pem, slicename) {
+	var sliceProxy = this.getSliceProxy(pem);
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 
 	var resStats = Object.create(null);
@@ -152,11 +112,13 @@ ahabFuncs.prototype.listResourceStatuses = function(slicename) {
 		var state = java.callMethodSync(cn, 'getState');
 		resStats[rname] = state;
 	}
-	return resStats
-}
+	return resStats;
+};
 
-ahabFuncs.prototype.getSliceProxy = function(pem) {
+ahabfuncs.getSliceProxy = function(pem) {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
 	return java.callMethodSync(ifac, "getSliceProxy", ctx, java.newInstanceSync('java.net.URL', "https://geni.renci.org:11443/orca/xmlrpc"));
 };
+
+module.exports = ahabfuncs;

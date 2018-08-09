@@ -199,9 +199,7 @@ dbfuncs.updateTopology = function(topoid, toponame, callback) {
  */
 dbfuncs.deleteTopology = function(topoloc, callback) {
 	conn.query('DELETE topology, permission FROM topology INNER JOIN permission WHERE topology.location = ? AND topology.Id = permission.topoid', topoloc, function(err, results, fields) {
-		if (err) return callback(err);
-
-		return callback(null, results);
+		return callback(err, results);
 	});
 };
 
@@ -238,21 +236,33 @@ dbfuncs.addFile = function(filename, location, callback) {
 };
 
 // TODO: use moment.js to increment expiration date by 1
-dbfuncs.addSlice = function(userid, slicename, isDelayed, topoid, pemid, pubid, expiration, callback) {
-	var slice = {
-		userid: userid,
-		slicename: slicename,
-		isDelayed: isDelayed,
-		topoid: topoid,
-		pemid: pemid,
-		pubid: pubid,
-		expiration: new Date().toISOString().slice(0, 19).replace('T', ' ')
-	};
-	conn.query('INSERT INTO slice SET ?', activeslice, function(err, results, fields) {
+/**
+ * @param sliceobj {object} - must contain the properties: userid, slicename, isDelayed, toponame, topoloc,
+ *                                                         pemname, pemloc, pubname, publoc, and expiration
+ */
+dbfuncs.addSlice = function(sliceobj, callback) {
+	var properties = ['userid', 'slicename', 'isDelayed', 'topoloc', 'pemname', 'pemloc', 'pubname', 'publoc', 'expiration'];
+	if(!properties.every(function(x) { return x in sliceobj; }))
+		return callback('missing parameter(s)');
+
+	conn.query('INSERT INTO slice SET ?', sliceobj, function(err, results, fields) {
 		return callback(err, results);
 	});
 };
 
+dbfuncs.deleteSlice = function(userid, sliceid, callback) {
+	conn.query('DELETE FROM slice WHERE userid = ? AND Id = ?', [userid, sliceid], function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+/**
+ */
+dbfuncs.getSlice = function(userid, sliceid, callback) {
+	conn.query('SELECT * FROM slice WHERE userid = ? AND Id = ?', [userid, sliceid], function(err, results, fields) {
+		return callback(err, results[0]);
+	});
+};
 
 /* =================================================================================== */
 /* ============================= DB FUNCTIONS: SCHEDULER ============================= */

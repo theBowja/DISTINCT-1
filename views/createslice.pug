@@ -38,7 +38,16 @@ html
             span#pubname= pubname
             br
             br
+            input(placeholder='expiration date')
+            span (unimplemented)
+            br
+            br
+            input#isDelayed(type='checkbox', name='isDelayed')
+            span  delay slice
+              span.glyphicon.glyphicon-question-sign(title='delays the creation of the slice until a reservation requires it')
+            br
             span#flashmessage(style='display: none;') don't panic
+
             br
             input#createslicebutton(type='submit', value='Make slice!', name='submit')
       .right
@@ -48,6 +57,7 @@ html
            // var topology = JSON.parse( !{JSON.stringify(topology).replace(/<\//g, "<\\/")} );
 
           h4= JSON.stringify(topology).replace(/<\//g, "<\\/")
+          h4= topology
 
 if topology
   script.

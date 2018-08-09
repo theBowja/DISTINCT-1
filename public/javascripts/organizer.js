@@ -17,19 +17,13 @@ function topoVerifyDelete(fileName, fileloc) {
 	}
 }
 
-function sliceVerifyDelete(slicename) {
-	if (confirm("You are about to delete " + slicename + ". Are you sure?")) {
+function sliceVerifyDelete(slice) {
+	if (confirm("You are about to delete " + slice.slicename + ". Are you sure?")) {
 		var formdata = new FormData();
-		formdata.append('sslcert', $('#sslcert')[0].files[0] );
 		$.ajax({
-
-			url: 'api/ahab/'+slicename,
+			url: 'api/deleteslice/'+slice.Id,
 			type: 'DELETE',
-			data: formdata,
-			processData: false,
-			contentType: false,
 			success: function() {
-				$('#ssl').submit();
 				alert('success delete');
 			},
 			error: function() {
@@ -40,24 +34,40 @@ function sliceVerifyDelete(slicename) {
 }
 
 function listslices(list) {
+	listactiveslices( list.filter(slice => !slice.isDelayed) );
+	listdelayedslices( list.filter(slice => slice.isDelayed) );
+}
+
+function listactiveslices(activeslices) {
 	$('#activeslicelist').empty();
-	var ele = d3.select('#activeslicelist').selectAll('div').data(list)
+	var ele = d3.select('#activeslicelist').selectAll('div').data(activeslices)
 		.enter().append('div');
 	ele.append('button')
 		.attr('class', 'btn btn-default btn-sm custom-button')
 		.attr('type', 'button')
 		.attr('title', 'delete')
-		.attr('onclick', function(d) { return 'sliceVerifyDelete("'+d.slicename+'")'; })
+		.on('click', sliceVerifyDelete)
 		.append('span')
 			.attr('class','glyphicon glyphicon-trash');
 	ele.append('a')
 		.attr('href', function(d) { return 'slicestatus/'+d.slicename; })
-		.text(function(d) { return d.slicename; });
-    /* for(let slicename of list) {
+		.text(function(d) { return d.slicename; });	
+}
 
-      console.log(slicename);
-      $("<a href='api/topo/'>"+slicename+"</a>").appendTo("div").appendTo('#slicelist')
-    } */
+function listdelayedslices(delayedslices) {
+	$('#delayedslicelist').empty();
+	var ele = d3.select('#delayedslicelist').selectAll('div').data(delayedslices)
+		.enter().append('div');
+	ele.append('button')
+		.attr('class', 'btn btn-default btn-sm custom-button')
+		.attr('type', 'button')
+		.attr('title', 'delete')
+		.on('click', sliceVerifyDelete)
+		.append('span')
+			.attr('class','glyphicon glyphicon-trash');
+	ele.append('a')
+		.attr('href', function(d) { return 'slicestatus/'+d.slicename; })
+		.text(function(d) { return d.slicename; });	
 }
 
 $(document).ready(function() {

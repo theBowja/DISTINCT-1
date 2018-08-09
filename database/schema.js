@@ -57,16 +57,16 @@ schema.defs.slice =
 	userid INT NOT NULL,
 	isDelayed BOOLEAN NOT NULL,
 
-	topoid INT NOT NULL,
-	pemid INT NOT NULL,
-	pubid INT NOT NULL,
+	topoloc VARCHAR(63) NOT NULL,
+	pemname VARCHAR(63) NOT NULL,
+	pemloc VARCHAR(63) NOT NULL,
+	pubname VARCHAR(63) NOT NULL,
+	publoc VARCHAR(63) NOT NULL,
 
 	expiration DATETIME NOT NULL,
 
 	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
-	FOREIGN KEY (topoid) REFERENCES file(Id) ON DELETE CASCADE,
-	FOREIGN KEY (pemid) REFERENCES file(Id) ON DELETE CASCADE,
-	FOREIGN KEY (pubid) REFERENCES file(Id) ON DELETE CASCADE,
+
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 

@@ -15,7 +15,6 @@ html, body {
 
 .section {
 	height: 100%;
-	flex: 1;
 	padding: 15px;
 	overflow-y: auto;
 	display: flex;
@@ -24,32 +23,22 @@ html, body {
 
 .topologies {
 	order: 1;
-	padding: 15px;
+	flex: 2;
 	border-right: 1px solid black;
-	overflow-y: auto;
 
-	display: flex;
-	flex-direction: column;
 }
 
 .slices {
 	order: 2;
-	padding: 15px;
+	flex: 2;
 	border-left: 1px solid black;
 	border-right: 1px solid black;
-	overflow-y: auto;
-
-	display: flex;
-	flex-direction: column;
 }
 
 .reservations {
 	order: 3;
-	padding: 15px;
-	border-left: 1px solid black;	
-	overflow-y: auto;
-	display: flex;
-	flex-direction: column;
+	flex: 3;
+	border-left: 1px solid black;
 }
 
 .title {
