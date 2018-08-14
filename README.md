@@ -9,43 +9,50 @@ Table of contents
 =================
 
 <!--ts-->
-   * [gh-md-toc](#gh-md-toc)
+   * [DISTINCT](#distinct)
    * [Table of contents](#table-of-contents)
    * [Getting Started](#getting-started)
    * [Usage](#usage)
-      * [STDIN](#stdin)
-      * [Local files](#local-files)
-      * [Remote files](#remote-files)
-      * [Multiple files](#multiple-files)
-      * [Combo](#combo)
-      * [Auto insert and update TOC](#auto-insert-and-update-toc)
+     * [Localhost](#localhost)
+     * [AWS](#aws)
+
    * [Tests](#tests)
-   * [Dependency](#dependency)
+   
+   * [Built With](#built-with)
+   * [Versioning](#versioning)
+   * [Authors](#authors)
+   * [License](#license)
+   * [Acknowledgements](#acknowledgements)
 <!--te-->
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. First you must have a machine that is working.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. First you must have a machine that is working. Step by step instructions for creating/setting up your app on the AWS cloud platform (07/03/2018):
 
-### Setup
-Step by step instructions for creating/setting up your app on the AWS cloud platform (07/03/2018):
+## Usage
+~~Server is hosted on port 3000. It can be changed in the **config/config.js** file.~~
+instructions for different servers below
 
-### Running
-Server is hosted on port 3000. It can be changed in the **config/config.js** file.
+### Localhost
 
-**Running Locally:**
-
-Prerequisites:
-1. This repository forked
+#### Prerequisites
+1. Fork this repository
 2. [Node.js](https://nodejs.org/en/download) installed (verify using ```node --version```)
 3. python 2.7 and java jdk is installed
-4. Dependency packages installed ( ```npm install```)
-5. In the config/config.js file, config.db must be set to match what you are using in your MySQL
+4. Install dependency packages using ```npm install``` at project root directory
+5. MySQL server started
+6. In the **config/config.js** file, *config.db* *username*, *password*, and *dbname* must be set to match what you are using for your MySQL server
 
-In command line in your downloaded repository's directory, type ```npm start```.
+#### Running
 
-## AWS
+In command line in the repository's root directory, type ```npm start```. Please submit an issue if there are any problems.
 
+### AWS
+
+#### Prerequisites
+Your IAM user account must have privileges to ElasticBeanstalk, Amazon RDS, and ElasticFileSystem
+
+#### Running
 ```
 ======= steps in AWS =========
 go to ElasticBeanStalk
