@@ -8,34 +8,30 @@ https://docs.google.com/presentation/d/1yXcqzQ_bF7ZG4YzCxm1gXvq6DyfmKGHy297GhTXR
 Table of contents
 =================
 
-<!--ts-->
-   * [DISTINCT](#distinct)
-   * [Table of contents](#table-of-contents)
-   * [Getting Started](#getting-started)
-   * [Usage](#usage)
-     * [Localhost](#localhost)
-     * [AWS](#aws)
-
+* [DISTINCT](#distinct)
+* [Table of contents](#table-of-contents)
+* [Getting Started](#getting-started)
+* [Usage](#usage)
+* [Localhost](#localhost)
+* [AWS](#aws)
    * [Tests](#tests)
-   
    * [Built With](#built-with)
    * [Versioning](#versioning)
    * [Authors](#authors)
    * [License](#license)
    * [Acknowledgements](#acknowledgements)
-<!--te-->
 
-## Getting Started
+# Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. First you must have a machine that is working. Step by step instructions for creating/setting up your app on the AWS cloud platform (07/03/2018):
 
-## Usage
+# Usage
 ~~Server is hosted on port 3000. It can be changed in the **config/config.js** file.~~
 instructions for different servers below
 
-### Localhost
+## Localhost
 
-#### Prerequisites
+### Prerequisites
 1. Fork this repository
 2. [Node.js](https://nodejs.org/en/download) installed (verify using ```node --version```)
 3. python 2.7 and java jdk is installed
@@ -43,16 +39,16 @@ instructions for different servers below
 5. MySQL server started
 6. In the **config/config.js** file, *config.db* *username*, *password*, and *dbname* must be set to match what you are using for your MySQL server
 
-#### Running
+### Running
 
 In command line in the repository's root directory, type ```npm start```. Please submit an issue if there are any problems.
 
-### AWS
+## AWS
 
-#### Prerequisites
+### Prerequisites
 Your IAM user account must have privileges to ElasticBeanstalk, Amazon RDS, and ElasticFileSystem
 
-#### Running
+### Running
 ```
 ======= steps in AWS =========
 go to ElasticBeanStalk
@@ -178,27 +174,27 @@ Given the parameters provided, this function will create and return a button to 
 ### topologySchema
 A schema to verify the json of the topology. Uses AJV as its JSON Schema validator. The topology object must contain the array properties: "nodes" and "links". Each object element in the array "nodes" must have a property: "name". Each object element in the array "links" must have the properties: "source" and "target" which reference to an existing "name" in the "nodes" array.
 
-## Built With
+# Built With
 
 * [express.js](https://expressjs.com/) - The web framework used
 * [Node.js](https://nodejs.org/) - Idk what
 * MySQL
 
-## Versioning
+# Versioning
 
 ~~We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).~~ lol
 
-## Authors
+# Authors
 
 * **Eric Xin** - *Initial work* - [theBowja](https://github.com/theBowja)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
-## License
+# License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-## Acknowledgments
+# Acknowledgments
 
 * Hat tip to anyone who's code was used
 * Inspiration
