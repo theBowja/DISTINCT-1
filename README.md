@@ -130,7 +130,9 @@ example: \c ebroot@aa1apvlvao9ra69.ct4nsaowdm5z.us-east-1.rds.amazonaws.com:3306
 
 ## MySQL Table Schemas
 
-Can be found in [**database/schema.js**](database/schema.js) and will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
+Can be found in [**database/schema.js**](database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
+
+Tables: user, topology, permission, slice, resource, reservation
 
 ## Development
 
@@ -146,21 +148,27 @@ This application is generated with the [Express.js boilerplate generator](https:
 Lack of better naming. Contains functions for database (in dbfuncs.js), for files (in fsfuncs.js), and for ahab (in ahabfuncs.js).
 
 ### dbfuncs.js
-- login(username, password, callback)
-- createuser(username, email, password, callback)
-- getPermission(userid, topoid, callback)
-- getPermissionbyLocation(userid, location, callback)
-- updatePermission(role, callback) (unimplemented)
-- getIdbyLocation(location, callback)
-- getTopology(topoid, callback)
-- getTopologybyLocaiton(location, callback)
-- listTopologies(userid, callback)
-- createTopology(userid, toponame, callback)
-- updateTopology(topoid, toponame, callback)
-- deleteTopology(topoloc, callback)
+functions for database
+```
+var dbfuncs = require('relative/path/dbfuncs.js')
+```
+#### Table of contents
+* [login(username, password, callback)]
+* [createuser(username, email, password, callback)]
+* [getPermission(userid, topoid, callback)]
+* [getPermissionbyLocation(userid, location, callback)]
+* [updatePermission(role, callback) (unimplemented)]
+* [getIdbyLocation(location, callback)]
+* [getTopology(topoid, callback)]
+* [getTopologybyLocaiton(location, callback)]
+* [listTopologies(userid, callback)]
+* [createTopology(userid, toponame, callback)]
+* [updateTopology(topoid, toponame, callback)]
+* [deleteTopology(topoloc, callback)]
 
-### fsfuncs.js
-this is just an interface to reading and writing files, in case you want to implement a different system of storing topologies.
+##### login(username, password, callback)
+
+##### createuser(username, email, password, callback)
 
 ### ahabfuncs.js
 TBD
