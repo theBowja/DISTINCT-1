@@ -12,14 +12,14 @@ Table of contents
 * [Table of contents](#table-of-contents)
 * [Getting Started](#getting-started)
 * [Usage](#usage)
-* [Localhost](#localhost)
-* [AWS](#aws)
-   * [Tests](#tests)
-   * [Built With](#built-with)
-   * [Versioning](#versioning)
-   * [Authors](#authors)
-   * [License](#license)
-   * [Acknowledgements](#acknowledgements)
+  * [Localhost](#localhost)
+  * [AWS](#aws)
+* [Tests](#tests)
+* [Built With](#built-with)
+* [Versioning](#versioning)
+* [Authors](#authors)
+* [License](#license)
+* [Acknowledgements](#acknowledgements)
 
 # Getting Started
 
@@ -45,10 +45,12 @@ In command line in the repository's root directory, type ```npm start```. Please
 
 ## AWS
 
-### Prerequisites
-Your IAM user account must have privileges to ElasticBeanstalk, Amazon RDS, and ElasticFileSystem
+Create an elasticbeanstalk application and setup the necessary configurations in order to run the server.
 
-### Running
+### Prerequisites
+Your IAM user account must have privileges for ElasticBeanstalk, Amazon RDS, and ElasticFileSystem
+
+### Setup
 ```
 ======= steps in AWS =========
 go to ElasticBeanStalk
@@ -57,10 +59,10 @@ create a new environment
 -choose Node.js for *Platform*
 click create
 wait for it to finish creating.
-======== linking up to amazon rds ========
+======== linking up to new amazon rds ========
 go to configuration in your newly created environment
 find *Database* card and click modify
-enter a username and password and click save
+enter your desired username and password and click save
 wait for environment to finish updating configurations
 ======== connect EFS to your VPC =========
 (the config file referred is storage-efs-createfilesystem.config)
@@ -71,6 +73,29 @@ click *Subnets*
 find the Subnet IDs corresponding to the VPCID and add them all to config file
 copy paste *Mount Target Resources* in the config file for each corresponding Subnet
 ```
+
+### Running
+
+```
+========= uploading as zip =========
+TBD
+======= through eb cli ==========
+TBD
+```
+
+#### Notice
+* if your environment takes a long time to update but still fails, then there is probably something that is timing out
+* you may link an existing database
+* efs is only available in certain regions
+* there is a limited number of security groups for each mount target
+
+### Troubleshooting
+
+```
+====== access your EB instance =======
+TBD
+```
+
 ```
 ======= access files in your EFS ========
 (taken from https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstances.html)
@@ -101,9 +126,11 @@ change Source to "anywhere"
 example: \c ebroot@aa1apvlvao9ra69.ct4nsaowdm5z.us-east-1.rds.amazonaws.com:3306
 ```
 
+# Documentation
+
 ## MySQL Table Schemas
 
-Can be found in **database/schema.js** and will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually.
+Can be found in [**database/schema.js**](database/schema.js) and will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
 
 ## Development
 
