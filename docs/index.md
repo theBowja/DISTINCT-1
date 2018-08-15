@@ -2,11 +2,34 @@
 
 Documentation yeah
 
+# Table of Contents
+* [Documentation]#(documentation)
+* [Table of Contents]#(table-of-contents)
+* [MySQL Table Schemas]#(mysql-table-schemas)
+  * [user]#(user)
+  * [topology]#(topology)
+  * [permission]#(permission)
+  * [slice]#(slice)
+  * [resource]#(resource)
+  * [reservation]#(reservation)
+
 ## MySQL Table Schemas
 
 Can be found in [**database/schema.js**](../database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
 
-Tables: user, topology, permission, slice, resource, reservation
+### user
+```
+user (
+	Id INT NOT NULL AUTO_INCREMENT,
+	username VARCHAR(40) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	password CHAR(60) BINARY NOT NULL,
+	role ENUM('admin', 'user') DEFAULT 'user' NOT NULL,
+
+	UNIQUE (username),
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB
+```
 
 ## Development
 
