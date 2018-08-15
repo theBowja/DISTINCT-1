@@ -4,7 +4,7 @@ Documentation yeah
 
 ## MySQL Table Schemas
 
-Can be found in [**database/schema.js**](database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
+Can be found in [**database/schema.js**](../database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
 
 Tables: user, topology, permission, slice, resource, reservation
 
