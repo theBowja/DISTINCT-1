@@ -2,7 +2,8 @@
 
 Documentation yeah
 
-# Table of Contents
+Table of contents
+=================
 
 * [Documentation]#(documentation)
 * [Table of Contents]#(table-of-contents)
