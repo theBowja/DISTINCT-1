@@ -5,15 +5,15 @@ Documentation yeah
 Table of contents
 =================
 
-* [Documentation]#(documentation)
-* [Table of Contents]#(table-of-contents)
-* [MySQL Table Schemas]#(mysql-table-schemas)
-  * [user]#(user)
-  * [topology]#(topology)
-  * [permission]#(permission)
-  * [slice]#(slice)
-  * [resource]#(resource)
-  * [reservation]#(reservation)
+* [Documentation](#documentation)
+* [Table of Contents](#table-of-contents)
+* [MySQL Table Schemas](#mysql-table-schemas)
+  * [user](#user)
+  * [topology](#topology)
+  * [permission](#permission)
+  * [slice](#slice)
+  * [resource](#resource)
+  * [reservation](#reservation)
 
 ## MySQL Table Schemas
 
