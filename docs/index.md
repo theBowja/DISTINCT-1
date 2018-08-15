@@ -33,6 +33,12 @@ user (
 ) ENGINE=InnoDB
 ```
 
+### topology
+### permission
+### slice
+### resource
+### reservation
+
 ## Development
 
 Middlewares - body-parser, express-session, connect-cloudant-store, multer, multer-autoreap
@@ -46,40 +52,40 @@ This application is generated with the [Express.js boilerplate generator](https:
 ## Development - 'database' folder
 Lack of better naming. Contains functions for database (in dbfuncs.js), for files (in fsfuncs.js), and for ahab (in ahabfuncs.js).
 
-### dbfuncs.js
+## dbfuncs.js
 functions for database
 ```
 var dbfuncs = require('relative/path/dbfuncs.js')
 ```
 #### Table of contents
-* [login(username, password, callback)]#(loginusername-password-callback)
-* [createuser(username, email, password, role, callback)]#(createuserusername-email-password-role-callback)
-* [getPermission(userid, topoid, callback)]#(getPermissionuserid-topoid-callback)
-* [getPermissionbyLocation(userid, location, callback)]#(getPermissionbyLocationuserid-location-callback)
-* [updatePermission(role, callback)]#(updatePermissionrole-callback)
-* [getIdbyLocation(location, callback)]#(getIdbyLocationlocation-callback)
-* [getTopology(topoid, callback)]#(getTopologytopoid-callback)
-* [getTopologybyLocation(location, callback)]#(getTopologybyLocationlocation-callback)
-* [listTopologies(userid, callback)]#(listTopologiesuserid-callback)
-* [createTopology(userid, toponame, callback)]#(createTopologyuserid-toponame-callback)
-* [updateTopology(topoid, toponame, callback)]#(updateTopologytopoid-toponame-callback)
-* [deleteTopology(topoloc, callback)]#(deleteTopologytopoloc-callback)
-* [listSlices(userid, callback)]#(listSlicesuserid-callback)
-* [listActiveSlices(userid, callback)]#(listActiveSlicesuserid-callback)
-* [listDelayedSlices(userid, callback)]#(listDelayedSlicesuserid-callback)
-* [addFile(filename, location, callback)]#(addFilefilename-location-callback)
-* [addSlice(sliceobj, callback)]#(addSlicesliceobj-callback)
-* [deleteSlice(userid, sliceid, callback)]#(deleteSliceuserid-sliceid-callback)
-* [getSlice(userid, sliceid, callback)]#(getSliceuserid-sliceid-callback)
-* [listAllReservations(callback)]#(listAllReservationscallback)
-* [listUserReservations(userid, callback)]#(listUserReservationsuserid-callback)
-* [addReservation(userid, resources, slicename, start, end, callback)]#(addReservationuserid-resources-slicename-start-end-callback)
-* [deleteReservation(userid, rsvnid, callback)]#(deleteReservationuserid-rsvnid-callback)
-* [updateReservationResource(userid, rsvnid, resources, callback)]#(updateReservationResourceuserid-rsvnid-resources-callback)
-* [updateReservationTime(userid, rsvnid, start, end, callback)]#(updateReservationTimeuserid-rsvnid-start-end-callback)
-* [listResources(callback)]#(listResourcescallback)
-* [addResource(resname, stitchport, callback)]#(addResourceresname-stitchport-callback)
-* [deleteResource(resoid, callback)]#(deleteResourceresoid-callback)
+* [login(username, password, callback)](#loginusername-password-callback)
+* [createuser(username, email, password, role, callback)](#createuserusername-email-password-role-callback)
+* [getPermission(userid, topoid, callback)](#getPermissionuserid-topoid-callback)
+* [getPermissionbyLocation(userid, location, callback)](#getPermissionbyLocationuserid-location-callback)
+* [updatePermission(role, callback)](#updatePermissionrole-callback)
+* [getIdbyLocation(location, callback)](#getIdbyLocationlocation-callback)
+* [getTopology(topoid, callback)](#getTopologytopoid-callback)
+* [getTopologybyLocation(location, callback)](#getTopologybyLocationlocation-callback)
+* [listTopologies(userid, callback)](#listTopologiesuserid-callback)
+* [createTopology(userid, toponame, callback)](#createTopologyuserid-toponame-callback)
+* [updateTopology(topoid, toponame, callback)](#updateTopologytopoid-toponame-callback)
+* [deleteTopology(topoloc, callback)](#deleteTopologytopoloc-callback)
+* [listSlices(userid, callback)](#listSlicesuserid-callback)
+* [listActiveSlices(userid, callback)](#listActiveSlicesuserid-callback)
+* [listDelayedSlices(userid, callback)](#listDelayedSlicesuserid-callback)
+* [addFile(filename, location, callback)](#addFilefilename-location-callback)
+* [addSlice(sliceobj, callback)](#addSlicesliceobj-callback)
+* [deleteSlice(userid, sliceid, callback)](#deleteSliceuserid-sliceid-callback)
+* [getSlice(userid, sliceid, callback)](#getSliceuserid-sliceid-callback)
+* [listAllReservations(callback)](#listAllReservationscallback)
+* [listUserReservations(userid, callback)](#listUserReservationsuserid-callback)
+* [addReservation(userid, resources, slicename, start, end, callback)](#addReservationuserid-resources-slicename-start-end-callback)
+* [deleteReservation(userid, rsvnid, callback)](#deleteReservationuserid-rsvnid-callback)
+* [updateReservationResource(userid, rsvnid, resources, callback)](#updateReservationResourceuserid-rsvnid-resources-callback)
+* [updateReservationTime(userid, rsvnid, start, end, callback)](#updateReservationTimeuserid-rsvnid-start-end-callback)
+* [listResources(callback)](#listResourcescallback)
+* [addResource(resname, stitchport, callback)](#addResourceresname-stitchport-callback)
+* [deleteResource(resoid, callback)](#deleteResourceresoid-callback)
 
 ##### login(username, password, callback)
 
