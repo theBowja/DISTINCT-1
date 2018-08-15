@@ -3,6 +3,7 @@
 Documentation yeah
 
 # Table of Contents
+
 * [Documentation]#(documentation)
 * [Table of Contents]#(table-of-contents)
 * [MySQL Table Schemas]#(mysql-table-schemas)
