@@ -128,6 +128,8 @@ example: \c ebroot@aa1apvlvao9ra69.ct4nsaowdm5z.us-east-1.rds.amazonaws.com:3306
 
 # Documentation
 
+Documentation yeah
+
 ## MySQL Table Schemas
 
 Can be found in [**database/schema.js**](database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
@@ -153,18 +155,34 @@ functions for database
 var dbfuncs = require('relative/path/dbfuncs.js')
 ```
 #### Table of contents
-* [login(username, password, callback)]
-* [createuser(username, email, password, callback)]
-* [getPermission(userid, topoid, callback)]
-* [getPermissionbyLocation(userid, location, callback)]
-* [updatePermission(role, callback) (unimplemented)]
-* [getIdbyLocation(location, callback)]
-* [getTopology(topoid, callback)]
-* [getTopologybyLocaiton(location, callback)]
-* [listTopologies(userid, callback)]
-* [createTopology(userid, toponame, callback)]
-* [updateTopology(topoid, toponame, callback)]
-* [deleteTopology(topoloc, callback)]
+* [login(username, password, callback)]#(loginusername-password-callback)
+* [createuser(username, email, password, role, callback)]#(createuserusername-email-password-role-callback)
+* [getPermission(userid, topoid, callback)]#(getPermissionuserid-topoid-callback)
+* [getPermissionbyLocation(userid, location, callback)]#(getPermissionbyLocationuserid-location-callback)
+* [updatePermission(role, callback)]#(updatePermissionrole-callback)
+* [getIdbyLocation(location, callback)]#(getIdbyLocationlocation-callback)
+* [getTopology(topoid, callback)]#(getTopologytopoid-callback)
+* [getTopologybyLocation(location, callback)]#(getTopologybyLocationlocation-callback)
+* [listTopologies(userid, callback)]#(listTopologiesuserid-callback)
+* [createTopology(userid, toponame, callback)]#(createTopologyuserid-toponame-callback)
+* [updateTopology(topoid, toponame, callback)]#(updateTopologytopoid-toponame-callback)
+* [deleteTopology(topoloc, callback)]#(deleteTopologytopoloc-callback)
+* [listSlices(userid, callback)]#(listSlicesuserid-callback)
+* [listActiveSlices(userid, callback)]#(listActiveSlicesuserid-callback)
+* [listDelayedSlices(userid, callback)]#(listDelayedSlicesuserid-callback)
+* [addFile(filename, location, callback)]#(addFilefilename-location-callback)
+* [addSlice(sliceobj, callback)]#(addSlicesliceobj-callback)
+* [deleteSlice(userid, sliceid, callback)]#(deleteSliceuserid-sliceid-callback)
+* [getSlice(userid, sliceid, callback)]#(getSliceuserid-sliceid-callback)
+* [listAllReservations(callback)]#(listAllReservationscallback)
+* [listUserReservations(userid, callback)]#(listUserReservationsuserid-callback)
+* [addReservation(userid, resources, slicename, start, end, callback)]#(addReservationuserid-resources-slicename-start-end-callback)
+* [deleteReservation(userid, rsvnid, callback)]#(deleteReservationuserid-rsvnid-callback)
+* [updateReservationResource(userid, rsvnid, resources, callback)]#(updateReservationResourceuserid-rsvnid-resources-callback)
+* [updateReservationTime(userid, rsvnid, start, end, callback)]#(updateReservationTimeuserid-rsvnid-start-end-callback)
+* [listResources(callback)]#(listResourcescallback)
+* [addResource(resname, stitchport, callback)]#(addResourceresname-stitchport-callback)
+* [deleteResource(resoid, callback)]#(deleteResourceresoid-callback)
 
 ##### login(username, password, callback)
 
