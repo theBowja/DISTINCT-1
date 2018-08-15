@@ -8,18 +8,21 @@ Table of contents
 * [Documentation](#documentation)
 * [Table of Contents](#table-of-contents)
 * [MySQL Table Schemas](#mysql-table-schemas)
-  * [user](#user)
-  * [topology](#topology)
-  * [permission](#permission)
-  * [slice](#slice)
-  * [resource](#resource)
-  * [reservation](#reservation)
 * [dbfuncs.js](#dbfuncsjs)
 * [ahabfuncs.js](#ahabfuncsjs)
+* [API routes](#api-routes)
 
 ## MySQL Table Schemas
 
 Can be found in [**database/schema.js**](../database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
+
+* [user](#user)
+* [topology](#topology)
+* [permission](#permission)
+* [slice](#slice)
+* [resource](#resource)
+* [reservation](#reservation)
+
 
 ### user
 ```
@@ -59,7 +62,6 @@ functions for database
 ```
 var dbfuncs = require('relative/path/dbfuncs.js')
 ```
-### Table of contents
 * [login(username, password, callback)](#loginusername-password-callback)
 * [createuser(username, email, password, role, callback)](#createuserusername-email-password-role-callback)
 * [getPermission(userid, topoid, callback)](#getPermissionuserid-topoid-callback)
@@ -120,6 +122,9 @@ var dbfuncs = require('relative/path/dbfuncs.js')
 
 ## ahabfuncs.js
 description goes here
+```
+var ahabfuncs = require('relative/path/ahabfuncs.js')
+```
 * [createSlice(pem, pub, topopath)](#createSlicepem-pub-topopath)
 * [deleteSlice(pem, slicename)](#deleteSlicepem-slicename)
 * [listSlices(pem)](#listSlicespem)
@@ -127,12 +132,44 @@ description goes here
 * [listResourceStatuses(pem, slicename)](#listResourceStatusespem-slicename)
 * [getSliceProxy(pem)](#getSliceProxypem)
 
-### createSlice(pem, pub, topopath)
-### deleteSlice(pem, slicename)
-### listSlices(pem)
-### listResources(pem, slicename)
-### listResourceStatuses(pem, slicename)
-### getSliceProxy(pem)
+#### createSlice(pem, pub, topopath)
+#### deleteSlice(pem, slicename)
+#### listSlices(pem)
+#### listResources(pem, slicename)
+#### listResourceStatuses(pem, slicename)
+#### getSliceProxy(pem)
+
+# API routes
+Description goes here
+```
+sample code
+```
+* [topo.js](#topojs)
+  * routes
+* [reservation.js](#reservationjs)
+  * routes
+* [resources.js](#resourcesjs)
+  * routes
+* [slice.js](#slicejs)
+  * routes
+* [ahab.js](#ahabjs)
+
+## topo.js
+Description goes here.
+
+### GET /api/topo/:topoloc
+
+## reservation.js
+Description goes here.
+
+## resources.js
+Description goes here.
+
+## slice.js
+Description goes here.
+
+## ahab.js
+Description goes here.
 
 ## Development - views folder
 Under the views folder. Pug files are compiled and sent to client responses. 
