@@ -1,20 +1,20 @@
 // This global object OPTIONSPANEL will be initialized
 //   after the initialization of control in svgeditor.js.
 //   It is passed in a string array of shapes that can be created.
-var OPTIONSPANEL = (function (shapes) {
-	// "base", ["circle", "cross", "diamond", "square", "star", "triangle", "wye"]
+var OPTIONSPANEL = (function (shapesIndex) {
 
+	// { shapename: "router",  href: "/images/router.svg" }, etc
 	// copy pasted from svgeditor.js
-	// Returns the string of the shape
-	function getShape(s) { // defaults to 0: circle
+	// Returns the object of the shape
+	function getShape(s) { // defaults to 0: object for router
 		switch (typeof s) {
 			case "number":
-				return shapes[s >= 0 && s <= 6 ? s : 0];
+				return shapesIndex[s >= 0 && s < shapesIndex.length ? s : 0];
 			case "string":
-				var index = shapes.indexOf(s.toLowerCase());
-				return shapes[index !== -1 ? index : 0];
+				var obj = shapesIndex.find((obj) => obj.shapename===s.toLowerCase());
+				return obj !== undefined ? obj : shapesIndex[0];
 			default:
-				return shapes[0];
+				return shapesIndex[0];
 		}
 	}
 
@@ -56,26 +56,21 @@ var OPTIONSPANEL = (function (shapes) {
 			element: "textarea"
 		}
 	];
-
-	var circle = base.concat([]);
-	var cross = base.concat([]);
-	var diamond = base.concat([]);
-	var square = base.concat([
+	var shaperouter = base.concat([]);
+	var shapedefault = base.concat([]);
+	var shapeserver = base.concat([
 		{
 			label: "blahblahblah",
 			element: "textarea",
 		}
 	]);
-	var star = base.concat([]);
-	var triangle = base.concat([]);
-	var wye = base.concat([]);
 
-	var everything = {circle: circle, cross: cross, diamond: diamond, square: square, star: star, triangle: triangle, wye: wye};
+	var allshapesproperties = { router: shaperouter, default: shapedefault, server: shapeserver };
 
 
 	function createNodeOptionsPanel(d, node, canCreate) {
 		var shapedNode = node;
-		var shape = getShape(d.shape);
+		var shape = getShape(d.shape).shapename;
 
 		// if options panel is already open, then it'll close again. (or do nothing)
 		if (d3.select(shapedNode).classed("optionsopen")) {
@@ -128,7 +123,7 @@ var OPTIONSPANEL = (function (shapes) {
 			.style("display", "none");
 
 		// make all the elements of the form (input/select/whatever)
-		everything[shape].forEach( function(trait) {
+		allshapesproperties[shape].forEach( function(trait) {
 			var subform = form.append("div")
 				.attr("class", "form-group");
 			subform.append("label")
@@ -187,7 +182,7 @@ var OPTIONSPANEL = (function (shapes) {
 		var form = panel.select("form");
 
 		var original = shapedNode.datum();
-		everything[shape].forEach( function(trait) {
+		allshapesproperties[shape].forEach( function(trait) {
 			var formdata = form.select("#"+trait.label).property("value");
 			if (original[trait.label] !== formdata) {
 				original[trait.label] = formdata;
