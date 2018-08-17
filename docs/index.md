@@ -23,7 +23,7 @@ Can be found in [**database/schema.js**](../database/schema.js) and tables will 
 * [resource](#resource)
 * [reservation](#reservation)
 
-### [user](#table-user)
+### user <a id="table-user"></a>
 ```
 user (
 	Id INT NOT NULL AUTO_INCREMENT,
