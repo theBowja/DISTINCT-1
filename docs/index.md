@@ -1,6 +1,6 @@
 # Documentation
 
-This is the documentation for the code. Warning: documentation may not be completely up-to-date with the code.
+This is the documentation for the code. Warning: documentation may not be completely up-to-date with the code. Each section will have a more detailed table of contents.
 
 Table of contents
 =================
@@ -11,19 +11,21 @@ Table of contents
 * [dbfuncs.js](#dbfuncsjs)
 * [ahabfuncs.js](#ahabfuncsjs)
 * [API routes](#api-routes)
+* [Editor](#editor)
 
 ## MySQL Table Schemas
 
 Can be found in [**database/schema.js**](../database/schema.js) and tables will be automatically created when you start the server. however if you make changes in the file for the definitions, you will have to delete the corresponding tables manually/modify data.
 
-* [user](#table-user)
-* [topology](#topology)
-* [permission](#permission)
-* [slice](#slice)
-* [resource](#resource)
-* [reservation](#reservation)
+* [user](#user-table)
+* [topology](#topology-table)
+* [permission](#permission-table)
+* [slice](#slice-table)
+* [resource](#resource-table)
+* [reservation](#reservation-table)
 
-### user<a id="table-user"></a>
+### user table
+Contains basic information for the user.
 ```
 user (
 	Id INT NOT NULL AUTO_INCREMENT,
@@ -37,11 +39,84 @@ user (
 ) ENGINE=InnoDB
 ```
 
-### topology
-### permission
-### slice
-### resource
-### reservation
+### topology table
+Just the name of the topology and the file name it is saved under by the server. Can probably be combined into the permission table.
+```topology (
+	Id INT NOT NULL AUTO_INCREMENT,
+	toponame VARCHAR(50) NOT NULL,
+	location VARCHAR(63) NOT NULL,
+
+	UNIQUE (location),
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB
+```
+
+### permission table
+Controls which topologies a user can access. This means a topology can be shared with other users (unimplemented).
+```permission (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	userid INT NOT NULL,
+	role ENUM('owner', 'readonly', 'readwrite') NOT NULL DEFAULT 'readwrite',
+	topoid INT NOT NULL,
+
+	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+	FOREIGN KEY (topoid) REFERENCES topology(Id) ON DELETE CASCADE,
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB
+```
+
+### slice table
+Slice.
+```slice (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	slicename VARCHAR(63) NOT NULL,
+
+	userid INT NOT NULL,
+	isDelayed BOOLEAN NOT NULL,
+
+	topoloc VARCHAR(63) NOT NULL,
+	pemname VARCHAR(63) NOT NULL,
+	pemloc VARCHAR(63) NOT NULL,
+	pubname VARCHAR(63) NOT NULL,
+	publoc VARCHAR(63) NOT NULL,
+
+	expiration DATETIME NOT NULL,
+
+	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB
+```
+
+### resource table
+Available powergrid resources. 
+```resource (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	resname VARCHAR(63) NOT NULL,
+	stitchport VARCHAR(63) NOT NULL,
+
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB
+```
+
+### reservation table
+```reservation (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	sliceid INT NOT NULL,
+	resourceid INT NOT NULL,
+
+	start DATETIME NOT NULL,
+	end DATETIME NOT NULL,
+
+	FOREIGN KEY (sliceid) REFERENCES slice(Id) ON DELETE CASCADE,
+	FOREIGN KEY (resourceid) REFERENCES resource(Id) ON DELETE CASCADE,
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB
+```
 
 ## Development
 
@@ -56,7 +131,7 @@ This application is generated with the [Express.js boilerplate generator](https:
 ## Development - 'database' folder
 Lack of better naming. Contains functions for database (in dbfuncs.js), for files (in fsfuncs.js), and for ahab (in ahabfuncs.js).
 
-## dbfuncs.js
+# dbfuncs.js
 functions for database
 ```
 var dbfuncs = require('relative/path/dbfuncs.js')
@@ -96,8 +171,12 @@ var dbfuncs = require('relative/path/dbfuncs.js')
   * [addResource(resname, stitchport, callback)](#addResourceresname-stitchport-callback)
   * [deleteResource(resoid, callback)](#deleteResourceresoid-callback)
 ### USER
+Functions relating to user.
 #### login(username, password, callback)
+Verifies the login with username and plaintextpassword. Returns a user object containing the properties: id, username, and role to be saved in the session.
+
 #### createuser(username, email, password, role, callback)
+Creates a new user.
 
 ### PERMISSION
 #### getPermission(userid, topoid, callback)
@@ -136,9 +215,17 @@ var dbfuncs = require('relative/path/dbfuncs.js')
 #### deleteResource(resoid, callback)
 
 ## ahabfuncs.js
-description goes here
+Functions for calling GENI API through ahab. Since these functions are blocking, it is advisable to use child process. The following code shows an example.
 ```
-var ahabfuncs = require('relative/path/ahabfuncs.js')
+var { fork } = require('child_process');
+const ahabfuncs = fork('relative/path/ahabfuncs.js', [parameters]);
+ahabfuncs.on('message', function(result) { // 
+	res.send(result);
+});
+ahabfuncs.on('error', function(err) {
+	res.sendStatus(500);
+});
+ahabfuncs.send('ahabfunctionname'); // name of the function in ahabfuncs.js to call (see list below).
 ```
 * [createSlice(pem, pub, topopath)](#createSlicepem-pub-topopath)
 * [deleteSlice(pem, slicename)](#deleteSlicepem-slicename)
@@ -216,7 +303,7 @@ etc TBD
 ## Development - views folder
 Under the views folder. Pug files are compiled and sent to client responses. 
 
-## Development - Editor
+# Editor
 Instructions on how to use the editor is listed in the .pug template file.
 
 ### \#svgfocus
@@ -227,8 +314,8 @@ This element deals with the focus on the SVG. Specifically, keycodes.
 ### control
 The object that stores and controls the state of the simulation. Pretty much miscellaneous stuff.
 
-### Options Panel - (function(shapes){...})
-Parameter **shapes**: a string array of shapes that can be created. ```["circle", "cross", "diamond", "square", "star", "triangle", "wye"]```. Returns the function **createNodeOptionsPanel**.
+### Options Panel - (function(shapesIndex){...})
+Parameter **shapesIndex**: an object array of shapes that can be created. ```["circle", "cross", "diamond", "square", "star", "triangle", "wye"]```. Returns the function **createNodeOptionsPanel**.
 An interface to allow editing the data of nodes/links. **svgeditor_optionspanel.js** contains a closure for some reason...
 
 #### Creating editable properties
