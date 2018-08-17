@@ -1,3 +1,5 @@
+var TOPOLOC = window.location.pathname.split("/").slice(-1)[0];
+
 function listAttachments() {
 	var drop = d3.select("#withDropdown");
 	// if it is already open, then destroy the dropdown list
@@ -28,7 +30,7 @@ $(document).ready(function(){
 		if(!pubfile && $('#pubname').text() === '')
 			return $('#flashmessage').text('need pubfile').show(0).delay(3500).hide(0);
 
-		// upload and then call api for creating a slice
+		// upload keys and then call api for creating a slice
 		var formData = new FormData();
 		if(pemfile !== undefined)
 			formData.append('pem', pemfile);
@@ -42,16 +44,18 @@ $(document).ready(function(){
 				$('#flashmessage').text('upload success. creating slice... (please wait)').show(0);
 
 				$.ajax({
-					url: '/api/create/' + TOPOLOC,
-					type: 'GET',
+					url: '/api/createslice/' + TOPOLOC,
+					type: 'POST',
+					data: { isDelayed: $('#isDelayed').is(':checked')},
 					success: function() {
 						$('#flashmessage').text('create success').show(0);
 						window.location = '/organizer';
 					},
 					error: function() {
+						alert('internal server error')
 						$('#flashmessage').text('internal server error').show(0).delay(3500).hide(0);
 					}
-				})
+				});
 			},
 			error: function() {
 				$('#flashmessage').text('internal server error').show(0).delay(3500).hide(0);
@@ -59,7 +63,7 @@ $(document).ready(function(){
 			cache: false,
 			contentType: false,
 			processData: false
-		})
-	})
+		});
+	});
 
 });

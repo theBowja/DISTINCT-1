@@ -1,23 +1,26 @@
 var topo = require('express').Router();
 
+var fs = require('fs');
+var path = require('path');
+var config = require('../../config/config.js');
+
 var Ajv = require('ajv');
 var topologySchema = require('../../public/javascripts/topologySchema.js');
 
 var dbfuncs = require('../../database/dbfuncs.js');
-var fsfuncs = require('../../database/fsfuncs.js');
 
 
 topo.get('/topo/:topoloc', function(req, res) {
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
 		if (err) { console.log(err); return res.send("permission err"); }
 
-		fsfuncs.readfile(req.params.topoloc, function(err, body) {
+		fs.readFile(path.join(config.filedirectory, req.params.topoloc), function(err, data) {
 			if (err) {
 				console.log("file probably not found");
 				return res.send("Error: file probably not found");
 			}
 			
-			return res.send(body);
+			return res.send(data);
 			//return res.render('viewfile', { contents: body} );
 		});
 	});
@@ -60,7 +63,7 @@ topo.post('/topo/:topoloc', function(req, res) {
 			// creates new file
 			dbfuncs.createTopology(req.session.user.Id, toponame, function(err, topo) {
 				if (err) { console.log(err); return res.sendStatus(500); }
-				fsfuncs.writefile(topo.location, data, function(err) {
+				fs.writeFile(path.join(config.filedirectory, topo.location), data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
 					return res.send(topo.location);
 				});
@@ -69,7 +72,7 @@ topo.post('/topo/:topoloc', function(req, res) {
 			// updates file
 			dbfuncs.updateTopology(perm.topoid, toponame, function(err, topo) {
 				if (err) { console.log(err); return res.sendStatus(500); }
-				fsfuncs.writefile(req.params.topoloc, data, function(err) {
+				fs.writeFile(path.join(config.filedirectory, req.params.topoloc), data, function(err) {
 					if (err) { console.log(err); return res.sendStatus(500); }
 
 					return res.send(req.params.topoloc);
@@ -83,7 +86,7 @@ topo.delete('/topo/:topoloc', function(req, res) {
 	dbfuncs.deleteTopology(req.params.topoloc, function(err, data) {
 		if (err) { console.log(err); return res.sendStatus(500); }
 
-		fsfuncs.deletefile(req.params.topoloc, function(err) {
+		fs.unlink(path.join(config.filedirectory, req.params.topoloc), function(err) {
 			if (err) { console.log(err); return res.sendStatus(500); }
 
 			return res.sendStatus(200);			

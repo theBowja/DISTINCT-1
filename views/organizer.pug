@@ -7,8 +7,10 @@ html(lang='en')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/d3-selection/1.1.0/d3-selection.min.js')
+    script(src='/javascripts/organizer.js')
+
   body
-    .top
+    .menubar
       a(href='dashboard') Dashboard 
       a(href='editor') Editor 
       a(href='createslice') Create Slice 
@@ -34,11 +36,13 @@ html(lang='en')
           input#fileToUpload(type='file', name='fileToUpload')
           |  
           input(type='submit', value='Upload Topology', name='submit')
-      .section.activeslices
-        .title active slices
-        if !haspem
-          a.subtitle(href='uploadkeys') you have no yet uploaded your ssl certificate    
-        .list#slicelist
+      .section.slices
+        .top.activeslices
+          .title active slices  
+          .list#activeslicelist
+        .bottom.delayedslices
+          .title delayed slices
+          .list#delayedslicelist
 
       .section.reservations
         .title reservations
@@ -48,81 +52,3 @@ html(lang='en')
               div
                 a(href='api/topo/'+val.Id)= val.Id
                 span= val.start       
-
-script.
-  function topoVerifyDelete(fileName, fileloc) {
-    if (confirm("You are about to delete " + fileName + ". Are you sure?")) {
-      // success is called if ( status >= 200 && status < 300 || status === 304 )
-      //- $.ajax({url:"organizer/"+fileloc, type:"DELETE", success: function(result) {
-      //-   location.reload();
-      //- }})
-      var http = new XMLHttpRequest();
-      var url = "api/topo/" + fileloc
-      http.open("DELETE", url, true);
-
-      http.onreadystatechange = function() {//Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-          location.reload();
-        }
-      }
-      http.send();
-    }
-  }
-
-  function sliceVerifyDelete(slicename) {
-    if (confirm("You are about to delete " + slicename + ". Are you sure?")) {
-      var formdata = new FormData();
-      formdata.append('sslcert', $('#sslcert')[0].files[0] )
-      $.ajax({
-
-        url: 'api/ahab/'+slicename,
-        type: 'DELETE',
-        data: formdata,
-        processData: false,
-        contentType: false,
-        success: function() {
-          $('#ssl').submit()
-          alert('success delete');
-        },
-        error: function() {
-          alert('error delete');
-        }
-      })
-    }
-  }
-
-  function listslices(list) {
-    $('#slicelist').empty();
-    var ele = d3.select('#slicelist').selectAll('div').data(list)
-      .enter().append('div');
-    ele.append('button')
-      .attr('class', 'btn btn-default btn-sm custom-button')
-      .attr('type', 'button')
-      .attr('title', 'delete')
-      .attr('onclick', function(d) { return 'sliceVerifyDelete("'+d+'")' })
-      .append('span')
-        .attr('class','glyphicon glyphicon-trash');
-    ele.append('a')
-      .attr('href', function(d) { return 'slicestatus/'+d; })
-      .text(function(d) { return d; });
-    /* for(let slicename of list) {
-
-      console.log(slicename);
-      $("<a href='api/topo/'>"+slicename+"</a>").appendTo("div").appendTo('#slicelist')
-    } */
-  }
-
-if haspem
-  script.
-    console.log(typeof #{haspem})
-    $('<p>loading...</p>').appendTo('#slicelist');
-    $.ajax({
-      url: 'api/listactiveslices',
-      type: 'GET',
-      success: function(data) {
-        listslices(data);
-      }, 
-      error: function() {
-        alert('error listactiveslices')
-      }
-    })

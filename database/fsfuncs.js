@@ -26,4 +26,4 @@ fsfuncs.deletefile = function(fileloc, callback) {
 
 
 
-module.exports = fsfuncs;
+//module.exports = fsfuncs;

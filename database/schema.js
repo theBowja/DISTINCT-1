@@ -24,18 +24,6 @@ schema.defs.topology =
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
-schema.defs.file = 
-`file (
-	Id INT NOT NULL AUTO_INCREMENT,
-	location VARCHAR(63) NOT NULL,
-
-	topoid INT NOT NULL,
-
-	UNIQUE (location),
-	FOREIGN KEY (topoid) REFERENCES topology(Id) ON DELETE CASCADE,
-	PRIMARY KEY (Id)
-) ENGINE=InnoDB`;
-
 schema.defs.permission = 
 `permission (
 	Id INT NOT NULL AUTO_INCREMENT,
@@ -49,14 +37,36 @@ schema.defs.permission =
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
-schema.defs.activeslice = 
-`activeslice (
+schema.defs.file = 
+`file (
 	Id INT NOT NULL AUTO_INCREMENT,
 
-	topoid INT NOT NULL,
+	filename VARCHAR(63) NOT NULL,
+	location VARCHAR(63) NOT NULL,
+
+	UNIQUE (location),
+	PRIMARY KEY (Id)
+) ENGINE=InnoDB`;
+
+schema.defs.slice = 
+`slice (
+	Id INT NOT NULL AUTO_INCREMENT,
+
+	slicename VARCHAR(63) NOT NULL,
+
+	userid INT NOT NULL,
+	isDelayed BOOLEAN NOT NULL,
+
+	topoloc VARCHAR(63) NOT NULL,
+	pemname VARCHAR(63) NOT NULL,
+	pemloc VARCHAR(63) NOT NULL,
+	pubname VARCHAR(63) NOT NULL,
+	publoc VARCHAR(63) NOT NULL,
+
 	expiration DATETIME NOT NULL,
 
-	FOREIGN KEY (topoid) REFERENCES topology(Id) ON DELETE CASCADE,
+	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;
 
@@ -83,14 +93,13 @@ schema.defs.reservation =
 `reservation (
 	Id INT NOT NULL AUTO_INCREMENT,
 
-	userid INT NOT NULL,
+	sliceid INT NOT NULL,
 	resourceid INT NOT NULL,
-	slicename VARCHAR(63) NOT NULL,
 
 	start DATETIME NOT NULL,
 	end DATETIME NOT NULL,
 
-	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
+	FOREIGN KEY (sliceid) REFERENCES slice(Id) ON DELETE CASCADE,
 	FOREIGN KEY (resourceid) REFERENCES resource(Id) ON DELETE CASCADE,
 	PRIMARY KEY (Id)
 ) ENGINE=InnoDB`;

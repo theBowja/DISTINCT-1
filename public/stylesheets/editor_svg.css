@@ -71,7 +71,7 @@ line#draglink {
 }
 
 .toolbox-box {
-	fill: lightgrey;
+	fill: #E3E3E3;
 }
 
 .toolbox-button:hover .toolbox-box {

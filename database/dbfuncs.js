@@ -199,9 +199,7 @@ dbfuncs.updateTopology = function(topoid, toponame, callback) {
  */
 dbfuncs.deleteTopology = function(topoloc, callback) {
 	conn.query('DELETE topology, permission FROM topology INNER JOIN permission WHERE topology.location = ? AND topology.Id = permission.topoid', topoloc, function(err, results, fields) {
-		if (err) return callback(err);
-
-		return callback(null, results);
+		return callback(err, results);
 	});
 };
 
@@ -209,26 +207,61 @@ dbfuncs.deleteTopology = function(topoloc, callback) {
 /* ============================== DB FUNCTIONS: SLICES =============================== */
 /* =================================================================================== */
 
-// TODO: use moment.js to increment expiration date by 1
-dbfuncs.addActiveSlice = function(topoid, callback) {
-	var activeslice = {
-		topoid: topoid,
-		expiration: new Date().toISOString().slice(0, 19).replace('T', ' ')
-	};
-
-	conn.query('INSERT INTO activeslice SET ?', activeslice, function(err, results, fields) {
-		if (err) return callback(err);
-		return callback(null, results);
+dbfuncs.listSlices = function(userid, callback) {
+	conn.query('SELECT * FROM slice WHERE slice.userid = ?;', userid, function(err, results, fields) {
+		return callback(err, results);
 	});
-
 };
 
 dbfuncs.listActiveSlices = function(userid, callback) {
-	conn.query('SELECT topology.toponame, topology.location FROM permission, topology, activeslice WHERE permission.userid = ? AND permission.topoid = activeslice.topoid;', userid, function(err, results, fields) {
-		if (err) return callback(err);
-		return callback(null, results);
+	conn.query('SELECT * FROM slice WHERE slice.userid = ? AND isDelayed = false;', userid, function(err, results, fields) {
+		return callback(err, results);
 	});
+};
 
+dbfuncs.listDelayedSlices = function(userid, callback) {
+	conn.query('SELECT * FROM slice WHERE slice.userid = ? AND isDelayed = true;', userid, function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+dbfuncs.addFile = function(filename, location, callback) {
+	var file = {
+		filename: filename,
+		location : location
+	};
+	conn.query('INSERT INTO file SET ?', file, function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+// TODO: use moment.js to increment expiration date by 1
+/**
+ * @param sliceobj {object} - must contain the properties: userid, slicename, isDelayed, toponame, topoloc,
+ *                                                         pemname, pemloc, pubname, publoc, and expiration
+ */
+dbfuncs.addSlice = function(sliceobj, callback) {
+	var properties = ['userid', 'slicename', 'isDelayed', 'topoloc', 'pemname', 'pemloc', 'pubname', 'publoc', 'expiration'];
+	if(!properties.every(function(x) { return x in sliceobj; }))
+		return callback('missing parameter(s)');
+
+	conn.query('INSERT INTO slice SET ?', sliceobj, function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+dbfuncs.deleteSlice = function(userid, sliceid, callback) {
+	conn.query('DELETE FROM slice WHERE userid = ? AND Id = ?', [userid, sliceid], function(err, results, fields) {
+		return callback(err, results);
+	});
+};
+
+/**
+ */
+dbfuncs.getSlice = function(userid, sliceid, callback) {
+	conn.query('SELECT * FROM slice WHERE userid = ? AND Id = ?', [userid, sliceid], function(err, results, fields) {
+		return callback(err, results[0]);
+	});
 };
 
 /* =================================================================================== */
@@ -262,8 +295,9 @@ dbfuncs.listAllReservations = function(callback) {
  * the UTC times are returned in format: YYYY-MM-DD HH:MM:SS
  */
 dbfuncs.listUserReservations = function(userid, callback) {
-	conn.query('SELECT * FROM reservation WHERE userid = ?', userid, function(err, results, fields) {
+	conn.query('SELECT reservation.Id, slice.topoloc, reservation.start, reservation.end FROM reservation, slice WHERE slice.userid = ? AND reservation.sliceid = slice.Id', userid, function(err, results, fields) {
 		if (err) return callback(err);
+		console.log(results);
 		var reservations = [];
 		for(let r of results) {
 			reservations.push({
@@ -314,7 +348,7 @@ dbfuncs.deleteReservation = function(userid, rsvnid, callback) {
  */
 dbfuncs.updateReservationResource = function(userid, rsvnid, resources, callback) {
 	conn.query('UPDATE reservation SET resources = ? WHERE userid = ? AND Id = ?', [resources.join(), userid, rsvnid], function(err, results, fields) {
-		return callback(err, resultss);
+		return callback(err, results);
 	});
 };
 

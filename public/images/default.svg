@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" viewBox="0 0 542.82 187.39" version="1.1">
+  <defs id="defs4">
+    <pattern id="pattern5300" xlink:href="#Strips1_1" patternTransform="matrix(10 0 0 10 279.15 .086657)"/>
+    <pattern id="Strips1_1" width="2" patternUnits="userSpaceOnUse" patternTransform="translate(0) scale(10)" height="1">
+      <rect id="rect4583" y="-.5" width="1" x="0" height="2"/>
+    </pattern>
+  </defs>
+  <g id="layer1" transform="translate(-34.043 -311.85)">
+    <path id="rect5302" stroke="#000" stroke-width="6.2" fill="#d9d7d9" d="m39 422.36 44.036-95.268c2.8225-6.1064 5.4157-12.143 12.143-12.143h434.32c6.7271 0 10.101 5.7332 12.143 12.143l30.36 95.27"/>
+    <rect id="rect3084" stroke-linejoin="round" ry="12.143" height="79.495" width="536.62" stroke="#000" stroke-linecap="round" y="416.65" x="37.143" stroke-width="6.2" fill="#b9baba"/>
+    <path id="path3856" stroke-linejoin="round" d="m315.71 460.22c0 12.229-9.9137 22.143-22.143 22.143s-22.143-9.9137-22.143-22.143 9.9137-22.143 22.143-22.143 22.143 9.9137 22.143 22.143z" transform="translate(10 -1.4286)" stroke="#000" stroke-linecap="round" stroke-width="6.2" fill="#f1f3f3"/>
+    <rect id="rect3860" stroke-linejoin="round" ry="4.2857" height="8.5714" width="30.714" stroke="#0000f1" stroke-linecap="round" y="454.72" x="288.07" stroke-width="5.8" fill="#f1f3f3"/>
+    <rect id="rect3862" ry="4.2857" height="48.571" width="211.43" y="433.79" x="58.571" fill="url(#Strips1_1)"/>
+    <rect id="rect5298" ry="4.2857" height="48.571" width="211.43" y="433.88" x="337.72" fill="url(#pattern5300)"/>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Server</dc:title>
+        <dc:date>2012-01-17T23:09:47</dc:date>
+        <dc:description>A single 1RU Server</dc:description>
+        <dc:source>http://openclipart.org/detail/167200/server-by-damyon</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>damyon</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>Computer</rdf:li>
+            <rdf:li>IT</rdf:li>
+            <rdf:li>Network</rdf:li>
+            <rdf:li>Server</rdf:li>
+            <rdf:li>clip art</rdf:li>
+            <rdf:li>clipart</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
