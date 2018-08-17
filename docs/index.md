@@ -180,24 +180,45 @@ Creates a new user.
 
 ### PERMISSION
 #### getPermission(userid, topoid, callback)
+Returns the permission object associated with the userid and topoid.
+
 #### getPermissionbyLocation(userid, location, callback)
+Returns the permission object associated with the userid and file location.
+
 #### updatePermission(role, callback)
+Updates the permission associated with . (INCOMPLETE)
+
 #### getIdbyLocation(location, callback)
+Returns the id of the topology row associated with the file location.
 
 ### TOPOLOGY
 #### getTopology(topoid, callback)
+Returns the topology object associated with the topoid.
+
 #### getTopologybyLocation(location, callback)
 #### listTopologies(userid, callback)
+Returns an array of topology objects that the user has access to.
+
 #### createTopology(userid, toponame, callback)
 #### updateTopology(topoid, toponame, callback)
 #### deleteTopology(topoloc, callback)
 
 ### SLICE
 #### listSlices(userid, callback)
+Returns an array of slice objects from the database that the user has access to.
+
 #### listActiveSlices(userid, callback)
+Returns only an array of slice objects that have the property ```delayed === false```
+
 #### listDelayedSlices(userid, callback)
+Returns only an array of slice objects that have the property ```delayed === true```
+
 #### addFile(filename, location, callback)
+misc. should be removed
+
 #### addSlice(sliceobj, callback)
+Adds a slice row to the database. The parameter *sliceobj* should the properties: userid, slicename, isDelayed, toponame, topoloc, pemname, pemloc, pubname, publoc, and expiration.
+
 #### deleteSlice(userid, sliceid, callback)
 #### getSlice(userid, sliceid, callback)
 
@@ -211,8 +232,13 @@ Creates a new user.
 
 ### RESOURCE
 #### listResources(callback)
+Returns and array of all rows in the resources table.
+
 #### addResource(resname, stitchport, callback)
+Add.
+
 #### deleteResource(resoid, callback)
+Delete.
 
 ## ahabfuncs.js
 Functions for calling GENI API through ahab. Since these functions are blocking, it is advisable to use child process. The following code shows an example.
@@ -227,6 +253,7 @@ ahabfuncs.on('error', function(err) {
 });
 ahabfuncs.send('ahabfunctionname'); // name of the function in ahabfuncs.js to call (see list below).
 ```
+Parameters *pem* and *pub* should be paths to the file. **SHOULD BE REMOVED AND CHANGED TO USE SPEAKS-FOR**
 * [createSlice(pem, pub, topopath)](#createSlicepem-pub-topopath)
 * [deleteSlice(pem, slicename)](#deleteSlicepem-slicename)
 * [listSlices(pem)](#listSlicespem)
