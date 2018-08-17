@@ -1,6 +1,6 @@
 # Documentation
 
-This is the documentation for the code.
+This is the documentation for the code. Warning: documentation may not be completely up-to-date with the code.
 
 Table of contents
 =================
@@ -64,7 +64,7 @@ var dbfuncs = require('relative/path/dbfuncs.js')
 * [USER](#user)
   * [login(username, password, callback)](#loginusername-password-callback)
   * [createuser(username, email, password, role, callback)](#createuserusername-email-password-role-callback)
-* [PERMISSION(#permission)
+* [PERMISSION](#permission)
   * [getPermission(userid, topoid, callback)](#getPermissionuserid-topoid-callback)
   * [getPermissionbyLocation(userid, location, callback)](#getPermissionbyLocationuserid-location-callback)
   * [updatePermission(role, callback)](#updatePermissionrole-callback)
