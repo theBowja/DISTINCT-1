@@ -158,18 +158,42 @@ sample code
 Description goes here.
 
 ### GET /api/topo/:topoloc
+### POST /api/topo/:topoloc
+### DELETE /api/topo/:topoloc
+### GET /api/listtopologies
 
 ## reservation.js
 Description goes here.
 
+### GET /api/listreservations
+### GET /api/listmyreservations
+### POST /api/rsvn/:slicename
+### DELETE /api/rsvn/:rsvnid
+
 ## resources.js
 Description goes here.
+
+### GET /api/listresources
+### GET /api/listresources-fs
+### POST /api/addresource
+### DELETE /api/deleteresource/:resoid
 
 ## slice.js
 Description goes here.
 
+### GET /api/listslices
+### GET /api/listactiveslices
+### GET /api/listdelayedslices
+### GET /api/listresources/:slicename
+### POST /api/createslice/:topoloc
+### DELETE /api/deleteslice/:sliceid
+
 ## ahab.js
 Description goes here.
+
+### DELETE /api/:slicename
+### GET /api/listslices
+etc TBD
 
 ## Development - views folder
 Under the views folder. Pug files are compiled and sent to client responses. 
