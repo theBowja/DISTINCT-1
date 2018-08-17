@@ -115,6 +115,14 @@ ahabfuncs.listResourceStatuses = function(pem, slicename) {
 	return resStats;
 };
 
+// TBD
+ahabfuncs.renewSlice = function(pem, slicename, date) {
+	var sliceProxy = this.getSliceProxy(pem);
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
+
+	java.callMethodSync(s, 'renew', date);
+};
+
 ahabfuncs.getSliceProxy = function(pem) {
 	var ifac = java.newInstanceSync('org.renci.ahab.libtransport.xmlrpc.XMLRPCProxyFactory');
 	var ctx = java.newInstanceSync('org.renci.ahab.libtransport.PEMTransportContext', "", pem, pem);
