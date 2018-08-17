@@ -1,6 +1,6 @@
 # Documentation
 
-Documentation yeah
+This is the documentation for the code.
 
 Table of contents
 =================
@@ -22,7 +22,6 @@ Can be found in [**database/schema.js**](../database/schema.js) and tables will 
 * [slice](#slice)
 * [resource](#resource)
 * [reservation](#reservation)
-
 
 ### user
 ```
@@ -62,47 +61,59 @@ functions for database
 ```
 var dbfuncs = require('relative/path/dbfuncs.js')
 ```
-* [login(username, password, callback)](#loginusername-password-callback)
-* [createuser(username, email, password, role, callback)](#createuserusername-email-password-role-callback)
-* [getPermission(userid, topoid, callback)](#getPermissionuserid-topoid-callback)
-* [getPermissionbyLocation(userid, location, callback)](#getPermissionbyLocationuserid-location-callback)
-* [updatePermission(role, callback)](#updatePermissionrole-callback)
-* [getIdbyLocation(location, callback)](#getIdbyLocationlocation-callback)
-* [getTopology(topoid, callback)](#getTopologytopoid-callback)
-* [getTopologybyLocation(location, callback)](#getTopologybyLocationlocation-callback)
-* [listTopologies(userid, callback)](#listTopologiesuserid-callback)
-* [createTopology(userid, toponame, callback)](#createTopologyuserid-toponame-callback)
-* [updateTopology(topoid, toponame, callback)](#updateTopologytopoid-toponame-callback)
-* [deleteTopology(topoloc, callback)](#deleteTopologytopoloc-callback)
-* [listSlices(userid, callback)](#listSlicesuserid-callback)
-* [listActiveSlices(userid, callback)](#listActiveSlicesuserid-callback)
-* [listDelayedSlices(userid, callback)](#listDelayedSlicesuserid-callback)
-* [addFile(filename, location, callback)](#addFilefilename-location-callback)
-* [addSlice(sliceobj, callback)](#addSlicesliceobj-callback)
-* [deleteSlice(userid, sliceid, callback)](#deleteSliceuserid-sliceid-callback)
-* [getSlice(userid, sliceid, callback)](#getSliceuserid-sliceid-callback)
-* [listAllReservations(callback)](#listAllReservationscallback)
-* [listUserReservations(userid, callback)](#listUserReservationsuserid-callback)
-* [addReservation(userid, resources, slicename, start, end, callback)](#addReservationuserid-resources-slicename-start-end-callback)
-* [deleteReservation(userid, rsvnid, callback)](#deleteReservationuserid-rsvnid-callback)
-* [updateReservationResource(userid, rsvnid, resources, callback)](#updateReservationResourceuserid-rsvnid-resources-callback)
-* [updateReservationTime(userid, rsvnid, start, end, callback)](#updateReservationTimeuserid-rsvnid-start-end-callback)
-* [listResources(callback)](#listResourcescallback)
-* [addResource(resname, stitchport, callback)](#addResourceresname-stitchport-callback)
-* [deleteResource(resoid, callback)](#deleteResourceresoid-callback)
-
+* [USER](#user)
+  * [login(username, password, callback)](#loginusername-password-callback)
+  * [createuser(username, email, password, role, callback)](#createuserusername-email-password-role-callback)
+* [PERMISSION(#permission)
+  * [getPermission(userid, topoid, callback)](#getPermissionuserid-topoid-callback)
+  * [getPermissionbyLocation(userid, location, callback)](#getPermissionbyLocationuserid-location-callback)
+  * [updatePermission(role, callback)](#updatePermissionrole-callback)
+  * [getIdbyLocation(location, callback)](#getIdbyLocationlocation-callback)
+* [TOPOLOGY](#topology)
+  * [getTopology(topoid, callback)](#getTopologytopoid-callback)
+  * [getTopologybyLocation(location, callback)](#getTopologybyLocationlocation-callback)
+  * [listTopologies(userid, callback)](#listTopologiesuserid-callback)
+  * [createTopology(userid, toponame, callback)](#createTopologyuserid-toponame-callback)
+  * [updateTopology(topoid, toponame, callback)](#updateTopologytopoid-toponame-callback)
+  * [deleteTopology(topoloc, callback)](#deleteTopologytopoloc-callback)
+* [SLICE](#slice)
+  * [listSlices(userid, callback)](#listSlicesuserid-callback)
+  * [listActiveSlices(userid, callback)](#listActiveSlicesuserid-callback)
+  * [listDelayedSlices(userid, callback)](#listDelayedSlicesuserid-callback)
+  * [addFile(filename, location, callback)](#addFilefilename-location-callback)
+  * [addSlice(sliceobj, callback)](#addSlicesliceobj-callback)
+  * [deleteSlice(userid, sliceid, callback)](#deleteSliceuserid-sliceid-callback)
+  * [getSlice(userid, sliceid, callback)](#getSliceuserid-sliceid-callback)
+* [SCHEDULER](#scheduler)
+  * [listAllReservations(callback)](#listAllReservationscallback)
+  * [listUserReservations(userid, callback)](#listUserReservationsuserid-callback)
+  * [addReservation(userid, resources, slicename, start, end, callback)](#addReservationuserid-resources-slicename-start-end-callback)
+  * [deleteReservation(userid, rsvnid, callback)](#deleteReservationuserid-rsvnid-callback)
+  * [updateReservationResource(userid, rsvnid, resources, callback)](#updateReservationResourceuserid-rsvnid-resources-callback)
+  * [updateReservationTime(userid, rsvnid, start, end, callback)](#updateReservationTimeuserid-rsvnid-start-end-callback)
+* [RESOURCE](#resource)
+  * [listResources(callback)](#listResourcescallback)
+  * [addResource(resname, stitchport, callback)](#addResourceresname-stitchport-callback)
+  * [deleteResource(resoid, callback)](#deleteResourceresoid-callback)
+### USER
 #### login(username, password, callback)
 #### createuser(username, email, password, role, callback)
+
+### PERMISSION
 #### getPermission(userid, topoid, callback)
 #### getPermissionbyLocation(userid, location, callback)
 #### updatePermission(role, callback)
 #### getIdbyLocation(location, callback)
+
+### TOPOLOGY
 #### getTopology(topoid, callback)
 #### getTopologybyLocation(location, callback)
 #### listTopologies(userid, callback)
 #### createTopology(userid, toponame, callback)
 #### updateTopology(topoid, toponame, callback)
 #### deleteTopology(topoloc, callback)
+
+### SLICE
 #### listSlices(userid, callback)
 #### listActiveSlices(userid, callback)
 #### listDelayedSlices(userid, callback)
@@ -110,12 +121,16 @@ var dbfuncs = require('relative/path/dbfuncs.js')
 #### addSlice(sliceobj, callback)
 #### deleteSlice(userid, sliceid, callback)
 #### getSlice(userid, sliceid, callback)
+
+### RESERVATION
 #### listAllReservations(callback)
 #### listUserReservations(userid, callback)
 #### addReservation(userid, resources, slicename, start, end, callback)
 #### deleteReservation(userid, rsvnid, callback)
 #### updateReservationResource(userid, rsvnid, resources, callback)
 #### updateReservationTime(userid, rsvnid, start, end, callback)
+
+### RESOURCE
 #### listResources(callback)
 #### addResource(resname, stitchport, callback)
 #### deleteResource(resoid, callback)
@@ -145,7 +160,10 @@ Description goes here
 sample code
 ```
 * [topo.js](#topojs)
-  * routes
+  * [GET /api/topo/:topoloc](#get-apitopotopoloc)
+  * [POST /api/topo/:topoloc](#post-apitopotopoloc)
+  * [DELETE /api/topo/:topoloc](#delete-apitopotopoloc)
+  * [GET /api/listtopologies](#get-apilisttopologies)
 * [reservation.js](#reservationjs)
   * routes
 * [resources.js](#resourcesjs)
