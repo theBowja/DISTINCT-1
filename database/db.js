@@ -12,7 +12,10 @@ var conn = mysql.createConnection({
 });
 
 conn.query('CREATE DATABASE IF NOT EXISTS ' + config.db.dbname, function(err) {
-	if (err) throw err;
+	if (err) {
+		console.error("there is probably a problem with connecting to the database");
+		throw err;
+	}
 	conn.query('USE ' + config.db.dbname, function(err) {
 		if (err) throw err;
 		// create all tables that don't exist
