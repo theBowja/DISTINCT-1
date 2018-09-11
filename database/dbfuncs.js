@@ -1,5 +1,5 @@
 var conn = require('./db.js');
-var bcrypt = require('bcrypt');
+//var bcrypt = require('bcrypt');
 var uuidv4 = require('uuid/v4');
 
 var dbfuncs = {};
@@ -15,18 +15,20 @@ dbfuncs.login = function(username, password, callback) {
 		if (err) return callback(err);
 		if (results.length == 0) return callback("USER_NOT_FOUND");
 
-		bcrypt.compare(password, results[0].password, function(err, res) {
-			if (err) return callback("BCRYPT_ERR");
-			if (!res) return callback("INCORRECT_PWD");
+		// bcrypt.compare(password, results[0].password, function(err, res) {
+		// 	if (err) return callback("BCRYPT_ERR");
+		// 	if (!res) return callback("INCORRECT_PWD");
 			// else user login success
 			//   update lastlogin
+		if (password == results[0].password) {
 			var user = {
 				Id : results[0].Id,
 				username : results[0].username,
 				role: results[0].role
 			};
 			return callback(null, user);
-		});
+		}
+		// });
 	});
 
 };
@@ -37,11 +39,11 @@ dbfuncs.login = function(username, password, callback) {
  * Duplicate username is also checked and returns an error if there is.
  */
 dbfuncs.createuser = function(username, email, password, role, callback) {
-	bcrypt.hash(password, 10, function(err, hash) {
+	//bcrypt.hash(password, 10, function(err, hash) {
 		var user = {
 			username: username,
 			email: email,
-			password: hash,
+			password: password, //hash,
 			role: role
 		};
 
@@ -49,7 +51,7 @@ dbfuncs.createuser = function(username, email, password, role, callback) {
 			if (err) return callback(err);
 			return callback(null, results);
 		});
-	});
+	//});
 	
 };
 
