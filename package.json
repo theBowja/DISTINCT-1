@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "ajv": "^6.5.0",
-    "bcrypt": "^2.0.1",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
