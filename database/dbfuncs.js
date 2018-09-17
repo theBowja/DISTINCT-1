@@ -55,6 +55,16 @@ dbfuncs.createuser = function(username, email, password, role, callback) {
 	
 };
 
+/**
+ * lists all the users. returns an array of all the users and their information:
+ * { username, email, role }
+ */
+dbfuncs.listUsers = function(callback) {
+	conn.query('SELECT Id, username, email, role FROM user', function(err, results, fields) {
+		return callback(null, results);
+	});
+};
+
 /* ========================================================================================= */
 /* ============================== DB FUNCTIONS: PERMISSION ================================= */
 /* ========================================================================================= */

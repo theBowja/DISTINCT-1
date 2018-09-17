@@ -36,7 +36,6 @@ reso.post('/addresource', function(req, res) {
 });
 
 reso.delete('/deleteresource/:resoid', function(req, res) {
-	console.log("hey");
 	if(req.session.user.role !== "admin") return res.sendStatus(403);
 	dbfuncs.deleteResource(req.params.resoid, function(err, data) {
 		if (err) { console.log(err); return res.sendStatus(500); }

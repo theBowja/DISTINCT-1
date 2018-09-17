@@ -139,6 +139,7 @@ var dbfuncs = require('relative/path/dbfuncs.js')
 * [USER](#user)
   * [login(username, password, callback)](#loginusername-password-callback)
   * [createuser(username, email, password, role, callback)](#createuserusername-email-password-role-callback)
+  * [listUser(callback)](#listUsercallback)
 * [PERMISSION](#permission)
   * [getPermission(userid, topoid, callback)](#getPermissionuserid-topoid-callback)
   * [getPermissionbyLocation(userid, location, callback)](#getPermissionbyLocationuserid-location-callback)
@@ -170,6 +171,7 @@ var dbfuncs = require('relative/path/dbfuncs.js')
   * [listResources(callback)](#listResourcescallback)
   * [addResource(resname, stitchport, callback)](#addResourceresname-stitchport-callback)
   * [deleteResource(resoid, callback)](#deleteResourceresoid-callback)
+
 ### USER
 Functions relating to user.
 #### login(username, password, callback)
@@ -177,6 +179,9 @@ Verifies the login with username and plaintextpassword. Returns a user object co
 
 #### createuser(username, email, password, role, callback)
 Creates a new user.
+
+#### listUser(callback)
+Lists all the users and their: username, email, role, account creation date, and last login date
 
 ### PERMISSION
 #### getPermission(userid, topoid, callback)

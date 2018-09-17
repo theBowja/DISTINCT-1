@@ -156,6 +156,15 @@ router.get('/resource', function(req, res) {
 	});	
 });
 
+router.get('/listusers', function(req, res) {
+	if(req.session.user.role !== "admin") return res.sendStatus(403);
+	dbfuncs.listUsers(function(err, data) {
+		if (err) { console.log(err); return res.sendStatus(500); }
+		return res.render('userlist', { users: data });
+	});
+});
+
+
 var api = require('./api/index.js');
 router.use('/api', api);
 

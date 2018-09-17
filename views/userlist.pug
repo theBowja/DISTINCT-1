@@ -15,14 +15,16 @@ html(lang='en')
     table#table37(data-toggle='table' data-search='true' data-search-text='' data-search-align='left')
       thead
         tr
+          th#Id(data-field='Id' data-sortable='true') Id
           th#username(data-field='username' data-sortable='true') Username
           th#email(data-field='email' data-sortable='true') Email
           th#role(data-field='role' data-sortable='true') Role
           th#datecreated(data-field='datecreated' data-sortable='true' data-sorter='dateSorter') Time created (UTC)
           th#lastlogin(data-field='lastlogin' data-sortable='true' data-sorter='dateSorter') Last login (UTC)
       tbody
-        each user in data
+        each user in users
           tr
+            td= user.Id
             td= user.username
             td= user.email
             td= user.role
