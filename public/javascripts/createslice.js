@@ -19,6 +19,27 @@ function listAttachments() {
 }
 
 $(document).ready(function(){
+	$('#starttime').datetimepicker({
+		minDate: moment(),
+		stepping: 30
+	});
+	$('#endtime').datetimepicker({
+		maxDate: moment().add(1, "years"),
+		stepping: 30,
+		useCurrent: false
+	});
+    $("#starttime").on("dp.change", function (e) {
+        $('#endtime').data("DateTimePicker").minDate(e.date);
+    });
+    $("#endtime").on("dp.change", function (e) {
+        $('#starttime').data("DateTimePicker").maxDate(e.date);
+    });
+
+    // disable starttime input when "now" is checked
+    $("#now").change(function() {
+    	$("#starttime>input").prop('disabled', this.checked);
+    });
+
 
 	$('form#upload').submit(function(e) {
 		e.preventDefault();
@@ -36,6 +57,8 @@ $(document).ready(function(){
 			formData.append('pem', pemfile);
 		if(pubfile !== undefined)
 			formData.append('pub', pubfile);
+
+
 		$.ajax({
 			url: '/uploadkeys',
 			type: 'POST',
@@ -43,16 +66,25 @@ $(document).ready(function(){
 			success: function(data) {
 				$('#flashmessage').text('upload success. creating slice... (please wait)').show(0);
 
+				var slicename = $('#slicename').val(); // TODO: check for valid strings
+				var now = $('#now').is(":checked");
+		    	var start = $('#starttime').data("DateTimePicker").date();
+		    	var end = $('#endtime').data("DateTimePicker").date();
 				$.ajax({
 					url: '/api/createslice/' + TOPOLOC,
 					type: 'POST',
-					data: { isDelayed: $('#isDelayed').is(':checked')},
+					data: {
+						slicename: slicename,
+						now: now,
+						starttime: moment.utc(start).format("YYYY-MM-DD HH:mm:ss"),
+						endtime: moment.utc(end).format("YYYY-MM-DD HH:mm:ss")
+					},
 					success: function() {
 						$('#flashmessage').text('create success').show(0);
 						window.location = '/organizer';
 					},
 					error: function() {
-						alert('internal server error')
+						alert('internal server error');
 						$('#flashmessage').text('internal server error').show(0).delay(3500).hide(0);
 					}
 				});

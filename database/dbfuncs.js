@@ -247,13 +247,12 @@ dbfuncs.addFile = function(filename, location, callback) {
 	});
 };
 
-// TODO: use moment.js to increment expiration date by 1
 /**
- * @param sliceobj {object} - must contain the properties: userid, slicename, isDelayed, toponame, topoloc,
- *                                                         pemname, pemloc, pubname, publoc, and expiration
+ * @param sliceobj {object} - must contain the properties: userid, slicename, toponame, topoloc,
+ *                                                         pemname, pemloc, pubname, publoc, starttime, and endtime
  */
 dbfuncs.addSlice = function(sliceobj, callback) {
-	var properties = ['userid', 'slicename', 'isDelayed', 'topoloc', 'pemname', 'pemloc', 'pubname', 'publoc', 'expiration'];
+	var properties = ['userid', 'slicename', 'topoloc', 'pemname', 'pemloc', 'pubname', 'publoc', 'starttime', 'endtime'];
 	if(!properties.every(function(x) { return x in sliceobj; }))
 		return callback('missing parameter(s)');
 

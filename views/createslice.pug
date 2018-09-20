@@ -8,6 +8,11 @@ html
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js')
+
+    //- the following is for datetime picker
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css')
 
     script(src='/javascripts/createslice.js')
 
@@ -38,13 +43,28 @@ html
             span#pubname= pubname
             br
             br
-            input(placeholder='expiration date')
-            span (unimplemented)
+            span slicename
+              span.glyphicon.glyphicon-question-sign(title='must be a unique name across active slices. any conflicts may fail silently.')
+
+            input#slicename(name='slicename')
             br
             br
-            input#isDelayed(type='checkbox', name='isDelayed')
-            span  delay slice
-              span.glyphicon.glyphicon-question-sign(title='delays the creation of the slice until a reservation requires it')
+            .form-group
+              span starttime
+                span.glyphicon.glyphicon-question-sign(title='the time your slice is to be created') ---
+                input#now(type='checkbox', name='now')
+                span now
+              .input-group.date#starttime
+                input.form-control(type='text' class='form-control')
+                span.input-group-addon
+                  span.glyphicon.glyphicon-calendar
+            .form-group
+              span endtime
+              .input-group.date#endtime
+                input.form-control(type='text' class='form-control')
+                span.input-group-addon
+                  span.glyphicon.glyphicon-calendar
+            br
             br
             span#flashmessage(style='display: none;') don't panic
 

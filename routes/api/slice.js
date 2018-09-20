@@ -81,7 +81,10 @@ slic.post('/createslice/:topoloc', function(req, res) {
 	if(!req.session.pem || !req.session.pub)
 		return res.sendStatus(403);
 
-	console.log(req.body.isDelayed);
+	console.log(req.body.endtime);
+	// TODO: check if req.body.slicename has valid characters
+	// TODO: check if the format of starttime/endtime is right
+	// console.log(new Date(req.body.endtime).toISOString().slice(0, 19).replace('T', ' '));
 
 	// check if user can access the topology
 	dbfuncs.getPermissionbyLocation(req.session.user.Id, req.params.topoloc, function(err, perm) {
@@ -91,22 +94,23 @@ slic.post('/createslice/:topoloc', function(req, res) {
 		var newtopopath = path.join(config.filedirectory, uuidv4());
 		var pempath = path.join(config.filedirectory, uuidv4());
 		var pubpath = path.join(config.filedirectory, uuidv4());
-		req.body.isDelayed = req.body.isDelayed === 'true';
+		req.body.now = req.body.now === 'true';
 		Promise.all([fs.copy(path.join(config.filedirectory, req.params.topoloc), newtopopath),
 					 fs.writeFile(pempath, req.session.pem.data),
 					 fs.writeFile(pubpath, req.session.pub.data)])
 		.then(() => {
-			if(req.body.isDelayed)
-				return uuidv4();
-			// else start child process and call ahab function to create slice
-			const ahabfuncs = fork('ahab/ahabfuncs.js', [pempath, pubpath, newtopopath]);
+			if(!req.body.now) // if not now, then skip ahab slice create.
+				return req.body.slicename;
+
+			// start child process
+			const ahabfuncs = fork('ahab/ahabfuncs.js', [pempath, pubpath, newtopopath, req.body.slicename, endtime]);
 			ahabfuncs.on('message', function(slicename) { // success function
 				return slicename;
 			});
 			ahabfuncs.on('error', function(err) {
 				throw err;
 			});
-			ahabfuncs.send('createSlice');
+			//ahabfuncs.send('createSlice');  // call ahab function to create slice
 		})
 		.then((slicename) => {
 			console.log("insert into database");
@@ -114,13 +118,13 @@ slic.post('/createslice/:topoloc', function(req, res) {
 			var slice = {
 				userid: req.session.user.Id,
 				slicename: slicename,
-				isDelayed: req.body.isDelayed,
 				topoloc: newtopopath,
 				pemname: req.session.pem.originalname,
 				pemloc: pempath,
 				pubname: req.session.pub.originalname,
 				publoc: pubpath,
-				expiration: new Date().toISOString().slice(0, 19).replace('T', ' ')
+				starttime: (req.body.now) ? new Date().toISOString().slice(0, 19).replace('T', ' ') : starttime,
+				endtime: endtime
 			};
 			dbfuncs.addSlice(slice, function(err, data) {
 				if(err) throw err;

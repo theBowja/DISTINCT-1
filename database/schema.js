@@ -55,7 +55,6 @@ schema.defs.slice =
 	slicename VARCHAR(63) NOT NULL,
 
 	userid INT NOT NULL,
-	isDelayed BOOLEAN NOT NULL,
 
 	topoloc VARCHAR(63) NOT NULL,
 	pemname VARCHAR(63) NOT NULL,
@@ -63,7 +62,8 @@ schema.defs.slice =
 	pubname VARCHAR(63) NOT NULL,
 	publoc VARCHAR(63) NOT NULL,
 
-	expiration DATETIME NOT NULL,
+	starttime DATETIME NOT NULL,
+	endtime DATETIME NOT NULL,
 
 	FOREIGN KEY (userid) REFERENCES user(Id) ON DELETE CASCADE,
 

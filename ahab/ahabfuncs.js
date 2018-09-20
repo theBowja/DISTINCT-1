@@ -22,9 +22,10 @@ process.on('message', (method) => {
 var ahabfuncs = {};
 
 /**
+ * #param {string} endtime - should be checked for validity TODO
  * @return slicename
  */
-ahabfuncs.createSlice = function(pem, pub, topopath) {
+ahabfuncs.createSlice = function(pem, pub, topopath, slicename, endtime) {
 	var topology = JSON.parse(fs.readFileSync(topopath));
 	//console.log(topology);
 	var sctx = java.newInstanceSync('org.renci.ahab.libtransport.SliceAccessContext');
@@ -34,7 +35,7 @@ ahabfuncs.createSlice = function(pem, pub, topopath) {
 	java.callMethodSync(sctx, "addToken", "distinct", t);
 
 	var sliceProxy = this.getSliceProxy(pem);
-	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", 'create', sliceProxy, sctx, topology.toponame);
+	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", 'create', sliceProxy, sctx, slicename);
 
 	for(let node of topology.nodes) {
 		newnode = java.callMethodSync(s, "addComputeNode", node.name);
@@ -56,10 +57,12 @@ ahabfuncs.createSlice = function(pem, pub, topopath) {
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getDebugString"));
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getRequest"));
 
+	java.callMethodSync(s, 'renew', new Date(endtime).getTime());
+
 	java.callMethodSync(s, "commit");
 
 	// return the slicename
-	return topology.toponame;
+	return slicename;
 };
 
 ahabfuncs.deleteSlice = function(pem, slicename) {
@@ -115,12 +118,12 @@ ahabfuncs.listResourceStatuses = function(pem, slicename) {
 	return resStats;
 };
 
-// TBD
+// where date is the string. example: 2018-09-21 04:30:00
 ahabfuncs.renewSlice = function(pem, slicename, date) {
 	var sliceProxy = this.getSliceProxy(pem);
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 
-	java.callMethodSync(s, 'renew', date);
+	java.callMethodSync(s, 'renew', new Date(date).getTime());
 };
 
 ahabfuncs.getSliceProxy = function(pem) {
