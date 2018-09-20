@@ -57,7 +57,7 @@ ahabfuncs.createSlice = function(pem, pub, topopath, slicename, endtime) {
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getDebugString"));
 	// console.log("testNewSlice1: " + java.callMethodSync(s, "getRequest"));
 
-	java.callMethodSync(s, 'renew', new Date(endtime).getTime());
+	java.callMethodSync(s, 'renew', java.newInstanceSync('java.util.Date', java.newLong(new Date(date).getTime())));
 
 	java.callMethodSync(s, "commit");
 
@@ -123,7 +123,7 @@ ahabfuncs.renewSlice = function(pem, slicename, date) {
 	var sliceProxy = this.getSliceProxy(pem);
 	var s = java.callStaticMethodSync("org.renci.ahab.libndl.Slice", "loadManifestFile", sliceProxy, slicename);
 
-	java.callMethodSync(s, 'renew', new Date(date).getTime());
+	java.callMethodSync(s, 'renew', java.newInstanceSync('java.util.Date', java.newLong(new Date(date).getTime())));
 };
 
 ahabfuncs.getSliceProxy = function(pem) {
