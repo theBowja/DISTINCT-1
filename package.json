@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "debug": "SET DEBUG=DISTINCT-1:* & npm start",
     "test": "mocha"
   },
   "dependencies": {
